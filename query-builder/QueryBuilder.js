@@ -267,7 +267,6 @@ var QueryBuilder = /** @class */ (function () {
                 parameters["discriminatorColumnValues"] = values;
             }
         }
-        console.log('paramters', parameters);
         return parameters;
     };
     /**

@@ -551,6 +551,8 @@ var SpannerDriver = /** @class */ (function () {
      * and an array of parameter names to be passed to a query.
      */
     SpannerDriver.prototype.escapeQueryWithParameters = function (sql, parameters, nativeParameters) {
+        // written values (for update) are likely to put in nativeParameter
+        // OTOH read values (for select, update, delete) are likely to put in parameter. 
         var escapedParameters = Object.keys(nativeParameters).map(function (key) { return nativeParameters[key]; });
         if (!parameters || !Object.keys(parameters).length)
             return [sql, escapedParameters];

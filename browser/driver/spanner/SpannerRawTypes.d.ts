@@ -10,6 +10,15 @@ export interface SpannerExtendSchemas {
         [column: string]: SpannerExtendColumnSchema;
     };
 }
+export interface SpannerExtendColumnSchemaSource {
+    type: string;
+    value: string;
+}
+export interface SpannerExtendSchemaSources {
+    [table: string]: {
+        [column: string]: SpannerExtendColumnSchemaSource;
+    };
+}
 export interface SpannerDatabase {
     handle: any;
     tables: {

@@ -1419,6 +1419,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 }
                                 tableSchemas = schemas[table];
                                 column = rawObject["column"];
+                                if (!tableSchemas[column]) {
+                                    tableSchemas[column] = {};
+                                }
                                 Object.assign(tableSchemas[column], this.createExtendSchemaObject(table, rawObject["type"], rawObject["value"]));
                             }
                         }

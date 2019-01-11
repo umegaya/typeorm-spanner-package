@@ -644,19 +644,31 @@ var SpannerDriver = /** @class */ (function () {
      * Creates a database type from a given column metadata.
      */
     SpannerDriver.prototype.normalizeType = function (column) {
-        if (column.type === Number || column.type === "integer") {
+        if (column.type === Number) {
+            if (column.type.toString().indexOf("float") !== -1 ||
+                column.type.toString().indexOf("double") !== -1 ||
+                column.type.toString().indexOf("dec") !== -1) {
+                return "float64";
+            }
             return "int64";
         }
-        else if (column.type === String || column.type === "nvarchar") {
+        else if (column.type === String ||
+            column.type.toString().indexOf("char") !== -1 ||
+            column.type.toString().indexOf("text") !== -1) {
             return "string";
         }
-        else if (column.type === Date) {
+        else if (column.type === Date ||
+            column.type.toString().indexOf("time") !== -1) {
             return "timestamp";
         }
-        else if (column.type === Buffer) {
+        else if (column.type === Buffer || column.type === Uint8Array ||
+            column.type.toString().indexOf("binary") !== -1 ||
+            column.type.toString().indexOf("blob") !== -1 ||
+            column.type.toString().indexOf("char") !== -1) {
             return "bytes";
         }
-        else if (column.type === Boolean) {
+        else if (column.type === Boolean ||
+            column.type === "bit") {
             return "bool";
         }
         else if (column.type === "simple-array" || column.type === "simple-json" || column.type === "uuid") {

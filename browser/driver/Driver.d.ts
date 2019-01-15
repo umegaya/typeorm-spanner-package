@@ -70,9 +70,9 @@ export interface Driver {
      */
     afterConnect(): Promise<void>;
     /**
-     * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
+     * Makes any action after some start up event happens (e.g. drop schemas, run migration, ...)
      */
-    afterSynchronize(): Promise<void>;
+    afterBootStep(event: "DROP_DATABASE" | "RUN_MIGRATION" | "SYNCHRONIZE" | "FINISH"): Promise<void>;
     /**
      * Closes connection with database and releases all resources.
      */

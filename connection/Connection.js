@@ -161,7 +161,7 @@ var Connection = /** @class */ (function () {
                         Object.assign(this, { isConnected: true });
                         _a.label = 4;
                     case 4:
-                        _a.trys.push([4, 14, , 16]);
+                        _a.trys.push([4, 16, , 18]);
                         // build all metadatas registered in the current connection
                         this.buildMetadatas();
                         return [4 /*yield*/, this.driver.afterConnect()];
@@ -169,45 +169,51 @@ var Connection = /** @class */ (function () {
                         _a.sent();
                         // if option is set - drop schema once connection is done
                         this.logger.log('log', "------------------------ dropSchema(" + this.options.dropSchema + ")");
-                        if (!this.options.dropSchema) return [3 /*break*/, 7];
+                        if (!this.options.dropSchema) return [3 /*break*/, 8];
                         return [4 /*yield*/, this.dropDatabase()];
                     case 6:
                         _a.sent();
-                        _a.label = 7;
+                        return [4 /*yield*/, this.driver.afterBootStep("DROP_DATABASE")];
                     case 7:
+                        _a.sent();
+                        _a.label = 8;
+                    case 8:
                         // if option is set - run migrations
                         this.logger.log('log', "------------------------ migrationsRun(" + this.options.migrationsRun + ")");
-                        if (!this.options.migrationsRun) return [3 /*break*/, 9];
+                        if (!this.options.migrationsRun) return [3 /*break*/, 11];
                         return [4 /*yield*/, this.runMigrations()];
-                    case 8:
-                        _a.sent();
-                        _a.label = 9;
                     case 9:
-                        // if option is set - automatically synchronize a schema
-                        this.logger.log('log', "------------------------ synchronize(" + this.options.synchronize + ")");
-                        if (!this.options.synchronize) return [3 /*break*/, 11];
-                        return [4 /*yield*/, this.synchronize()];
+                        _a.sent();
+                        return [4 /*yield*/, this.driver.afterBootStep("RUN_MIGRATION")];
                     case 10:
                         _a.sent();
                         _a.label = 11;
                     case 11:
-                        if (!(this.options.dropSchema || this.options.synchronize || this.options.migrationsRun)) return [3 /*break*/, 13];
-                        return [4 /*yield*/, this.driver.afterSynchronize()];
+                        // if option is set - automatically synchronize a schema
+                        this.logger.log('log', "------------------------ synchronize(" + this.options.synchronize + ")");
+                        if (!this.options.synchronize) return [3 /*break*/, 14];
+                        return [4 /*yield*/, this.synchronize()];
                     case 12:
                         _a.sent();
-                        _a.label = 13;
-                    case 13: return [3 /*break*/, 16];
-                    case 14:
+                        return [4 /*yield*/, this.driver.afterBootStep("SYNCHRONIZE")];
+                    case 13:
+                        _a.sent();
+                        _a.label = 14;
+                    case 14: return [4 /*yield*/, this.driver.afterBootStep("FINISH")];
+                    case 15:
+                        _a.sent();
+                        return [3 /*break*/, 18];
+                    case 16:
                         error_1 = _a.sent();
                         // if for some reason build metadata fail (for example validation error during entity metadata check)
                         // connection needs to be closed
                         return [4 /*yield*/, this.close()];
-                    case 15:
+                    case 17:
                         // if for some reason build metadata fail (for example validation error during entity metadata check)
                         // connection needs to be closed
                         _a.sent();
                         throw error_1;
-                    case 16: return [2 /*return*/, this];
+                    case 18: return [2 /*return*/, this];
                 }
             });
         });

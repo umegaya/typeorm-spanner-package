@@ -65,7 +65,6 @@ import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInst
 import { PlatformTools } from "../../platform/PlatformTools";
 import { DateUtils } from "../../util/DateUtils";
 import { Table } from "../../schema-builder/table/Table";
-import { DataTypeNotSupportedError } from "../../error/DataTypeNotSupportedError";
 import { SpannerUtil } from "./SpannerUtil";
 import * as Long from "long";
 //import { filter } from "minimatch";
@@ -148,10 +147,10 @@ var SpannerDriver = /** @class */ (function () {
             updateDateDefault: "CURRENT_TIMESTAMP(6)",
             version: "int64",
             treeLevel: "int64",
-            migrationId: "int64",
+            migrationId: "string",
             migrationName: "string",
             migrationTimestamp: "timestamp",
-            cacheId: "int64",
+            cacheId: "string",
             cacheIdentifier: "string",
             cacheTime: "int64",
             cacheDuration: "int64",
@@ -261,6 +260,16 @@ var SpannerDriver = /** @class */ (function () {
             });
         });
     };
+    // get list of table names which has actual Table but not metadata. 
+    // (eg. migrations)
+    SpannerDriver.prototype.systemTableNames = function () {
+        return [
+            this.options.migrationsTableName || "migrations",
+            "query-result-cache"
+        ];
+    };
+    // get list of tables which has actual Table but not metadata. 
+    // (eg. migrations)
     SpannerDriver.prototype.getSystemTables = function () {
         return __awaiter(this, void 0, void 0, function () {
             var db;
@@ -274,9 +283,9 @@ var SpannerDriver = /** @class */ (function () {
                         return [4 /*yield*/, this.loadTables(this.getSchemaTableName())];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/, [
-                                this.options.migrationsTableName || "migrations"
-                            ].map(function (name) { return db.tables[name]; }).filter(function (t) { return !!t; })];
+                        return [2 /*return*/, this.systemTableNames()
+                                .map(function (name) { return db.tables[name]; })
+                                .filter(function (t) { return !!t; })];
                 }
             });
         });
@@ -320,6 +329,10 @@ var SpannerDriver = /** @class */ (function () {
             throw new Error('connect() driver first');
         }
         this.spanner.database.tables[table.name] = table;
+        // if system table is updated, setup extend schemas again.
+        if (this.systemTableNames().indexOf(table.name) !== -1) {
+            this.setupExtendSchemas(this.spanner.database, false);
+        }
     };
     SpannerDriver.prototype.dropTable = function (tableName) {
         return __awaiter(this, void 0, void 0, function () {
@@ -439,6 +452,15 @@ var SpannerDriver = /** @class */ (function () {
         }
         return generator();
     };
+    SpannerDriver.prototype.defaultValueGenerator = function (value) {
+        if (value === this.mappedDataTypes.createDateDefault) {
+            return function () { return new Date(); };
+        }
+        else {
+            var parsedDefault_1 = JSON.parse(value);
+            return function () { return parsedDefault_1; };
+        }
+    };
     // -------------------------------------------------------------------------
     // Public Methods
     // -------------------------------------------------------------------------
@@ -502,20 +524,36 @@ var SpannerDriver = /** @class */ (function () {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    SpannerDriver.prototype.afterSynchronize = function () {
+    SpannerDriver.prototype.afterBootStep = function (event) {
         var _this = this;
         return (function () { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         if (!this.spanner) {
                             throw new Error('connect() driver first');
                         }
-                        return [4 /*yield*/, this.setupExtendSchemas(this.spanner.database, true)];
-                    case 1:
-                        _a.sent();
+                        _a = event;
+                        switch (_a) {
+                            case "DROP_DATABASE": return [3 /*break*/, 1];
+                            case "RUN_MIGRATION": return [3 /*break*/, 3];
+                            case "SYNCHRONIZE": return [3 /*break*/, 4];
+                            case "FINISH": return [3 /*break*/, 5];
+                        }
+                        return [3 /*break*/, 7];
+                    case 1: return [4 /*yield*/, this.setupExtendSchemas(this.spanner.database, false)];
+                    case 2:
+                        _b.sent();
+                        return [3 /*break*/, 7];
+                    case 3: return [3 /*break*/, 7];
+                    case 4: return [3 /*break*/, 7];
+                    case 5: return [4 /*yield*/, this.setupExtendSchemas(this.spanner.database, true)];
+                    case 6:
+                        _b.sent();
                         this.enableTransaction = true;
-                        return [2 /*return*/];
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         }); })();
@@ -598,13 +636,21 @@ var SpannerDriver = /** @class */ (function () {
      * Prepares given value to a value to be persisted, based on its column type and metadata.
      */
     SpannerDriver.prototype.preparePersistentValue = function (value, columnMetadata) {
-        if (columnMetadata.transformer)
-            value = columnMetadata.transformer.to(value);
+        return this.normalizeValue(value, columnMetadata.type, columnMetadata.transformer);
+    };
+    SpannerDriver.prototype.normalizeValue = function (value, type, transformer) {
+        if (transformer)
+            value = transformer.to(value);
         if (value === null || value === undefined)
             return value;
-        if (columnMetadata.type === "timestamp" ||
-            columnMetadata.type === "date" ||
-            columnMetadata.type === Date) {
+        if (type === "timestamp" ||
+            type === "date" ||
+            type === Date) {
+            if (typeof (value) === 'number') {
+                // convert millisecond numeric timestamp to date object. 
+                // because @google/spanner does not accept it
+                return new Date(value);
+            }
             return DateUtils.mixedDateToDate(value);
         } /*else if (columnMetadata.type === "simple-array") {
             return DateUtils.simpleArrayToString(value);
@@ -612,20 +658,20 @@ var SpannerDriver = /** @class */ (function () {
         } else if (columnMetadata.type === "simple-json") {
             return DateUtils.simpleJsonToString(value);
         } */
-        else if (columnMetadata.type == Number ||
-            columnMetadata.type == String ||
-            columnMetadata.type == Boolean ||
-            columnMetadata.type == "int64" ||
-            columnMetadata.type == "float64" ||
-            columnMetadata.type == "bool" ||
-            columnMetadata.type == "string" ||
-            columnMetadata.type == "bytes") {
+        else if (type == Number ||
+            type == String ||
+            type == Boolean ||
+            type == "int64" ||
+            type == "float64" ||
+            type == "bool" ||
+            type == "string" ||
+            type == "bytes") {
             return value;
         }
-        else if (columnMetadata.type == "uuid") {
+        else if (type == "uuid") {
             return value.toString();
         }
-        throw new DataTypeNotSupportedError(columnMetadata, columnMetadata.type, "spanner");
+        throw new Error("spanner driver does not support '" + type + "' column type");
     };
     /**
      * Prepares given value to a value to be persisted, based on its column type or metadata.
@@ -644,13 +690,13 @@ var SpannerDriver = /** @class */ (function () {
      * Creates a database type from a given column metadata.
      */
     SpannerDriver.prototype.normalizeType = function (column) {
-        if (column.type === Number) {
-            if (column.type.toString().indexOf("float") !== -1 ||
-                column.type.toString().indexOf("double") !== -1 ||
-                column.type.toString().indexOf("dec") !== -1) {
-                return "float64";
-            }
+        if (column.type === Number || column.type.toString().indexOf("int") !== -1) {
             return "int64";
+        }
+        else if (column.type.toString().indexOf("float") !== -1 ||
+            column.type.toString().indexOf("double") !== -1 ||
+            column.type.toString().indexOf("dec") !== -1) {
+            return "float64";
         }
         else if (column.type === String ||
             column.type.toString().indexOf("char") !== -1 ||

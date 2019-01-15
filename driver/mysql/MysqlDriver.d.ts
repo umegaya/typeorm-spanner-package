@@ -101,7 +101,7 @@ export declare class MysqlDriver implements Driver {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    afterSynchronize(): Promise<void>;
+    afterBootStep(event: "DROP_DATABASE" | "RUN_MIGRATION" | "SYNCHRONIZE" | "FINISH"): Promise<void>;
     /**
      * Closes connection with the database.
      */

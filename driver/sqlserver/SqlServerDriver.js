@@ -242,7 +242,7 @@ var SqlServerDriver = /** @class */ (function () {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    SqlServerDriver.prototype.afterSynchronize = function () {
+    SqlServerDriver.prototype.afterBootStep = function (event) {
         return Promise.resolve();
     };
     /**

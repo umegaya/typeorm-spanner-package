@@ -234,7 +234,7 @@ var OracleDriver = /** @class */ (function () {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    OracleDriver.prototype.afterSynchronize = function () {
+    OracleDriver.prototype.afterBootStep = function (event) {
         return Promise.resolve();
     };
     /**

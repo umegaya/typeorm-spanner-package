@@ -390,7 +390,7 @@ var PostgresDriver = /** @class */ (function () {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    PostgresDriver.prototype.afterSynchronize = function () {
+    PostgresDriver.prototype.afterBootStep = function (event) {
         return Promise.resolve();
     };
     /**

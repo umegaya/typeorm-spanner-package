@@ -12,6 +12,7 @@ import { EntityMetadata } from "../../metadata/EntityMetadata";
 import { SpannerDatabase, SpannerExtendSchemas } from "./SpannerRawTypes";
 import { Table } from "../../schema-builder/table/Table";
 import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { ValueTransformer } from "../../decorator/options/ValueTransformer";
 export declare const SpannerColumnUpdateWithCommitTimestamp = "commit_timestamp";
 /**
  * Organizes communication with MySQL DBMS.
@@ -107,6 +108,7 @@ export declare class SpannerDriver implements Driver {
     getAllTablesForDrop(force?: boolean): Promise<{
         [name: string]: Table;
     }>;
+    systemTableNames(): string[];
     getSystemTables(): Promise<Table[]>;
     getExtendSchemas(): SpannerExtendSchemas;
     /**
@@ -130,6 +132,7 @@ export declare class SpannerDriver implements Driver {
     getSchemaTableName(): string;
     getTableEntityMetadata(): EntityMetadata[];
     autoGenerateValue(tableName: string, columnName: string): any;
+    defaultValueGenerator(value: string): () => any;
     /**
      * Performs connection to the database.
      */
@@ -142,7 +145,7 @@ export declare class SpannerDriver implements Driver {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    afterSynchronize(): Promise<void>;
+    afterBootStep(event: "DROP_DATABASE" | "RUN_MIGRATION" | "SYNCHRONIZE" | "FINISH"): Promise<void>;
     /**
      * Closes connection with the database.
      */
@@ -174,6 +177,7 @@ export declare class SpannerDriver implements Driver {
      * Prepares given value to a value to be persisted, based on its column type and metadata.
      */
     preparePersistentValue(value: any, columnMetadata: ColumnMetadata): any;
+    normalizeValue(value: any, type: any, transformer?: ValueTransformer): any;
     /**
      * Prepares given value to a value to be persisted, based on its column type or metadata.
      */

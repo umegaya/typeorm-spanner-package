@@ -173,7 +173,7 @@ var AbstractSqliteDriver = /** @class */ (function () {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    AbstractSqliteDriver.prototype.afterSynchronize = function () {
+    AbstractSqliteDriver.prototype.afterBootStep = function (event) {
         return Promise.resolve();
     };
     /**

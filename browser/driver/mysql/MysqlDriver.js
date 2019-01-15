@@ -266,7 +266,7 @@ var MysqlDriver = /** @class */ (function () {
     /**
      * Makes any action after any synchronization happens (e.g. sync extend schema table in Spanner driver)
      */
-    MysqlDriver.prototype.afterSynchronize = function () {
+    MysqlDriver.prototype.afterBootStep = function (event) {
         return Promise.resolve();
     };
     /**

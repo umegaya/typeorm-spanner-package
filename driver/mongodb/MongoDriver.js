@@ -166,7 +166,7 @@ var MongoDriver = /** @class */ (function () {
     MongoDriver.prototype.afterConnect = function () {
         return Promise.resolve();
     };
-    MongoDriver.prototype.afterSynchronize = function () {
+    MongoDriver.prototype.afterBootStep = function (event) {
         return Promise.resolve();
     };
     /**

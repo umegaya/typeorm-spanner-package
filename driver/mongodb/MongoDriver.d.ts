@@ -76,7 +76,7 @@ export declare class MongoDriver implements Driver {
      */
     connect(): Promise<void>;
     afterConnect(): Promise<void>;
-    afterSynchronize(): Promise<void>;
+    afterBootStep(event: "DROP_DATABASE" | "RUN_MIGRATION" | "SYNCHRONIZE" | "FINISH"): Promise<void>;
     /**
      * Closes connection with the database.
      */

@@ -131,10 +131,9 @@ var SpannerDDLTransformer = /** @class */ (function () {
             addUniqueKey: this.O_ALTER_TABLE_SPEC_addUniqueKey,
             dropIndex: this.O_ALTER_TABLE_SPEC_dropIndex,
         };
-        return actionSqlMap[ast.def.action](ast.def, extendSchemas);
+        return actionSqlMap[ast.def.action].call(this, ast.def, extendSchemas);
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_addColumn = function (ast, extendSchemas) {
-        this.setScopedColumn(ast.name);
         return "ALTER TABLE " + this.scopedTable + " ADD COLUMN " + ast.name + " " +
             this.alterColumnDefinitionHelper(ast, extendSchemas);
     };
@@ -143,7 +142,6 @@ var SpannerDDLTransformer = /** @class */ (function () {
         return "ALTER TABLE " + this.scopedTable + " DROP COLUMN " + ast.column;
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_changeColumn = function (ast, extendSchemas) {
-        this.setScopedColumn(ast.column);
         return "ALTER TABLE " + this.scopedTable + " ALTER COLUMN " + [ast.column, ast.newName].filter(function (e) { return !!e; }).join(' ') + " " +
             this.alterColumnDefinitionHelper(ast, extendSchemas);
     };
@@ -189,16 +187,17 @@ var SpannerDDLTransformer = /** @class */ (function () {
             throw new Error("unsupported data type: " + ast.def.id);
         }
         else if (typeof (t) === "function") {
-            return t(ast.def.def);
+            this.scopedColumnType = t(ast.def.def);
         }
         else {
-            return t;
+            this.scopedColumnType = t;
         }
+        return this.scopedColumnType;
     };
     // O_XXXXX_DATATYPE: default (ignored)
     SpannerDDLTransformer.prototype.O_COLUMN_DEFINITION = function (ast, extendSchemas) {
         if (ast.nullable === true) {
-            return "NULL";
+            return ""; //spanner does not allow `NULL` to express nullable column. all column nullable by default.
         }
         else if (ast.nullable === false) {
             return "NOT NULL";
@@ -213,6 +212,7 @@ var SpannerDDLTransformer = /** @class */ (function () {
     };
     // helpers
     SpannerDDLTransformer.prototype.alterColumnDefinitionHelper = function (ast, extendSchemas) {
+        this.setScopedColumn(ast.name);
         return this.O_DATATYPE(ast.datatype, extendSchemas) + " " +
             ("" + this.O_COLUMN_DEFINITION(ast.columnDefinition, extendSchemas)) +
             (ast.position ? (ast.position.after ? "AFTER " + ast.position.after : "FIRST") : "");

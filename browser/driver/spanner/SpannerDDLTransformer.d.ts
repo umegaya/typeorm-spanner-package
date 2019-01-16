@@ -16,6 +16,7 @@ interface Index {
 export declare class SpannerDDLTransformer {
     scopedTable: string;
     scopedColumn?: string;
+    scopedColumnType?: string;
     scopedIndex?: string;
     primaryKeyColumns: Column[];
     indices: Index[];

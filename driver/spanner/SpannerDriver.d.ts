@@ -132,7 +132,8 @@ export declare class SpannerDriver implements Driver {
     getSchemaTableName(): string;
     getTableEntityMetadata(): EntityMetadata[];
     autoGenerateValue(tableName: string, columnName: string): any;
-    defaultValueGenerator(value: string): () => any;
+    encodeDefaultValueGenerator(value: any): string;
+    decodeDefaultValueGenerator(value: string): () => any;
     /**
      * Performs connection to the database.
      */

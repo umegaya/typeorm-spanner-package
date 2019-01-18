@@ -452,7 +452,16 @@ var SpannerDriver = /** @class */ (function () {
         }
         return generator();
     };
-    SpannerDriver.prototype.defaultValueGenerator = function (value) {
+    SpannerDriver.prototype.encodeDefaultValueGenerator = function (value) {
+        var defaultValue = typeof (value) === 'function' ? value() : value;
+        if (defaultValue === this.mappedDataTypes.createDateDefault) {
+            return defaultValue;
+        }
+        else {
+            return JSON.stringify(defaultValue);
+        }
+    };
+    SpannerDriver.prototype.decodeDefaultValueGenerator = function (value) {
         if (value === this.mappedDataTypes.createDateDefault) {
             return function () { return new Date(); };
         }
@@ -589,9 +598,8 @@ var SpannerDriver = /** @class */ (function () {
     SpannerDriver.prototype.escapeQueryWithParameters = function (sql, parameters, nativeParameters) {
         // written values (for update) are likely to put in nativeParameter
         // OTOH read values (for select, update, delete) are likely to put in parameter. 
-        var escapedParameters = Object.keys(nativeParameters).map(function (key) { return nativeParameters[key]; });
         if (!parameters || !Object.keys(parameters).length)
-            return [sql, escapedParameters];
+            return [sql, [nativeParameters]];
         var keys = Object.keys(parameters).map(function (parameter) { return "(:(\\.\\.\\.)?" + parameter + "\\b)"; }).join("|");
         sql = sql.replace(new RegExp(keys, "g"), function (key) {
             var value;
@@ -636,7 +644,7 @@ var SpannerDriver = /** @class */ (function () {
      * Prepares given value to a value to be persisted, based on its column type and metadata.
      */
     SpannerDriver.prototype.preparePersistentValue = function (value, columnMetadata) {
-        return this.normalizeValue(value, columnMetadata.type, columnMetadata.transformer);
+        return this.normalizeValue(value, this.normalizeType({ type: columnMetadata.type }), columnMetadata.transformer);
     };
     SpannerDriver.prototype.normalizeValue = function (value, type, transformer) {
         if (transformer)
@@ -941,6 +949,7 @@ var SpannerDriver = /** @class */ (function () {
             });
         }
         catch (e) {
+            console.log(e);
             throw new DriverPackageNotInstalledError("Spanner", "@google-cloud/spanner");
         }
     };

@@ -1344,11 +1344,16 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.clearTable = function (tableOrName) {
         return __awaiter(this, void 0, void 0, function () {
+            var qb;
             return __generator(this, function (_a) {
                 if (tableOrName instanceof Table) {
                     tableOrName = tableOrName.name;
                 }
-                return [2 /*return*/, this.dropTable(tableOrName)];
+                qb = this.connection.manager
+                    .createQueryBuilder(this)
+                    .delete()
+                    .from(tableOrName);
+                return [2 /*return*/, this.delete(qb)];
             });
         });
     };
@@ -1366,12 +1371,14 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                     case 0: return [4 /*yield*/, this.driver.getAllTablesForDrop(true)];
                     case 1:
                         tables = _a.sent();
+                        // TODO: if too many, separate deletaion group (~5 for each)
                         return [4 /*yield*/, Promise.all(Object.keys(tables).map(function (k) { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     return [2 /*return*/, this.dropTable(k)];
                                 });
                             }); }))];
                     case 2:
+                        // TODO: if too many, separate deletaion group (~5 for each)
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -1491,19 +1498,17 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         }));
                         newExtendSchemas = {};
                         return [4 /*yield*/, Promise.all(tableProps.map(function (t) { return __awaiter(_this, void 0, void 0, function () {
-                                var e_2, _a, e_3, _b, log, promises, schemaObjectsByTable, _c, _d, c, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
+                                var e_2, _a, e_3, _b, promises, schemaObjectsByTable, _c, _d, c, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
                                 var _this = this;
                                 return __generator(this, function (_f) {
                                     switch (_f.label) {
                                         case 0:
-                                            log = t.name === "migrations" ? console.log : function () { };
                                             promises = [];
                                             schemaObjectsByTable = allSchemaObjects[t.name] || [];
                                             try {
                                                 for (_c = __values(t.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
                                                     c = _d.value;
                                                     _e = this.getSyncExtendSchemaObjects(t, c), add = _e.add, remove = _e.remove;
-                                                    log('syncExtendSchemas', c.databaseName, add, remove);
                                                     addFiltered = add.filter(function (e) {
                                                         // filter element which already added and not changed
                                                         return !schemaObjectsByTable.find(function (o) { return o["column"] === e.column &&
@@ -1589,7 +1594,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         }
         else if (type === "default") {
             columnSchema.default = value;
-            columnSchema.generator = this.driver.defaultValueGenerator(value);
+            columnSchema.generator = this.driver.decodeDefaultValueGenerator(value);
         }
         return columnSchema;
     };
@@ -1799,7 +1804,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         }
         var _a, _b;
         if (this.driver.connection.options.logging) {
-            this.driver.connection.logger.logQuery(method + " " + Table.name + " " + (this.isTransactionActive ? "tx" : "non-tx"), args[0]);
+            this.driver.connection.logger.logQuery(method + " " + table.name + " " + (this.isTransactionActive ? "tx" : "non-tx"), args[0]);
         }
         if (this.tx) {
             return (_a = this.tx)[method].apply(_a, __spread([table.name], args));
@@ -2341,8 +2346,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             remove: []
         };
         if (column.default) {
-            var defaultValue = typeof (column.default) === 'function' ? column.default() : column.default;
-            ret.add.push({ table: table.name, column: column.databaseName, type: "default", value: JSON.stringify(defaultValue) });
+            var defaultValue = this.driver.encodeDefaultValueGenerator(column.default);
+            ret.add.push({ table: table.name, column: column.databaseName, type: "default", value: defaultValue });
         }
         else {
             ret.remove.push({ table: table.name, column: column.databaseName, type: "default" });

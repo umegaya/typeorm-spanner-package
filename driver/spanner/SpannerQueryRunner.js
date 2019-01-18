@@ -2347,7 +2347,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             add: [],
             remove: []
         };
-        if (column.default) {
+        if (column.default !== undefined) {
             var defaultValue = this.driver.encodeDefaultValueGenerator(column.default);
             ret.add.push({ table: table.name, column: column.databaseName, type: "default", value: defaultValue });
         }

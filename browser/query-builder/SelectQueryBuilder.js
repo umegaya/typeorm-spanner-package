@@ -1497,20 +1497,20 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
                                 countSql = "COUNT(DISTINCT(" + metadata.primaryColumns.map(function (primaryColumn, index) {
                                     var propertyName = _this.escape(primaryColumn.databaseName);
                                     return distinctAlias + "." + propertyName;
-                                }).join(" || ") + ")) as \"cnt\"";
+                                }).join(" || ") + (")) as " + this.escape("cnt"));
                             }
                             else {
                                 countSql = "COUNT(DISTINCT(CONCAT(" + metadata.primaryColumns.map(function (primaryColumn, index) {
                                     var propertyName = _this.escape(primaryColumn.databaseName);
                                     return distinctAlias + "." + propertyName;
-                                }).join(", ") + "))) as \"cnt\"";
+                                }).join(", ") + ("))) as " + this.escape("cnt"));
                             }
                         }
                         else {
                             countSql = "COUNT(DISTINCT(" + metadata.primaryColumns.map(function (primaryColumn, index) {
                                 var propertyName = _this.escape(primaryColumn.databaseName);
                                 return distinctAlias + "." + propertyName;
-                            }).join(", ") + ")) as \"cnt\"";
+                            }).join(", ") + (")) as " + this.escape("cnt"));
                         }
                         return [4 /*yield*/, this.clone()
                                 .orderBy()

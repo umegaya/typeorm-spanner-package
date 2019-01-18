@@ -1364,23 +1364,37 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.clearDatabase = function (database) {
         return __awaiter(this, void 0, void 0, function () {
-            var tables;
+            var tables, keys, CONCURRENT_DELETION, i, start, end, range;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.driver.getAllTablesForDrop(true)];
                     case 1:
                         tables = _a.sent();
-                        // TODO: if too many, separate deletaion group (~5 for each)
-                        return [4 /*yield*/, Promise.all(Object.keys(tables).map(function (k) { return __awaiter(_this, void 0, void 0, function () {
+                        keys = Object.keys(tables);
+                        CONCURRENT_DELETION = 10;
+                        i = 0;
+                        _a.label = 2;
+                    case 2:
+                        if (!(i < Math.ceil(keys.length / CONCURRENT_DELETION))) return [3 /*break*/, 5];
+                        start = i * CONCURRENT_DELETION;
+                        end = (i + 1) * CONCURRENT_DELETION;
+                        range = keys.slice(start, end);
+                        if (range.length <= 0) {
+                            return [3 /*break*/, 5];
+                        }
+                        return [4 /*yield*/, Promise.all(range.map(function (k) { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     return [2 /*return*/, this.dropTable(k)];
                                 });
                             }); }))];
-                    case 2:
-                        // TODO: if too many, separate deletaion group (~5 for each)
+                    case 3:
                         _a.sent();
-                        return [2 /*return*/];
+                        _a.label = 4;
+                    case 4:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -2012,7 +2026,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         var parser = this.driver.ddlParser.parser;
         parser.feed(ddl);
         var extendSchemas = {};
-        var t = new SpannerDDLTransformer();
+        var t = new SpannerDDLTransformer(this.driver.encodeDefaultValueGenerator.bind(this.driver));
         return [t.transform(parser.results[0], extendSchemas), extendSchemas, t.scopedTable];
     };
     /**

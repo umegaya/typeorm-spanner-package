@@ -23,7 +23,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 ;
 ;
 var SpannerDDLTransformer = /** @class */ (function () {
-    function SpannerDDLTransformer() {
+    function SpannerDDLTransformer(defaultValueEncoder) {
+        this.defaultValueEncoder = defaultValueEncoder;
         this.primaryKeyColumns = [];
         this.indices = [];
     }
@@ -208,7 +209,7 @@ var SpannerDDLTransformer = /** @class */ (function () {
             this.addExtendSchema(extendSchemas, "generator", "increment");
         }
         else if (ast.default !== undefined) {
-            this.addExtendSchema(extendSchemas, "default", JSON.stringify(ast.default));
+            this.addExtendSchema(extendSchemas, "default", this.defaultValueEncoder(ast.default));
         }
         return "";
     };

@@ -14,13 +14,14 @@ interface Index {
     columns: Column[];
 }
 export declare class SpannerDDLTransformer {
+    defaultValueEncoder: (value: any) => string;
     scopedTable: string;
     scopedColumn?: string;
     scopedColumnType?: string;
     scopedIndex?: string;
     primaryKeyColumns: Column[];
     indices: Index[];
-    constructor();
+    constructor(defaultValueEncoder: (value: any) => string);
     transform(ast: any, extendSchemas: SpannerExtendSchemaSources): string;
     protected addExtendSchema(extendSchemas: SpannerExtendSchemaSources, type: string, value: string): void;
     protected setScopedColumn(column: string): void;

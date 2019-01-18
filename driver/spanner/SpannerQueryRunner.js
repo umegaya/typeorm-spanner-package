@@ -1463,7 +1463,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                     tableSchemas[column] = {};
                                 }
                                 // value is stored in data as JSON.stringify form
-                                Object.assign(tableSchemas[column], this.createExtendSchemaObject(table, rawObject["type"], JSON.stringify(rawObject["value"])));
+                                Object.assign(tableSchemas[column], this.createExtendSchemaObject(table, rawObject["type"], rawObject["value"]));
                             }
                         }
                         catch (e_1_1) { e_1 = { error: e_1_1 }; }

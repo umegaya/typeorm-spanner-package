@@ -1194,23 +1194,35 @@ var SpannerDriver = /** @class */ (function () {
     };
     SpannerDriver.prototype.setupExtendSchemas = function (db, afterSync) {
         return __awaiter(this, void 0, void 0, function () {
-            var queryRunner, extendSchemas, ignoreColumnNotFound, newExtendSchemas;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var queryRunner, extendSchemas, ignoreColumnNotFound, database, handle, schemas, _a, newExtendSchemas;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         queryRunner = this.createQueryRunner("master");
                         return [4 /*yield*/, queryRunner.createAndLoadSchemaTable(this.getSchemaTableName())];
                     case 1:
-                        extendSchemas = _a.sent();
+                        extendSchemas = _b.sent();
                         ignoreColumnNotFound = !afterSync;
-                        SpannerDriver.updateTableWithExtendSchema(db, extendSchemas, ignoreColumnNotFound);
-                        if (!(this.options.dropSchema || this.options.synchronize || this.options.migrationsRun)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, queryRunner.syncExtendSchemas(this.getTableEntityMetadata())];
+                        if (!afterSync) return [3 /*break*/, 4];
+                        database = this.spanner.database;
+                        handle = database.handle;
+                        return [4 /*yield*/, handle.getSchema()];
                     case 2:
-                        newExtendSchemas = _a.sent();
+                        schemas = _b.sent();
+                        _a = database;
+                        return [4 /*yield*/, this.parseSchema(schemas)];
+                    case 3:
+                        _a.tables = _b.sent();
+                        _b.label = 4;
+                    case 4:
+                        SpannerDriver.updateTableWithExtendSchema(db, extendSchemas, ignoreColumnNotFound);
+                        if (!(this.options.dropSchema || this.options.synchronize || this.options.migrationsRun)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, queryRunner.syncExtendSchemas(this.getTableEntityMetadata())];
+                    case 5:
+                        newExtendSchemas = _b.sent();
                         SpannerDriver.updateTableWithExtendSchema(db, newExtendSchemas, ignoreColumnNotFound);
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        _b.label = 6;
+                    case 6: return [2 /*return*/];
                 }
             });
         });

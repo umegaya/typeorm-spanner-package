@@ -1346,14 +1346,18 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var qb;
             return __generator(this, function (_a) {
-                if (tableOrName instanceof Table) {
-                    tableOrName = tableOrName.name;
+                switch (_a.label) {
+                    case 0:
+                        if (tableOrName instanceof Table) {
+                            tableOrName = tableOrName.name;
+                        }
+                        qb = this.connection.manager
+                            .createQueryBuilder(this)
+                            .delete()
+                            .from(tableOrName);
+                        return [4 /*yield*/, this.delete(qb)];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
-                qb = this.connection.manager
-                    .createQueryBuilder(this)
-                    .delete()
-                    .from(tableOrName);
-                return [2 /*return*/, this.delete(qb)];
             });
         });
     };
@@ -1991,7 +1995,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.examineKeys(table, qb, true).catch(fail)];
                     case 2:
                         rows = _a.sent();
-                        if (rows === null) {
+                        if (rows === null || rows.length <= 0) {
                             ok();
                             return [2 /*return*/];
                         }

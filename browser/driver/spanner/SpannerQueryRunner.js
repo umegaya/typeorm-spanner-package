@@ -2368,7 +2368,13 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             ret.add.push({ table: table.name, column: column.databaseName, type: "default", value: defaultValue });
         }
         else {
-            ret.remove.push({ table: table.name, column: column.databaseName, type: "default" });
+            if (column.isNullable) {
+                var defaultValue = this.driver.encodeDefaultValueGenerator(null);
+                ret.add.push({ table: table.name, column: column.databaseName, type: "default", value: defaultValue });
+            }
+            else {
+                ret.remove.push({ table: table.name, column: column.databaseName, type: "default" });
+            }
         }
         if (column.generationStrategy) {
             ret.add.push({ table: table.name, column: column.databaseName, type: "generator", value: column.generationStrategy });

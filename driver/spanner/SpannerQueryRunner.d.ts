@@ -391,6 +391,6 @@ export declare class SpannerQueryRunner extends BaseQueryRunner implements Query
             type: string;
         }[];
     };
-    protected deleteExtendSchema(table: string, column: string, type: string): Promise<void>;
+    protected deleteExtendSchema(table: string, column?: string, type?: string): Promise<void>;
     protected upsertExtendSchema(table: string, column: string, type: string, value: string): Promise<void>;
 }

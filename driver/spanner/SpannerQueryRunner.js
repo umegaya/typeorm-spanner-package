@@ -1488,7 +1488,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.syncExtendSchemas = function (metadata) {
         return __awaiter(this, void 0, void 0, function () {
-            var allSchemaObjects, raw, systemTables, tableProps, newExtendSchemas;
+            var allSchemaObjects, raw, systemTables, tableProps, oldNormalTables, newExtendSchemas;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -1516,18 +1516,28 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 })
                             };
                         }));
+                        oldNormalTables = Object.keys(allSchemaObjects);
                         newExtendSchemas = {};
                         return [4 /*yield*/, Promise.all(tableProps.map(function (t) { return __awaiter(_this, void 0, void 0, function () {
-                                var e_2, _a, e_3, _b, promises, schemaObjectsByTable, _c, _d, c, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
+                                var e_2, _a, e_3, _b, oldTableIndex, promises, schemaObjectsByTable, oldColumns, _c, _d, c, oldColumnIndex, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
                                 var _this = this;
                                 return __generator(this, function (_f) {
                                     switch (_f.label) {
                                         case 0:
+                                            oldTableIndex = oldNormalTables.indexOf(t.name);
+                                            if (oldTableIndex >= 0) {
+                                                oldNormalTables.splice(oldTableIndex, 1);
+                                            }
                                             promises = [];
                                             schemaObjectsByTable = allSchemaObjects[t.name] || [];
+                                            oldColumns = schemaObjectsByTable.map(function (o) { return o["column"]; });
                                             try {
                                                 for (_c = __values(t.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
                                                     c = _d.value;
+                                                    oldColumnIndex = oldColumns.indexOf(c.databaseName);
+                                                    if (oldColumnIndex >= 0) {
+                                                        oldColumns.splice(oldColumnIndex, 1);
+                                                    }
                                                     _e = this.getSyncExtendSchemaObjects(t, c), add = _e.add, remove = _e.remove;
                                                     addFiltered = add.filter(function (e) {
                                                         // filter element which already added and not changed
@@ -1569,6 +1579,20 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                                 }
                                                 finally { if (e_2) throw e_2.error; }
                                             }
+                                            // if column is no more exists in new entity metadata, remove all extend schema for such columns
+                                            if (oldColumns.length > 0) {
+                                                console.log('oldColumns', oldColumns);
+                                                promises.push(Promise.all(oldColumns.map(function (c) { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0: return [4 /*yield*/, this.deleteExtendSchema(t.name, c)];
+                                                            case 1:
+                                                                _a.sent();
+                                                                return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); })));
+                                            }
                                             if (!(promises.length > 0)) return [3 /*break*/, 2];
                                             return [4 /*yield*/, Promise.all(promises)];
                                         case 1:
@@ -1580,7 +1604,23 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             }); }))];
                     case 3:
                         _a.sent();
-                        return [2 /*return*/, newExtendSchemas];
+                        if (!(oldNormalTables.length > 0)) return [3 /*break*/, 5];
+                        //console.log('oldNormalTables', oldNormalTables);
+                        return [4 /*yield*/, Promise.all(oldNormalTables.map(function (tableName) { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, this.deleteExtendSchema(tableName)];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 4:
+                        //console.log('oldNormalTables', oldNormalTables);
+                        _a.sent();
+                        _a.label = 5;
+                    case 5: return [2 /*return*/, newExtendSchemas];
                 }
             });
         });
@@ -2388,13 +2428,16 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     };
     SpannerQueryRunner.prototype.deleteExtendSchema = function (table, column, type) {
         return __awaiter(this, void 0, void 0, function () {
-            var qb;
+            var wh, qb;
             return __generator(this, function (_a) {
+                wh = column ? (type ?
+                    "`table` = '" + table + "' AND `column` = '" + column + "' AND `type` = '" + type + "'" :
+                    "`table` = '" + table + "' AND `column` = '" + column + "'") : ("`table` = '" + table + "'");
                 qb = this.connection.manager
                     .createQueryBuilder(this)
                     .delete()
                     .from(this.driver.options.schemaTableName || "schemas")
-                    .where("`table` = '" + table + "' AND `column` = '" + column + "' AND `type` = '" + type + "'");
+                    .where(wh);
                 return [2 /*return*/, this.delete(qb)];
             });
         });

@@ -67,6 +67,10 @@ import { DateUtils } from "../../util/DateUtils";
 import { Table } from "../../schema-builder/table/Table";
 import { SpannerUtil } from "./SpannerUtil";
 import * as Long from "long";
+if (process.env.PRELOAD_SPANNER_DEPENDENCY) {
+    require('@google-cloud/spanner');
+    require('sql-ddl-to-json-schema');
+}
 //import { filter } from "minimatch";
 export var SpannerColumnUpdateWithCommitTimestamp = "commit_timestamp";
 /**

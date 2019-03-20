@@ -69,6 +69,10 @@ var DateUtils_1 = require("../../util/DateUtils");
 var Table_1 = require("../../schema-builder/table/Table");
 var SpannerUtil_1 = require("./SpannerUtil");
 var Long = require("long");
+if (process.env.PRELOAD_SPANNER_DEPENDENCY) {
+    require('@google-cloud/spanner');
+    require('sql-ddl-to-json-schema');
+}
 //import { filter } from "minimatch";
 exports.SpannerColumnUpdateWithCommitTimestamp = "commit_timestamp";
 /**

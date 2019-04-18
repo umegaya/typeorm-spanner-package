@@ -2,17 +2,17 @@ import { DeepPartial } from "../common/DeepPartial";
 import { ObjectLiteral } from "../common/ObjectLiteral";
 import { ObjectID } from "../driver/mongodb/typings";
 import { EntityManager } from "../entity-manager/EntityManager";
-import { FindExtraOptions, FindOptions, FindOptionsWhere } from "../find-options/FindOptions";
+import { FindOptions, FindOptionsWhere } from "../find-options/FindOptions";
 import { EntityMetadata } from "../metadata/EntityMetadata";
-import { QueryPartialEntity } from "../query-builder/QueryPartialEntity";
 import { DeleteResult } from "../query-builder/result/DeleteResult";
-import { InsertResult } from "../query-builder/result/InsertResult";
 import { UpdateResult } from "../query-builder/result/UpdateResult";
+import { InsertResult } from "../query-builder/result/InsertResult";
+import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity";
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 import { QueryRunner } from "../query-runner/QueryRunner";
 import { RemoveOptions } from "./RemoveOptions";
 import { SaveOptions } from "./SaveOptions";
-import Observable = require("zen-observable");
+import * as Observable from "zen-observable";
 /**
  * Repository is supposed to work with your entity objects. Find entities, insert, update, delete, etc.
  */
@@ -80,12 +80,26 @@ export declare class Repository<Entity extends ObjectLiteral> {
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
      */
-    save<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<T[]>;
+    save<T extends DeepPartial<Entity>>(entities: T[], options: SaveOptions & {
+        reload: false;
+    }): Promise<T[]>;
+    /**
+     * Saves all given entities in the database.
+     * If entities do not exist in the database then inserts, otherwise updates.
+     */
+    save<T extends DeepPartial<Entity>>(entities: T[], options?: SaveOptions): Promise<(T & Entity)[]>;
     /**
      * Saves a given entity in the database.
      * If entity does not exist in the database then inserts, otherwise updates.
      */
-    save<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T>;
+    save<T extends DeepPartial<Entity>>(entity: T, options: SaveOptions & {
+        reload: false;
+    }): Promise<T>;
+    /**
+     * Saves a given entity in the database.
+     * If entity does not exist in the database then inserts, otherwise updates.
+     */
+    save<T extends DeepPartial<Entity>>(entity: T, options?: SaveOptions): Promise<T & Entity>;
     /**
      * Removes a given entities from the database.
      */
@@ -100,14 +114,14 @@ export declare class Repository<Entity extends ObjectLiteral> {
      * Executes fast and efficient INSERT query.
      * Does not check if entity exist in the database, so query will fail if duplicate entity is being inserted.
      */
-    insert(entity: QueryPartialEntity<Entity> | (QueryPartialEntity<Entity>[]), options?: SaveOptions): Promise<InsertResult>;
+    insert(entity: QueryDeepPartialEntity<Entity> | (QueryDeepPartialEntity<Entity>[]), options?: SaveOptions): Promise<InsertResult>;
     /**
      * Updates entity partially. Entity can be found by a given conditions.
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
      * Executes fast and efficient UPDATE query.
      * Does not check if entity exist in the database.
      */
-    update(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<Entity>, partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult>;
+    update(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<Entity>, partialEntity: QueryDeepPartialEntity<Entity>, options?: SaveOptions): Promise<UpdateResult>;
     /**
      * Deletes entities by a given criteria.
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
@@ -115,6 +129,14 @@ export declare class Repository<Entity extends ObjectLiteral> {
      * Does not check if entity exist in the database.
      */
     delete(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<Entity>, options?: RemoveOptions): Promise<DeleteResult>;
+    /**
+     * Counts entities that match given options.
+     */
+    count(options?: FindOptions<Entity>): Promise<number>;
+    /**
+     * Counts entities that match given conditions.
+     */
+    count(conditions?: FindOptionsWhere<Entity>): Promise<number>;
     /**
      * Finds entities that match given options.
      */
@@ -170,10 +192,6 @@ export declare class Repository<Entity extends ObjectLiteral> {
      */
     findOneOrFail(conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
     /**
-     * Counts entities that match given conditions.
-     */
-    count(conditions?: FindOptionsWhere<Entity>, options?: FindExtraOptions): Promise<number>;
-    /**
      * Finds entities that match given options and returns observable.
      * Whenever new data appears that matches given query observable emits new value.
      */
@@ -228,9 +246,9 @@ export declare class Repository<Entity extends ObjectLiteral> {
     /**
      * Increments some column by provided value of the entities matched given conditions.
      */
-    increment(conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number): Promise<void>;
+    increment(conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number | string): Promise<UpdateResult>;
     /**
      * Decrements some column by provided value of the entities matched given conditions.
      */
-    decrement(conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number): Promise<void>;
+    decrement(conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number | string): Promise<UpdateResult>;
 }

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var MissingDriverError_1 = require("../error/MissingDriverError");
+var CockroachDriver_1 = require("./cockroachdb/CockroachDriver");
 var MongoDriver_1 = require("./mongodb/MongoDriver");
 var SqlServerDriver_1 = require("./sqlserver/SqlServerDriver");
 var OracleDriver_1 = require("./oracle/OracleDriver");
@@ -29,6 +30,8 @@ var DriverFactory = /** @class */ (function () {
                 return new MysqlDriver_1.MysqlDriver(connection);
             case "postgres":
                 return new PostgresDriver_1.PostgresDriver(connection);
+            case "cockroachdb":
+                return new CockroachDriver_1.CockroachDriver(connection);
             case "mariadb":
                 return new MysqlDriver_1.MysqlDriver(connection);
             case "sqlite":

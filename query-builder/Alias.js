@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var ObjectUtils_1 = require("../util/ObjectUtils");
 /**
  */
 var Alias = /** @class */ (function () {
     function Alias(alias) {
-        Object.assign(this, alias || {});
+        ObjectUtils_1.ObjectUtils.assign(this, alias || {});
     }
     Object.defineProperty(Alias.prototype, "target", {
         get: function () {

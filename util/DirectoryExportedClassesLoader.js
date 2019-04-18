@@ -14,7 +14,7 @@ function importClassesFromDirectories(directories, formats) {
         else if (Array.isArray(exported)) {
             exported.forEach(function (i) { return loadFileClasses(i, allLoaded); });
         }
-        else if (typeof exported === "object") {
+        else if (typeof exported === "object" && exported !== null) {
             Object.keys(exported).forEach(function (key) { return loadFileClasses(exported[key], allLoaded); });
         }
         return allLoaded;

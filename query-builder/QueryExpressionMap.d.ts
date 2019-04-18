@@ -57,6 +57,18 @@ export declare class QueryExpressionMap {
      */
     onConflict: string;
     /**
+     * Optional on ignore statement used in insertion query in databases.
+     */
+    onIgnore: string | boolean;
+    /**
+     * Optional on update statement used in insertion query in databases.
+     */
+    onUpdate: {
+        columns?: string;
+        conflict?: string;
+        overwrite?: string;
+    };
+    /**
      * JOIN queries.
      */
     joinAttributes: JoinAttribute[];

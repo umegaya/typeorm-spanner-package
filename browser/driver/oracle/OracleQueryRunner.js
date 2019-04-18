@@ -1,64 +1,4 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { TransactionAlreadyStartedError } from "../../error/TransactionAlreadyStartedError";
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
 import { TableColumn } from "../../schema-builder/table/TableColumn";
@@ -77,7 +17,7 @@ import { PromiseUtils } from "../../index";
  * Runs queries on a single oracle database connection.
  */
 var OracleQueryRunner = /** @class */ (function (_super) {
-    __extends(OracleQueryRunner, _super);
+    tslib_1.__extends(OracleQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -142,8 +82,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      */
     OracleQueryRunner.prototype.startTransaction = function (isolationLevel) {
         if (isolationLevel === void 0) { isolationLevel = "READ COMMITTED"; }
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.isReleased)
@@ -168,8 +108,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     OracleQueryRunner.prototype.commitTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -188,8 +128,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     OracleQueryRunner.prototype.rollbackTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -210,10 +150,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
         var _this = this;
         if (this.isReleased)
             throw new QueryRunnerAlreadyReleasedError();
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var queryStartTime_1, handler, executionOptions, databaseConnection, err_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -259,8 +199,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Returns all available database names including system databases.
      */
     OracleQueryRunner.prototype.getDatabases = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -270,8 +210,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * If database parameter specified, returns schemas of that database.
      */
     OracleQueryRunner.prototype.getSchemas = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -280,8 +220,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Checks if database with the given name exist.
      */
     OracleQueryRunner.prototype.hasDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve(false)];
             });
         });
@@ -290,8 +230,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Checks if schema with the given name exist.
      */
     OracleQueryRunner.prototype.hasSchema = function (schema) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve(false)];
             });
         });
@@ -300,9 +240,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Checks if table with the given name exist in the database.
      */
     OracleQueryRunner.prototype.hasTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tableName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         tableName = tableOrName instanceof Table ? tableOrName.name : tableOrName;
@@ -319,9 +259,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Checks if column with the given name exist in the given table.
      */
     OracleQueryRunner.prototype.hasColumn = function (tableOrName, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tableName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         tableName = tableOrName instanceof Table ? tableOrName.name : tableOrName;
@@ -338,8 +278,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new database.
      */
     OracleQueryRunner.prototype.createDatabase = function (database, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("CREATE DATABASE IF NOT EXISTS \"" + database + "\"")];
                     case 1:
@@ -353,8 +293,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops database.
      */
     OracleQueryRunner.prototype.dropDatabase = function (database, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve()];
             });
         });
@@ -363,8 +303,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new table schema.
      */
     OracleQueryRunner.prototype.createSchema = function (schemas, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("Schema create queries are not supported by Oracle driver.");
             });
         });
@@ -373,8 +313,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops table schema.
      */
     OracleQueryRunner.prototype.dropSchema = function (schemaPath, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("Schema drop queries are not supported by Oracle driver.");
             });
         });
@@ -386,10 +326,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
         if (ifNotExist === void 0) { ifNotExist = false; }
         if (createForeignKeys === void 0) { createForeignKeys = true; }
         if (createIndices === void 0) { createIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifNotExist) return [3 /*break*/, 2];
@@ -431,10 +371,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
     OracleQueryRunner.prototype.dropTable = function (tableOrName, ifExist, dropForeignKeys, dropIndices) {
         if (dropForeignKeys === void 0) { dropForeignKeys = true; }
         if (dropIndices === void 0) { dropIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, createForeignKeys, table, _a, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!ifExist) return [3 /*break*/, 2];
@@ -481,10 +421,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Renames the given table.
      */
     OracleQueryRunner.prototype.renameTable = function (oldTableOrName, newTableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, oldTable, _a, newTable, columnNames, oldPkName, newPkName;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         upQueries = [];
@@ -562,9 +502,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new column from the column in the table.
      */
     OracleQueryRunner.prototype.addColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, primaryColumns, pkName_1, columnNames_1, pkName, columnNames, columnIndex, uniqueConstraint;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -627,9 +567,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new columns from the column in the table.
      */
     OracleQueryRunner.prototype.addColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(columns, function (column) { return _this.addColumn(tableOrName, column); })];
                     case 1:
@@ -643,9 +583,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Renames column in the given table.
      */
     OracleQueryRunner.prototype.renameColumn = function (tableOrName, oldTableColumnOrName, newTableColumnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, oldColumn, newColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -680,10 +620,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     OracleQueryRunner.prototype.changeColumn = function (tableOrName, oldTableColumnOrName, newColumn) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, oldColumn, primaryColumns, columnNames, oldPkName, newPkName, oldTableColumn, defaultUp, defaultDown, nullableUp, nullableDown, primaryColumns, pkName, columnNames, column, pkName, columnNames, primaryColumn, column, pkName, columnNames, uniqueConstraint, uniqueConstraint;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -872,9 +812,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     OracleQueryRunner.prototype.changeColumns = function (tableOrName, changedColumns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(changedColumns, function (changedColumn) { return _this.changeColumn(tableOrName, changedColumn.oldColumn, changedColumn.newColumn); })];
                     case 1:
@@ -888,9 +828,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops column in the table.
      */
     OracleQueryRunner.prototype.dropColumn = function (tableOrName, columnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, column, clonedTable, upQueries, downQueries, pkName, columnNames, tableColumn, pkName_2, columnNames_2, columnIndex, columnCheck, columnUnique;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -957,9 +897,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops the columns in the table.
      */
     OracleQueryRunner.prototype.dropColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(columns, function (column) { return _this.dropColumn(tableOrName, column); })];
                     case 1:
@@ -973,9 +913,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new primary key.
      */
     OracleQueryRunner.prototype.createPrimaryKey = function (tableOrName, columnNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1008,9 +948,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Updates composite primary keys.
      */
     OracleQueryRunner.prototype.updatePrimaryKeys = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, columnNames, clonedTable, upQueries, downQueries, primaryColumns, pkName_3, columnNamesString_1, pkName, columnNamesString;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1054,9 +994,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops a primary key.
      */
     OracleQueryRunner.prototype.dropPrimaryKey = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1085,9 +1025,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraint.
      */
     OracleQueryRunner.prototype.createUniqueConstraint = function (tableOrName, uniqueConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1117,10 +1057,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraints.
      */
     OracleQueryRunner.prototype.createUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = uniqueConstraints.map(function (uniqueConstraint) { return _this.createUniqueConstraint(tableOrName, uniqueConstraint); });
@@ -1136,9 +1076,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraint.
      */
     OracleQueryRunner.prototype.dropUniqueConstraint = function (tableOrName, uniqueOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, uniqueConstraint, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1168,10 +1108,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates an unique constraints.
      */
     OracleQueryRunner.prototype.dropUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = uniqueConstraints.map(function (uniqueConstraint) { return _this.dropUniqueConstraint(tableOrName, uniqueConstraint); });
@@ -1187,9 +1127,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates new check constraint.
      */
     OracleQueryRunner.prototype.createCheckConstraint = function (tableOrName, checkConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1219,10 +1159,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates new check constraints.
      */
     OracleQueryRunner.prototype.createCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = checkConstraints.map(function (checkConstraint) { return _this.createCheckConstraint(tableOrName, checkConstraint); });
@@ -1238,9 +1178,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops check constraint.
      */
     OracleQueryRunner.prototype.dropCheckConstraint = function (tableOrName, checkOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, checkConstraint, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1270,10 +1210,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops check constraints.
      */
     OracleQueryRunner.prototype.dropCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = checkConstraints.map(function (checkConstraint) { return _this.dropCheckConstraint(tableOrName, checkConstraint); });
@@ -1286,12 +1226,52 @@ var OracleQueryRunner = /** @class */ (function (_super) {
         });
     };
     /**
+     * Creates a new exclusion constraint.
+     */
+    OracleQueryRunner.prototype.createExclusionConstraint = function (tableOrName, exclusionConstraint) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Oracle does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Creates a new exclusion constraints.
+     */
+    OracleQueryRunner.prototype.createExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Oracle does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraint.
+     */
+    OracleQueryRunner.prototype.dropExclusionConstraint = function (tableOrName, exclusionOrName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Oracle does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraints.
+     */
+    OracleQueryRunner.prototype.dropExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Oracle does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
      * Creates a new foreign key.
      */
     OracleQueryRunner.prototype.createForeignKey = function (tableOrName, foreignKey) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1321,10 +1301,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign keys.
      */
     OracleQueryRunner.prototype.createForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.createForeignKey(tableOrName, foreignKey); });
@@ -1340,9 +1320,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign key from the table.
      */
     OracleQueryRunner.prototype.dropForeignKey = function (tableOrName, foreignKeyOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, foreignKey, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1372,10 +1352,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign keys from the table.
      */
     OracleQueryRunner.prototype.dropForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.dropForeignKey(tableOrName, foreignKey); });
@@ -1391,9 +1371,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new index.
      */
     OracleQueryRunner.prototype.createIndex = function (tableOrName, index) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1423,10 +1403,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Creates a new indices
      */
     OracleQueryRunner.prototype.createIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.createIndex(tableOrName, index); });
@@ -1442,9 +1422,9 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops an index from the table.
      */
     OracleQueryRunner.prototype.dropIndex = function (tableOrName, indexOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, index, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1474,10 +1454,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Drops an indices from the table.
      */
     OracleQueryRunner.prototype.dropIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.dropIndex(tableOrName, index); });
@@ -1494,8 +1474,8 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     OracleQueryRunner.prototype.clearTable = function (tableName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("TRUNCATE TABLE \"" + tableName + "\"")];
                     case 1:
@@ -1509,10 +1489,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Removes all tables from the currently connected database.
      */
     OracleQueryRunner.prototype.clearDatabase = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var dropTablesQuery, dropQueries, error_1, rollbackError_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.startTransaction()];
                     case 1:
@@ -1556,10 +1536,10 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     OracleQueryRunner.prototype.loadTables = function (tableNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tableNamesString, tablesSql, columnsSql, indicesSql, foreignKeysSql, constraintsSql, _a, dbTables, dbColumns, dbIndices, dbForeignKeys, dbConstraints;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         // if no tables given then no need to proceed
@@ -1593,7 +1573,7 @@ var OracleQueryRunner = /** @class */ (function (_super) {
                                 this.query(constraintsSql),
                             ])];
                     case 1:
-                        _a = __read.apply(void 0, [_b.sent(), 5]), dbTables = _a[0], dbColumns = _a[1], dbIndices = _a[2], dbForeignKeys = _a[3], dbConstraints = _a[4];
+                        _a = tslib_1.__read.apply(void 0, [_b.sent(), 5]), dbTables = _a[0], dbColumns = _a[1], dbIndices = _a[2], dbForeignKeys = _a[3], dbConstraints = _a[4];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];
@@ -1768,7 +1748,7 @@ var OracleQueryRunner = /** @class */ (function (_super) {
      */
     OracleQueryRunner.prototype.createIndexSql = function (table, index) {
         var columns = index.columnNames.map(function (columnName) { return "\"" + columnName + "\""; }).join(", ");
-        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON \"" + table.name + "\"(" + columns + ")";
+        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON \"" + table.name + "\" (" + columns + ")";
     };
     /**
      * Builds drop index sql.

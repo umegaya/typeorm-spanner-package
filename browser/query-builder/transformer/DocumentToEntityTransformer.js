@@ -72,11 +72,12 @@ var DocumentToEntityTransformer = /** @class */ (function () {
                 if (!document[embedded.prefix])
                     return;
                 if (embedded.isArray) {
-                    entity[embedded.propertyName] = document[embedded.prefix].map(function (subValue) {
+                    entity[embedded.propertyName] = document[embedded.prefix].map(function (subValue, index) {
                         var newItem = embedded.create();
                         embedded.columns.forEach(function (column) {
                             newItem[column.propertyName] = subValue[column.databaseNameWithoutPrefixes];
                         });
+                        addEmbeddedValuesRecursively(newItem, document[embedded.prefix][index], embedded.embeddeds);
                         return newItem;
                     });
                 }

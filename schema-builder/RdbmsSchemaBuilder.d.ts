@@ -60,6 +60,7 @@ export declare class RdbmsSchemaBuilder implements SchemaBuilder {
     protected dropOldIndices(): Promise<void>;
     protected dropOldChecks(): Promise<void>;
     protected dropCompositeUniqueConstraints(): Promise<void>;
+    protected dropOldExclusions(): Promise<void>;
     /**
      * Creates tables that do not exist in the database yet.
      * New tables are created without foreign and primary keys.
@@ -94,6 +95,10 @@ export declare class RdbmsSchemaBuilder implements SchemaBuilder {
      * Creates composite uniques which are missing in db yet.
      */
     protected createCompositeUniqueConstraints(): Promise<void>;
+    /**
+     * Creates exclusions which are missing in db yet.
+     */
+    protected createNewExclusions(): Promise<void>;
     /**
      * Creates foreign keys which does not exist in the table yet.
      */

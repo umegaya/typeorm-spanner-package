@@ -1,27 +1,13 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { QueryBuilderUtils } from "../QueryBuilderUtils";
+import { ObjectUtils } from "../../util/ObjectUtils";
 var RelationCountAttribute = /** @class */ (function () {
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
     function RelationCountAttribute(expressionMap, relationCountAttribute) {
         this.expressionMap = expressionMap;
-        Object.assign(this, relationCountAttribute || {});
+        ObjectUtils.assign(this, relationCountAttribute || {});
     }
     Object.defineProperty(RelationCountAttribute.prototype, "joinInverseSideMetadata", {
         // -------------------------------------------------------------------------
@@ -66,7 +52,7 @@ var RelationCountAttribute = /** @class */ (function () {
     });
     Object.defineProperty(RelationCountAttribute.prototype, "junctionAlias", {
         get: function () {
-            var _a = __read(QueryBuilderUtils.extractAliasAndPropertyPath(this.relationName), 2), parentAlias = _a[0], relationProperty = _a[1];
+            var _a = tslib_1.__read(QueryBuilderUtils.extractAliasAndPropertyPath(this.relationName), 2), parentAlias = _a[0], relationProperty = _a[1];
             return parentAlias + "_" + relationProperty.replace(".", "_") + "_rc";
         },
         enumerable: true,
@@ -81,7 +67,7 @@ var RelationCountAttribute = /** @class */ (function () {
         get: function () {
             if (!QueryBuilderUtils.isAliasProperty(this.relationName))
                 throw new Error("Given value is a string representation of alias property");
-            var _a = __read(QueryBuilderUtils.extractAliasAndPropertyPath(this.relationName), 2), parentAlias = _a[0], propertyPath = _a[1];
+            var _a = tslib_1.__read(QueryBuilderUtils.extractAliasAndPropertyPath(this.relationName), 2), parentAlias = _a[0], propertyPath = _a[1];
             var relationOwnerSelection = this.expressionMap.findAliasByName(parentAlias);
             var relation = relationOwnerSelection.metadata.findRelationWithPropertyPath(propertyPath);
             if (!relation)

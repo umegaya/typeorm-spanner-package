@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 /**
  * Repository is supposed to work with your entity objects. Find entities, insert, update, delete, etc.
  */
@@ -69,12 +50,12 @@ var Repository = /** @class */ (function () {
      * Merges multiple entities (or entity-like objects) into a given entity.
      */
     Repository.prototype.merge = function (mergeIntoEntity) {
+        var _a;
         var entityLikes = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             entityLikes[_i - 1] = arguments[_i];
         }
-        var _a;
-        return (_a = this.manager).merge.apply(_a, __spread([this.metadata.target, mergeIntoEntity], entityLikes));
+        return (_a = this.manager).merge.apply(_a, tslib_1.__spread([this.metadata.target, mergeIntoEntity], entityLikes));
     };
     /**
      * Creates a new entity from the given plan javascript object. If entity already exist in the database, then
@@ -128,6 +109,12 @@ var Repository = /** @class */ (function () {
         return this.manager.delete(this.metadata.target, criteria, options);
     };
     /**
+     * Counts entities that match given find options or conditions.
+     */
+    Repository.prototype.count = function (optionsOrConditions) {
+        return this.manager.count(this.metadata.target, optionsOrConditions);
+    };
+    /**
      * Finds entities that match given find options or conditions.
      */
     Repository.prototype.find = function (optionsOrConditions) {
@@ -159,12 +146,6 @@ var Repository = /** @class */ (function () {
      */
     Repository.prototype.findOneOrFail = function (optionsOrConditions, maybeOptions) {
         return this.manager.findOneOrFail(this.metadata.target, optionsOrConditions, maybeOptions);
-    };
-    /**
-     * Counts entities that match given conditions.
-     */
-    Repository.prototype.count = function (conditions, options) {
-        return this.manager.count(this.metadata.target, conditions, options);
     };
     /**
      * Finds entities that match given options and returns observable.

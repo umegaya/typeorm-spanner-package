@@ -50,7 +50,7 @@ export declare class ConnectionOptionsReader {
      */
     protected normalizeConnectionOptions(connectionOptions: ConnectionOptions | ConnectionOptions[]): ConnectionOptions[];
     /**
-     * Gets directory where configuration file should be located and configuration file name without extension.
+     * Gets directory where configuration file should be located and configuration file name.
      */
     protected readonly baseFilePath: string;
     /**

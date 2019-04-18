@@ -25,8 +25,17 @@ function PrimaryGeneratedColumn(strategyOrOptions, maybeOptions) {
         Object.assign(options, maybeOptions);
     return function (object, propertyName) {
         // if column type is not explicitly set then determine it based on generation strategy
-        if (!options.type)
-            options.type = strategy === "increment" ? Number : "uuid";
+        if (!options.type) {
+            if (strategy === "increment") {
+                options.type = Number;
+            }
+            else if (strategy === "uuid") {
+                options.type = "uuid";
+            }
+            else if (strategy === "rowid") {
+                options.type = "int";
+            }
+        }
         // explicitly set a primary and generated to column options
         options.primary = true;
         // register column metadata args

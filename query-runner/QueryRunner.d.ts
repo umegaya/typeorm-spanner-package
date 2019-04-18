@@ -1,3 +1,4 @@
+
 import { TableColumn } from "../schema-builder/table/TableColumn";
 import { Table } from "../schema-builder/table/Table";
 import { TableForeignKey } from "../schema-builder/table/TableForeignKey";
@@ -11,6 +12,7 @@ import { TableUnique } from "../schema-builder/table/TableUnique";
 import { Broadcaster } from "../subscriber/Broadcaster";
 import { TableCheck } from "../schema-builder/table/TableCheck";
 import { IsolationLevel } from "../driver/types/IsolationLevel";
+import { TableExclusion } from "../schema-builder/table/TableExclusion";
 import { QueryBuilder } from "../query-builder/QueryBuilder";
 /**
  * Runs queries on a single database connection.
@@ -235,6 +237,22 @@ export interface QueryRunner {
      * Drops check constraints.
      */
     dropCheckConstraints(table: Table | string, checkConstraints: TableCheck[]): Promise<void>;
+    /**
+     * Creates a new exclusion constraint.
+     */
+    createExclusionConstraint(table: Table | string, exclusionConstraint: TableExclusion): Promise<void>;
+    /**
+     * Creates new exclusion constraints.
+     */
+    createExclusionConstraints(table: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
+    /**
+     * Drops a exclusion constraint.
+     */
+    dropExclusionConstraint(table: Table | string, exclusionOrName: TableExclusion | string): Promise<void>;
+    /**
+     * Drops exclusion constraints.
+     */
+    dropExclusionConstraints(table: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
     /**
      * Creates a new foreign key.
      */

@@ -1,3 +1,4 @@
+
 import { ObjectLiteral } from "../common/ObjectLiteral";
 import { QueryBuilder } from "./QueryBuilder";
 import { ReadStream } from "../platform/PlatformTools";
@@ -612,11 +613,6 @@ export declare class SelectQueryBuilder<Entity> extends QueryBuilder<Entity> imp
      * Loads raw results from the database.
      */
     protected loadRawResults(queryRunner: QueryRunner): Promise<any>;
-    /**
-     * Builds column alias from given alias name and column name,
-     * If alias length is more than 29, abbreviates column name.
-     */
-    protected buildColumnAlias(aliasName: string, columnName: string): string;
     /**
      * Merges into expression map given expression map properties.
      */

@@ -9,6 +9,7 @@ import { TableUnique } from "../../schema-builder/table/TableUnique";
 import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
 import { TableCheck } from "../../schema-builder/table/TableCheck";
 import { IsolationLevel } from "../types/IsolationLevel";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
 /**
  * Runs queries on a single postgres database connection.
  */
@@ -189,6 +190,22 @@ export declare class PostgresQueryRunner extends BaseQueryRunner implements Quer
      */
     dropCheckConstraints(tableOrName: Table | string, checkConstraints: TableCheck[]): Promise<void>;
     /**
+     * Creates new exclusion constraint.
+     */
+    createExclusionConstraint(tableOrName: Table | string, exclusionConstraint: TableExclusion): Promise<void>;
+    /**
+     * Creates new exclusion constraints.
+     */
+    createExclusionConstraints(tableOrName: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
+    /**
+     * Drops exclusion constraint.
+     */
+    dropExclusionConstraint(tableOrName: Table | string, exclusionOrName: TableExclusion | string): Promise<void>;
+    /**
+     * Drops exclusion constraints.
+     */
+    dropExclusionConstraints(tableOrName: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
+    /**
      * Creates a new foreign key.
      */
     createForeignKey(tableOrName: Table | string, foreignKey: TableForeignKey): Promise<void>;
@@ -293,6 +310,14 @@ export declare class PostgresQueryRunner extends BaseQueryRunner implements Quer
      * Builds drop check constraint sql.
      */
     protected dropCheckConstraintSql(table: Table, checkOrName: TableCheck | string): string;
+    /**
+     * Builds create exclusion constraint sql.
+     */
+    protected createExclusionConstraintSql(table: Table, exclusionConstraint: TableExclusion): string;
+    /**
+     * Builds drop exclusion constraint sql.
+     */
+    protected dropExclusionConstraintSql(table: Table, exclusionOrName: TableExclusion | string): string;
     /**
      * Builds create foreign key sql.
      */

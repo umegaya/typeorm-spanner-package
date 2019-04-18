@@ -24,14 +24,16 @@ export declare class SqljsDriver extends AbstractSqliteDriver {
      */
     load(fileNameOrLocalStorageOrData: string | Uint8Array, checkIfFileOrLocalStorageExists?: boolean): Promise<any>;
     /**
-     * Saved the current database to the given file (Node.js) or local storage key (browser).
+     * Saved the current database to the given file (Node.js), local storage key (browser) or
+     * indexedDB key (browser with enabled useLocalForage option).
      * If no location path is given, the location path in the options (if specified) will be used.
      */
     save(location?: string): Promise<void>;
     /**
      * This gets called by the QueryRunner when a change to the database is made.
      * If a custom autoSaveCallback is specified, it get's called with the database as Uint8Array,
-     * otherwise the save method is called which saves it to file (Node.js) or localstorage (browser).
+     * otherwise the save method is called which saves it to file (Node.js), local storage (browser)
+     * or indexedDB (browser with enabled useLocalForage option).
      */
     autoSave(): Promise<void>;
     /**

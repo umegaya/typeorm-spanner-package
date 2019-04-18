@@ -191,6 +191,17 @@ var EntitySchemaTransformer = /** @class */ (function () {
                     metadataArgsStorage.checks.push(checkAgrs);
                 });
             }
+            // add exclusion metadata args from the schema
+            if (options.exclusions) {
+                options.exclusions.forEach(function (exclusion) {
+                    var exclusionArgs = {
+                        target: options.target || options.name,
+                        name: exclusion.name,
+                        expression: exclusion.expression
+                    };
+                    metadataArgsStorage.exclusions.push(exclusionArgs);
+                });
+            }
         });
         return metadataArgsStorage;
     };

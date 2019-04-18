@@ -6,6 +6,7 @@ import { WhereExpression } from "./WhereExpression";
 import { Brackets } from "./Brackets";
 import { UpdateResult } from "./result/UpdateResult";
 import { OrderByCondition } from "../find-options/OrderByCondition";
+import { QueryDeepPartialEntity } from "./QueryPartialEntity";
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
@@ -22,7 +23,7 @@ export declare class UpdateQueryBuilder<Entity> extends QueryBuilder<Entity> imp
     /**
      * Values needs to be updated.
      */
-    set(values: ObjectLiteral): this;
+    set(values: QueryDeepPartialEntity<Entity>): this;
     /**
      * Sets WHERE condition in the query builder.
      * If you had previously WHERE expression defined,

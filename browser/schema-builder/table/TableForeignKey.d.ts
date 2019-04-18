@@ -5,7 +5,7 @@ import { TableForeignKeyOptions } from "../options/TableForeignKeyOptions";
  */
 export declare class TableForeignKey {
     /**
-     * Name of the table which contains this foreign key.
+     * Name of the foreign key constraint.
      */
     name?: string;
     /**

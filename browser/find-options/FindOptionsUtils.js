@@ -1,11 +1,4 @@
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
+import * as tslib_1 from "tslib";
 import { Any, Between, Equal, ILike, In, LessThan, Like, MoreThan, Not, Raw } from "..";
 import { FindOperator } from "./FindOperator";
 /**
@@ -41,16 +34,16 @@ export { FindOptionsUtils };
 export function normalizeFindOptions(options) {
     var where = options.where;
     if (!where)
-        return __assign({}, options);
+        return tslib_1.__assign({}, options);
     if (!(where instanceof Object))
-        return __assign({}, options);
+        return tslib_1.__assign({}, options);
     if (where instanceof FindOperator)
-        return __assign({}, options);
+        return tslib_1.__assign({}, options);
     var recursively$FindOption = function (obj) {
         var valueKeys = Object.keys(obj);
         if (valueKeys.length === 1) {
             var value = obj[valueKeys[0]];
-            if (value instanceof Object && !(value instanceof Array))
+            if (value instanceof Object && !(value instanceof Array) && !(value instanceof Function))
                 value = recursively$FindOption(value);
             if (valueKeys[0] === "$any") {
                 return Any(value);
@@ -102,7 +95,7 @@ export function normalizeFindOptions(options) {
             return newWhere;
         }, {});
     };
-    return __assign({}, options, { where: recursivelyWhere(options.where) });
+    return tslib_1.__assign({}, options, { where: recursivelyWhere(options.where) });
 }
 
 //# sourceMappingURL=FindOptionsUtils.js.map

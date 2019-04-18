@@ -1,15 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var QueryRunnerAlreadyReleasedError_1 = require("../../error/QueryRunnerAlreadyReleasedError");
 var QueryFailedError_1 = require("../../error/QueryFailedError");
 var AbstractSqliteQueryRunner_1 = require("../sqlite-abstract/AbstractSqliteQueryRunner");
@@ -18,7 +9,7 @@ var Broadcaster_1 = require("../../subscriber/Broadcaster");
  * Runs queries on a single sqlite database connection.
  */
 var NativescriptQueryRunner = /** @class */ (function (_super) {
-    __extends(NativescriptQueryRunner, _super);
+    tslib_1.__extends(NativescriptQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------

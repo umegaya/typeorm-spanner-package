@@ -18,7 +18,7 @@ export declare class MigrationExecutor {
      * Executes all pending migrations. Pending migrations are migrations that are not yet executed,
      * thus not saved in the database.
      */
-    executePendingMigrations(): Promise<void>;
+    executePendingMigrations(): Promise<Migration[]>;
     /**
      * Reverts last migration that were run.
      */

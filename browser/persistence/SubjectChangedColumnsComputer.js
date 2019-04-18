@@ -1,5 +1,6 @@
 import { DateUtils } from "../util/DateUtils";
 import { EntityMetadata } from "../metadata/EntityMetadata";
+import { OrmUtils } from "../util/OrmUtils";
 /**
  * Finds what columns are changed in the subject entities.
  */
@@ -37,6 +38,10 @@ var SubjectChangedColumnsComputer = /** @class */ (function () {
                 column.isVersion ||
                 column.isCreateDate)
                 return;
+            var changeMap = subject.changeMaps.find(function (changeMap) { return changeMap.column === column; });
+            if (changeMap) {
+                subject.changeMaps.splice(subject.changeMaps.indexOf(changeMap), 1);
+            }
             // get user provided value - column value from the user provided persisted entity
             var entityValue = column.getEntityValue(subject.entity);
             // we don't perform operation over undefined properties (but we DO need null properties!)
@@ -54,7 +59,7 @@ var SubjectChangedColumnsComputer = /** @class */ (function () {
                 }
                 var normalizedValue = entityValue;
                 // normalize special values to make proper comparision
-                if (entityValue !== null && entityValue !== undefined) {
+                if (entityValue !== null) {
                     if (column.type === "date") {
                         normalizedValue = DateUtils.mixedDateToDateString(entityValue);
                     }
@@ -66,31 +71,30 @@ var SubjectChangedColumnsComputer = /** @class */ (function () {
                         databaseValue = DateUtils.mixedDateToUtcDatetimeString(databaseValue);
                     }
                     else if (column.type === "json" || column.type === "jsonb" || column.type === "simple-json") {
-                        if (normalizedValue !== null && normalizedValue !== undefined)
-                            normalizedValue = JSON.stringify(normalizedValue);
-                        if (databaseValue !== null && databaseValue !== undefined)
-                            databaseValue = JSON.stringify(databaseValue);
+                        // JSON.stringify doesn't work because postgresql sorts jsonb before save.
+                        // If you try to save json '[{"messages": "", "attribute Key": "", "level":""}] ' as jsonb,
+                        // then postgresql will save it as '[{"level": "", "message":"", "attributeKey": ""}]'
+                        if (OrmUtils.deepCompare(entityValue, databaseValue))
+                            return;
                     }
-                    else if (column.type === "sample-array") {
+                    else if (column.type === "simple-array") {
                         normalizedValue = DateUtils.simpleArrayToString(entityValue);
                         databaseValue = DateUtils.simpleArrayToString(databaseValue);
+                    }
+                    else if (column.type === "simple-enum") {
+                        normalizedValue = DateUtils.simpleEnumToString(entityValue);
+                        databaseValue = DateUtils.simpleEnumToString(databaseValue);
                     }
                 }
                 // if value is not changed - then do nothing
                 if (normalizedValue === databaseValue)
                     return;
             }
-            // find if there is already a column to be changed
-            var changeMap = subject.changeMaps.find(function (changeMap) { return changeMap.column === column; });
-            if (changeMap) { // and update its value if it was found
-                changeMap.value = entityValue;
-            }
-            else { // if it wasn't found add a new column for change
-                subject.changeMaps.push({
-                    column: column,
-                    value: entityValue
-                });
-            }
+            subject.diffColumns.push(column);
+            subject.changeMaps.push({
+                column: column,
+                value: entityValue
+            });
         });
     };
     /**
@@ -121,8 +125,12 @@ var SubjectChangedColumnsComputer = /** @class */ (function () {
                 var databaseRelatedEntityRelationIdMap = relation.getEntityValue(subject.databaseEntity);
                 // if relation ids are equal then we don't need to update anything
                 var areRelatedIdsEqual = EntityMetadata.compareIds(relatedEntityRelationIdMap, databaseRelatedEntityRelationIdMap);
-                if (areRelatedIdsEqual)
+                if (areRelatedIdsEqual) {
                     return;
+                }
+                else {
+                    subject.diffRelations.push(relation);
+                }
             }
             // if there is an inserted subject for the related entity of the persisted entity then use it as related entity
             // this code is used for related entities without ids to be properly inserted (and then updated if needed)

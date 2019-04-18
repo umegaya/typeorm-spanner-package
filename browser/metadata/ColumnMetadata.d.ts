@@ -78,7 +78,7 @@ export declare class ColumnMetadata {
     /**
      * Specifies generation strategy if this column will use auto increment.
      */
-    generationStrategy?: "uuid" | "increment";
+    generationStrategy?: "uuid" | "increment" | "rowid";
     /**
      * Column comment.
      * This feature is not supported by all databases.
@@ -113,8 +113,11 @@ export declare class ColumnMetadata {
     unsigned: boolean;
     /**
      * Array of possible enumerated values.
+     *
+     * `postgres` and `mysql` store enum values as strings but we want to keep support
+     * for numeric and heterogeneous based typescript enums, so we need (string|number)[]
      */
-    enum?: any[];
+    enum?: (string | number)[];
     /**
      * Generated column expression. Supports only in MySQL.
      */

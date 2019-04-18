@@ -1,3 +1,4 @@
+import { CockroachConnectionOptions } from "../driver/cockroachdb/CockroachConnectionOptions";
 import { MysqlConnectionOptions } from "../driver/mysql/MysqlConnectionOptions";
 import { PostgresConnectionOptions } from "../driver/postgres/PostgresConnectionOptions";
 import { SqliteConnectionOptions } from "../driver/sqlite/SqliteConnectionOptions";
@@ -15,4 +16,4 @@ import { SpannerConnectionOptions } from "../driver/spanner/SpannerConnectionOpt
  * Options contain database and other connection-related settings.
  * Consumer must provide connection options for each of your connections.
  */
-export declare type ConnectionOptions = MysqlConnectionOptions | PostgresConnectionOptions | SqliteConnectionOptions | SqlServerConnectionOptions | OracleConnectionOptions | CordovaConnectionOptions | NativescriptConnectionOptions | ReactNativeConnectionOptions | SqljsConnectionOptions | MongoConnectionOptions | ExpoConnectionOptions | SpannerConnectionOptions;
+export declare type ConnectionOptions = MysqlConnectionOptions | PostgresConnectionOptions | CockroachConnectionOptions | SqliteConnectionOptions | SqlServerConnectionOptions | OracleConnectionOptions | CordovaConnectionOptions | NativescriptConnectionOptions | ReactNativeConnectionOptions | SqljsConnectionOptions | MongoConnectionOptions | ExpoConnectionOptions | SpannerConnectionOptions;

@@ -29,7 +29,7 @@ export interface TableColumnOptions {
     /**
      * Specifies generation strategy if this column will use auto increment.
      */
-    generationStrategy?: "uuid" | "increment";
+    generationStrategy?: "uuid" | "increment" | "rowid";
     /**
      * Indicates if column is a primary key.
      */
@@ -86,7 +86,7 @@ export interface TableColumnOptions {
     /**
      * Array of possible enumerated values.
      */
-    enum?: any[];
+    enum?: string[];
     /**
      * Generated column expression. Supports only in MySQL.
      */

@@ -1,27 +1,9 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { OrmUtils } from "../util/OrmUtils";
 import { PostgresDriver } from "../driver/postgres/PostgresDriver";
 import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver";
 import { CannotCreateEntityIdMapError } from "../error/CannotCreateEntityIdMapError";
+import { shorten } from "../util/StringUtils";
 /**
  * Contains all entity metadata.
  */
@@ -187,9 +169,17 @@ var EntityMetadata = /** @class */ (function () {
          */
         this.uniques = [];
         /**
+         * Entity's own uniques.
+         */
+        this.ownUniques = [];
+        /**
          * Entity's check metadatas.
          */
         this.checks = [];
+        /**
+         * Entity's exclusion metadatas.
+         */
+        this.exclusions = [];
         /**
          * Entity's own listener metadatas.
          */
@@ -246,7 +236,7 @@ var EntityMetadata = /** @class */ (function () {
         // if target is set to a function (e.g. class) that can be created then create it
         var ret;
         if (this.target instanceof Function) {
-            ret = new this.target();
+            ret = this.connection.entityFactory.createEntity(this.target);
             this.lazyRelations.forEach(function (relation) { return _this.connection.relationLoader.enableLazyLoad(relation, ret, queryRunner); });
             return ret;
         }
@@ -430,7 +420,7 @@ var EntityMetadata = /** @class */ (function () {
             var parentPath = prefix ? prefix + "." + key : key;
             if (metadata.hasEmbeddedWithPropertyPath(parentPath)) {
                 var subPaths = _this.createPropertyPath(metadata, entity[key], parentPath);
-                paths.push.apply(paths, __spread(subPaths));
+                paths.push.apply(paths, tslib_1.__spread(subPaths));
             }
             else {
                 var path = prefix ? prefix + "." + key : key;
@@ -477,7 +467,7 @@ var EntityMetadata = /** @class */ (function () {
         var namingStrategy = this.connection.namingStrategy;
         var entityPrefix = this.connection.options.entityPrefix;
         this.engine = this.tableMetadataArgs.engine;
-        this.database = this.tableMetadataArgs.database;
+        this.database = this.tableMetadataArgs.type === "entity-child" && this.parentEntityMetadata ? this.parentEntityMetadata.database : this.tableMetadataArgs.database;
         this.schema = this.tableMetadataArgs.schema || this.connection.options.schema;
         this.givenTableName = this.tableMetadataArgs.type === "entity-child" && this.parentEntityMetadata ? this.parentEntityMetadata.givenTableName : this.tableMetadataArgs.name;
         this.synchronize = this.tableMetadataArgs.synchronize === false ? false : true;
@@ -490,6 +480,9 @@ var EntityMetadata = /** @class */ (function () {
         }
         else {
             this.tableNameWithoutPrefix = namingStrategy.tableName(this.targetName, this.givenTableName);
+            if (this.connection.driver.maxAliasLength && this.connection.driver.maxAliasLength > 0 && this.tableNameWithoutPrefix.length > this.connection.driver.maxAliasLength) {
+                this.tableNameWithoutPrefix = shorten(this.tableNameWithoutPrefix, { separator: "_", segmentLength: 3 });
+            }
         }
         this.tableName = entityPrefix ? namingStrategy.prefixTableName(entityPrefix, this.tableNameWithoutPrefix) : this.tableNameWithoutPrefix;
         this.target = this.target ? this.target : this.tableName;

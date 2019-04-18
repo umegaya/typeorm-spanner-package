@@ -46,5 +46,43 @@ function abbreviate(str, abbrLettersCount) {
     }, "");
 }
 exports.abbreviate = abbreviate;
+/**
+ * Shorten a given `input`. Useful for RDBMS imposing a limit on the
+ * maximum length of aliases and column names in SQL queries.
+ *
+ * @param input String to be shortened.
+ * @param options Default to `4` for segments length, `2` for terms length, `'__'` as a separator.
+ *
+ * @return Shortened `input`.
+ *
+ * @example
+ * // returns: "UsShCa__orde__mark__dire"
+ * shorten('UserShoppingCart__order__market__director')
+ *
+ * // returns: "cat_wit_ver_lon_nam_pos_wit_ver_lon_nam_pos_wit_ver_lon_nam"
+ * shorten(
+ *   'category_with_very_long_name_posts_with_very_long_name_post_with_very_long_name',
+ *   { separator: '_', segmentLength: 3 }
+ * )
+ *
+ * // equals: UsShCa__orde__mark_market_id
+ * `${shorten('UserShoppingCart__order__market')}_market_id`
+ */
+function shorten(input, options) {
+    if (options === void 0) { options = {}; }
+    var _a = options.segmentLength, segmentLength = _a === void 0 ? 4 : _a, _b = options.separator, separator = _b === void 0 ? "__" : _b, _c = options.termLength, termLength = _c === void 0 ? 2 : _c;
+    var segments = input.split(separator);
+    var shortSegments = segments.reduce(function (acc, val) {
+        // split the given segment into many terms based on an eventual camel cased name
+        var segmentTerms = val.replace(/([a-z\xE0-\xFF])([A-Z\xC0-\xDF])/g, "$1 $2").split(" ");
+        // "OrderItemList" becomes "OrItLi", while "company" becomes "comp"
+        var length = segmentTerms.length > 1 ? termLength : segmentLength;
+        var shortSegment = segmentTerms.map(function (term) { return term.substr(0, length); }).join("");
+        acc.push(shortSegment);
+        return acc;
+    }, []);
+    return shortSegments.join(separator);
+}
+exports.shorten = shorten;
 
 //# sourceMappingURL=StringUtils.js.map

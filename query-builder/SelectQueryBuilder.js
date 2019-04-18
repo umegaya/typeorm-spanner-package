@@ -1,70 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var FindOptionsUtils_1 = require("../find-options/FindOptionsUtils");
 var ObserverExecutor_1 = require("../observer/ObserverExecutor");
 var QueryBuilderUtils_1 = require("./QueryBuilderUtils");
@@ -90,15 +26,16 @@ var Brackets_1 = require("./Brackets");
 var AbstractSqliteDriver_1 = require("../driver/sqlite-abstract/AbstractSqliteDriver");
 var OffsetWithoutLimitNotSupportedError_1 = require("../error/OffsetWithoutLimitNotSupportedError");
 var BroadcasterResult_1 = require("../subscriber/BroadcasterResult");
-var StringUtils_1 = require("../util/StringUtils");
 var FindCriteriaNotFoundError_1 = require("../error/FindCriteriaNotFoundError");
 var FindOperator_1 = require("../find-options/FindOperator");
 var OrmUtils_1 = require("../util/OrmUtils");
+var ObjectUtils_1 = require("../util/ObjectUtils");
+var DriverUtils_1 = require("../driver/DriverUtils");
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
 var SelectQueryBuilder = /** @class */ (function (_super) {
-    __extends(SelectQueryBuilder, _super);
+    tslib_1.__extends(SelectQueryBuilder, _super);
     function SelectQueryBuilder() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.findOptions = {};
@@ -434,7 +371,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * for example [{ firstId: 1, secondId: 2 }, { firstId: 2, secondId: 3 }, ...]
      */
     SelectQueryBuilder.prototype.andWhereInIds = function (ids) {
-        return this.andWhere("(" + this.createWhereIdsExpression(ids) + ")");
+        return this.andWhere(this.createWhereIdsExpression(ids));
     };
     /**
      * Adds new OR WHERE with conditions for the given ids.
@@ -445,7 +382,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * for example [{ firstId: 1, secondId: 2 }, { firstId: 2, secondId: 3 }, ...]
      */
     SelectQueryBuilder.prototype.orWhereInIds = function (ids) {
-        return this.orWhere("(" + this.createWhereIdsExpression(ids) + ")");
+        return this.orWhere(this.createWhereIdsExpression(ids));
     };
     /**
      * Sets HAVING condition in the query builder.
@@ -506,8 +443,8 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * calling this function will override previously set ORDER BY conditions.
      */
     SelectQueryBuilder.prototype.orderBy = function (sort, order, nulls) {
-        if (order === void 0) { order = "ASC"; }
         var _a, _b;
+        if (order === void 0) { order = "ASC"; }
         if (order !== undefined && order !== "ASC" && order !== "DESC")
             throw new Error("SelectQueryBuilder.addOrderBy \"order\" can accept only \"ASC\" and \"DESC\" values.");
         if (nulls !== undefined && nulls !== "NULLS FIRST" && nulls !== "NULLS LAST")
@@ -601,8 +538,8 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Gets first raw result returned by execution of generated query builder sql.
      */
     SelectQueryBuilder.prototype.getRawOne = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getRawMany()];
                     case 1: return [2 /*return*/, (_a.sent())[0]];
@@ -614,9 +551,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Gets all raw results returned by execution of generated query builder sql.
      */
     SelectQueryBuilder.prototype.getRawMany = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queryRunner, transactionStartedByUs, results, error_1, rollbackError_1;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.expressionMap.lockMode === "optimistic")
@@ -676,9 +613,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Executes sql generated by query builder and returns object with raw results and entities created from them.
      */
     SelectQueryBuilder.prototype.getRawAndEntities = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queryRunner, transactionStartedByUs, results, error_2, rollbackError_2;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         queryRunner = this.obtainQueryRunner();
@@ -738,9 +675,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Gets single entity returned by execution of generated query builder sql.
      */
     SelectQueryBuilder.prototype.getOne = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var results, result, metadata, actualVersion, actualVersion;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getRawAndEntities()];
                     case 1:
@@ -768,9 +705,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Gets entities returned by execution of generated query builder sql.
      */
     SelectQueryBuilder.prototype.getMany = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var results;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.expressionMap.lockMode === "optimistic")
@@ -788,9 +725,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Count excludes all limitations set by setFirstResult and setMaxResults methods call.
      */
     SelectQueryBuilder.prototype.getCount = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queryRunner, transactionStartedByUs, results, error_3, rollbackError_3;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.expressionMap.lockMode === "optimistic")
@@ -853,9 +790,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * This method is useful to build pagination.
      */
     SelectQueryBuilder.prototype.getManyAndCount = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queryRunner, transactionStartedByUs, entitiesAndRaw, count, results, error_4, rollbackError_4;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.expressionMap.lockMode === "optimistic")
@@ -922,14 +859,14 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Executes built SQL query and returns raw data stream.
      */
     SelectQueryBuilder.prototype.stream = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, sql, parameters, queryRunner, transactionStartedByUs, releaseFn, results, error_5, rollbackError_5;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         this.expressionMap.queryEntity = false;
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = tslib_1.__read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
                         queryRunner = this.obtainQueryRunner();
                         transactionStartedByUs = false;
                         _b.label = 1;
@@ -1078,15 +1015,15 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var excludedSelects = [];
         if (this.expressionMap.mainAlias.hasMetadata) {
             var metadata = this.expressionMap.mainAlias.metadata;
-            allSelects.push.apply(allSelects, __spread(this.buildEscapedEntityColumnSelects(this.expressionMap.mainAlias.name, metadata)));
-            excludedSelects.push.apply(excludedSelects, __spread(this.findEntityColumnSelects(this.expressionMap.mainAlias.name, metadata)));
+            allSelects.push.apply(allSelects, tslib_1.__spread(this.buildEscapedEntityColumnSelects(this.expressionMap.mainAlias.name, metadata)));
+            excludedSelects.push.apply(excludedSelects, tslib_1.__spread(this.findEntityColumnSelects(this.expressionMap.mainAlias.name, metadata)));
         }
         // add selects from joins
         this.expressionMap.joinAttributes
             .forEach(function (join) {
             if (join.metadata) {
-                allSelects.push.apply(allSelects, __spread(_this.buildEscapedEntityColumnSelects(join.alias.name, join.metadata)));
-                excludedSelects.push.apply(excludedSelects, __spread(_this.findEntityColumnSelects(join.alias.name, join.metadata)));
+                allSelects.push.apply(allSelects, tslib_1.__spread(_this.buildEscapedEntityColumnSelects(join.alias.name, join.metadata)));
+                excludedSelects.push.apply(excludedSelects, tslib_1.__spread(_this.findEntityColumnSelects(join.alias.name, join.metadata)));
             }
             else {
                 var hasMainAlias = _this.expressionMap.selects.some(function (select) { return select.selection === join.alias.name; });
@@ -1237,12 +1174,21 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
             limit = this.expressionMap.take;
         }
         if (this.connection.driver instanceof SqlServerDriver_1.SqlServerDriver) {
+            // Due to a limitation in SQL Server's parser implementation it does not support using
+            // OFFSET or FETCH NEXT without an ORDER BY clause being provided. In cases where the
+            // user does not request one we insert a dummy ORDER BY that does nothing and should
+            // have no effect on the query planner or on the order of the results returned.
+            // https://dba.stackexchange.com/a/193799
+            var prefix = "";
+            if ((limit || offset) && Object.keys(this.expressionMap.allOrderBys).length <= 0) {
+                prefix = " ORDER BY (SELECT NULL)";
+            }
             if (limit && offset)
-                return " OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
+                return prefix + " OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
             if (limit)
-                return " OFFSET 0 ROWS FETCH NEXT " + limit + " ROWS ONLY";
+                return prefix + " OFFSET 0 ROWS FETCH NEXT " + limit + " ROWS ONLY";
             if (offset)
-                return " OFFSET " + offset + " ROWS";
+                return prefix + " OFFSET " + offset + " ROWS";
         }
         else if (this.connection.driver instanceof MysqlDriver_1.MysqlDriver) {
             if (limit && offset)
@@ -1340,9 +1286,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var hasMainAlias = this.expressionMap.selects.some(function (select) { return select.selection === aliasName; });
         var columns = [];
         if (hasMainAlias) {
-            columns.push.apply(columns, __spread(metadata.columns.filter(function (column) { return column.isSelect === true; })));
+            columns.push.apply(columns, tslib_1.__spread(metadata.columns.filter(function (column) { return column.isSelect === true; })));
         }
-        columns.push.apply(columns, __spread(metadata.columns.filter(function (column) {
+        columns.push.apply(columns, tslib_1.__spread(metadata.columns.filter(function (column) {
             return _this.expressionMap.selects.some(function (select) { return select.selection === aliasName + "." + column.propertyPath; });
         })));
         // if user used partial selection and did not select some primary columns which are required to be selected
@@ -1351,7 +1297,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         if (columns.length === 0) // however not in the case when nothing (even partial) was selected from this target (for example joins without selection)
             return [];
         var nonSelectedPrimaryColumns = this.expressionMap.queryEntity ? metadata.primaryColumns.filter(function (primaryColumn) { return columns.indexOf(primaryColumn) === -1; }) : [];
-        var allColumns = __spread(columns, nonSelectedPrimaryColumns);
+        var allColumns = tslib_1.__spread(columns, nonSelectedPrimaryColumns);
         return allColumns.map(function (column) {
             var selection = _this.expressionMap.selects.find(function (select) { return select.selection === aliasName + "." + column.propertyPath; });
             var selectionPath = _this.escape(aliasName) + "." + _this.escape(column.databaseName);
@@ -1366,7 +1312,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
             }
             return {
                 selection: selectionPath,
-                aliasName: selection && selection.aliasName ? selection.aliasName : _this.buildColumnAlias(aliasName, column.databaseName),
+                aliasName: selection && selection.aliasName ? selection.aliasName : DriverUtils_1.DriverUtils.buildColumnAlias(_this.connection.driver, aliasName, column.databaseName),
                 // todo: need to keep in mind that custom selection.aliasName breaks hydrator. fix it later!
                 virtual: selection ? selection.virtual === true : (hasMainAlias ? false : true),
             };
@@ -1484,10 +1430,10 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         }
     };
     SelectQueryBuilder.prototype.executeCountQuery = function (queryRunner) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var mainAlias, metadata, distinctAlias, countSql, results;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         mainAlias = this.expressionMap.mainAlias.name;
@@ -1538,10 +1484,10 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Executes sql generated by query builder and returns object with raw results and entities created from them.
      */
     SelectQueryBuilder.prototype.executeEntitiesAndRawResults = function (queryRunner) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var cloneQb1, cloneQb2, metadata, relationIdLoader, relationCountLoader, relationIdMetadataTransformer, relationCountMetadataTransformer, rawResults, entities, _a, selects, orderBys_1, metadata_1, mainAliasName_1, querySelects, clonnedQb, condition, parameters_1, ids, areAllNumbers, rawRelationIdResults, rawRelationCountResults, transformer, broadcastResult;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!this.expressionMap.mainAlias)
@@ -1563,15 +1509,15 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
                         relationCountMetadataTransformer.transform();
                         rawResults = [], entities = [];
                         if (!((this.expressionMap.skip || this.expressionMap.take) && this.expressionMap.joinAttributes.length > 0)) return [3 /*break*/, 4];
-                        _a = __read(this.createOrderByCombinedWithSelectExpression("distinctAlias"), 2), selects = _a[0], orderBys_1 = _a[1];
+                        _a = tslib_1.__read(this.createOrderByCombinedWithSelectExpression("distinctAlias"), 2), selects = _a[0], orderBys_1 = _a[1];
                         metadata_1 = this.expressionMap.mainAlias.metadata;
                         mainAliasName_1 = this.expressionMap.mainAlias.name;
                         querySelects = metadata_1.primaryColumns.map(function (primaryColumn) {
                             var distinctAlias = _this.escape("distinctAlias");
-                            var columnAlias = _this.escape(_this.buildColumnAlias(mainAliasName_1, primaryColumn.databaseName));
+                            var columnAlias = _this.escape(DriverUtils_1.DriverUtils.buildColumnAlias(_this.connection.driver, mainAliasName_1, primaryColumn.databaseName));
                             if (!orderBys_1[columnAlias]) // make sure we aren't overriding user-defined order in inverse direction
                                 orderBys_1[columnAlias] = "ASC";
-                            return distinctAlias + "." + columnAlias + " as \"ids_" + _this.buildColumnAlias(mainAliasName_1, primaryColumn.databaseName) + "\"";
+                            return distinctAlias + "." + columnAlias + " as \"ids_" + DriverUtils_1.DriverUtils.buildColumnAlias(_this.connection.driver, mainAliasName_1, primaryColumn.databaseName) + "\"";
                         });
                         clonnedQb = cloneQb1
                             // .setFindOptions({
@@ -1606,7 +1552,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
                             }).join(" OR ");
                         }
                         else {
-                            ids = rawResults.map(function (result) { return result["ids_" + _this.buildColumnAlias(mainAliasName_1, metadata_1.primaryColumns[0].databaseName)]; });
+                            ids = rawResults.map(function (result) { return result["ids_" + DriverUtils_1.DriverUtils.buildColumnAlias(_this.connection.driver, mainAliasName_1, metadata_1.primaryColumns[0].databaseName)]; });
                             areAllNumbers = ids.every(function (id) { return typeof id === "number"; });
                             if (areAllNumbers) {
                                 // fixes #190. if all numbers then its safe to perform query without parameter
@@ -1650,9 +1596,9 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
                     case 9:
                         _b.sent();
                         _b.label = 10;
-                    case 10: return [4 /*yield*/, Promise.all(this.relationMetadatas.map(function (relation) { return __awaiter(_this, void 0, void 0, function () {
+                    case 10: return [4 /*yield*/, Promise.all(this.relationMetadatas.map(function (relation) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var relationTarget, relationAlias, queryBuilder, relatedEntityGroups_1;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         relationTarget = relation.inverseEntityMetadata.target;
@@ -1698,10 +1644,10 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var selectString = Object.keys(orderBys)
             .map(function (orderCriteria) {
             if (orderCriteria.indexOf(".") !== -1) {
-                var _a = __read(QueryBuilderUtils_1.QueryBuilderUtils.extractAliasAndPropertyPath(orderCriteria), 2), aliasName = _a[0], propertyPath = _a[1];
+                var _a = tslib_1.__read(QueryBuilderUtils_1.QueryBuilderUtils.extractAliasAndPropertyPath(orderCriteria), 2), aliasName = _a[0], propertyPath = _a[1];
                 var alias = _this.expressionMap.findAliasByName(aliasName);
                 var column = alias.metadata.findColumnWithPropertyPath(propertyPath);
-                return _this.escape(parentAlias) + "." + _this.escape(_this.buildColumnAlias(aliasName, column.databaseName));
+                return _this.escape(parentAlias) + "." + _this.escape(DriverUtils_1.DriverUtils.buildColumnAlias(_this.connection.driver, aliasName, column.databaseName));
             }
             else {
                 if (_this.expressionMap.selects.find(function (select) { return select.selection === orderCriteria || select.aliasName === orderCriteria; }))
@@ -1713,10 +1659,10 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var orderByObject = {};
         Object.keys(orderBys).forEach(function (orderCriteria) {
             if (orderCriteria.indexOf(".") !== -1) {
-                var _a = __read(QueryBuilderUtils_1.QueryBuilderUtils.extractAliasAndPropertyPath(orderCriteria), 2), aliasName = _a[0], propertyPath = _a[1];
+                var _a = tslib_1.__read(QueryBuilderUtils_1.QueryBuilderUtils.extractAliasAndPropertyPath(orderCriteria), 2), aliasName = _a[0], propertyPath = _a[1];
                 var alias = _this.expressionMap.findAliasByName(aliasName);
                 var column = alias.metadata.findColumnWithPropertyPath(propertyPath);
-                orderByObject[_this.escape(parentAlias) + "." + _this.escape(_this.buildColumnAlias(aliasName, column.databaseName))] = orderBys[orderCriteria];
+                orderByObject[_this.escape(parentAlias) + "." + _this.escape(DriverUtils_1.DriverUtils.buildColumnAlias(_this.connection.driver, aliasName, column.databaseName))] = orderBys[orderCriteria];
             }
             else {
                 if (_this.expressionMap.selects.find(function (select) { return select.selection === orderCriteria || select.aliasName === orderCriteria; })) {
@@ -1733,12 +1679,12 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
      * Loads raw results from the database.
      */
     SelectQueryBuilder.prototype.loadRawResults = function (queryRunner) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, sql, parameters, queryId, cacheOptions, savedQueryResultCacheOptions, results;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = tslib_1.__read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
                         queryId = sql + " -- PARAMETERS: " + JSON.stringify(parameters);
                         cacheOptions = typeof this.connection.options.cache === "object" ? this.connection.options.cache : {};
                         savedQueryResultCacheOptions = undefined;
@@ -1773,20 +1719,10 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         });
     };
     /**
-     * Builds column alias from given alias name and column name,
-     * If alias length is more than 29, abbreviates column name.
-     */
-    SelectQueryBuilder.prototype.buildColumnAlias = function (aliasName, columnName) {
-        var columnAliasName = aliasName + "_" + columnName;
-        if (columnAliasName.length > 29 && this.connection.driver instanceof OracleDriver_1.OracleDriver)
-            return aliasName + "_" + StringUtils_1.abbreviate(columnName, 2);
-        return columnAliasName;
-    };
-    /**
      * Merges into expression map given expression map properties.
      */
     SelectQueryBuilder.prototype.mergeExpressionMap = function (expressionMap) {
-        Object.assign(this.expressionMap, expressionMap);
+        ObjectUtils_1.ObjectUtils.assign(this.expressionMap, expressionMap);
         return this;
     };
     /**

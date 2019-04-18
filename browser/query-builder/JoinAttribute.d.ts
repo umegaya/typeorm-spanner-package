@@ -35,6 +35,8 @@ export declare class JoinAttribute {
     isMappingMany?: boolean;
     constructor(connection: Connection, queryExpressionMap: QueryExpressionMap, joinAttribute?: JoinAttribute);
     readonly isMany: boolean;
+    isSelectedCache: boolean;
+    isSelectedEvalueated: boolean;
     /**
      * Indicates if this join is selected.
      */
@@ -58,6 +60,8 @@ export declare class JoinAttribute {
      * This is available when join was made using "post.category" syntax.
      */
     readonly relationPropertyPath: string | undefined;
+    relationCache: RelationMetadata | undefined;
+    relationEvalueated: boolean;
     /**
      * Relation of the parent.
      * This is used to understand what is joined.

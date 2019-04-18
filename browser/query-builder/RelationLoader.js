@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 /**
  * Wraps entities and creates getters/setters for their relations
  * to be able to lazily load relations when accessing these relations.
@@ -170,7 +151,7 @@ var RelationLoader = /** @class */ (function () {
             return joinAlias + "." + inverseJoinColumn.propertyName + "=" + mainAlias + "." + inverseJoinColumn.referencedColumn.propertyName;
         });
         return qb
-            .innerJoin(joinAlias, joinAlias, __spread(joinColumnConditions, inverseJoinColumnConditions).join(" AND "))
+            .innerJoin(joinAlias, joinAlias, tslib_1.__spread(joinColumnConditions, inverseJoinColumnConditions).join(" AND "))
             .setParameters(parameters)
             .getMany();
     };
@@ -208,7 +189,7 @@ var RelationLoader = /** @class */ (function () {
             }
         });
         return qb
-            .innerJoin(joinAlias, joinAlias, __spread(joinColumnConditions, inverseJoinColumnConditions).join(" AND "))
+            .innerJoin(joinAlias, joinAlias, tslib_1.__spread(joinColumnConditions, inverseJoinColumnConditions).join(" AND "))
             .setParameters(parameters)
             .getMany();
     };
@@ -224,7 +205,7 @@ var RelationLoader = /** @class */ (function () {
         Object.defineProperty(entity, relation.propertyName, {
             get: function () {
                 var _this = this;
-                if (this[resolveIndex] === true) // if related data already was loaded then simply return it
+                if (this[resolveIndex] === true || this[dataIndex]) // if related data already was loaded then simply return it
                     return Promise.resolve(this[dataIndex]);
                 if (this[promiseIndex]) // if related data is loading then return a promise relationLoader loads it
                     return this[promiseIndex];

@@ -1,11 +1,20 @@
+import * as yargs from "yargs";
 /**
  * Generates a new subscriber.
  */
-export declare class SubscriberCreateCommand {
+export declare class SubscriberCreateCommand implements yargs.CommandModule {
     command: string;
     describe: string;
-    builder(yargs: any): any;
-    handler(argv: any): Promise<void>;
+    builder(args: yargs.Argv): yargs.Argv<{
+        c: string;
+    } & {
+        n: unknown;
+    } & {
+        d: unknown;
+    } & {
+        f: string;
+    }>;
+    handler(args: yargs.Arguments): Promise<void>;
     /**
      * Gets contents of the entity file.
      */

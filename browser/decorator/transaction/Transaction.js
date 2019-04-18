@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { getConnection, getMetadataArgsStorage, MongoRepository, Repository, TreeRepository } from "../../";
 export function Transaction(connectionOrOptions) {
     return function (target, methodName, descriptor) {
@@ -37,11 +18,11 @@ export function Transaction(connectionOrOptions) {
                     connectionName = connectionOrOptions;
                 }
                 else {
-                    if (connectionOrOptions.hasOwnProperty("connectionName") && connectionOrOptions.connectionName) {
+                    if (connectionOrOptions.connectionName) {
                         connectionName = connectionOrOptions.connectionName;
                     }
-                    if (connectionOrOptions.hasOwnProperty("isolation") && connectionOrOptions.isolationLevel) {
-                        isolationLevel = connectionOrOptions.isolationLevel;
+                    if (connectionOrOptions.isolation) {
+                        isolationLevel = connectionOrOptions.isolation;
                     }
                 }
             }
@@ -56,17 +37,17 @@ export function Transaction(connectionOrOptions) {
                     .reverse();
                 // if there are @TransactionEntityManager() decorator usages the inject them
                 if (transactionEntityManagerMetadatas.length > 0) {
-                    argsWithInjectedTransactionManagerAndRepositories = __spread(args);
+                    argsWithInjectedTransactionManagerAndRepositories = tslib_1.__spread(args);
                     // replace method params with injection of transactionEntityManager
                     transactionEntityManagerMetadatas.forEach(function (metadata) {
                         argsWithInjectedTransactionManagerAndRepositories.splice(metadata.index, 0, entityManager);
                     });
                 }
                 else if (transactionRepositoryMetadatas.length === 0) { // otherwise if there's no transaction repositories in use, inject it as a first parameter
-                    argsWithInjectedTransactionManagerAndRepositories = __spread([entityManager], args);
+                    argsWithInjectedTransactionManagerAndRepositories = tslib_1.__spread([entityManager], args);
                 }
                 else {
-                    argsWithInjectedTransactionManagerAndRepositories = __spread(args);
+                    argsWithInjectedTransactionManagerAndRepositories = tslib_1.__spread(args);
                 }
                 // for every usage of @TransactionRepository decorator
                 transactionRepositoryMetadatas.forEach(function (metadata) {

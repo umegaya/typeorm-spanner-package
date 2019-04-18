@@ -19,6 +19,7 @@ import { GeneratedMetadataArgs } from "./GeneratedMetadataArgs";
 import { TreeMetadataArgs } from "./TreeMetadataArgs";
 import { UniqueMetadataArgs } from "./UniqueMetadataArgs";
 import { CheckMetadataArgs } from "./CheckMetadataArgs";
+import { ExclusionMetadataArgs } from "./ExclusionMetadataArgs";
 /**
  * Storage all metadatas args of all available types: tables, columns, subscribers, relations, etc.
  * Each metadata args represents some specifications of what it represents.
@@ -35,6 +36,7 @@ export declare class MetadataArgsStorage {
     readonly indices: IndexMetadataArgs[];
     readonly uniques: UniqueMetadataArgs[];
     readonly checks: CheckMetadataArgs[];
+    readonly exclusions: ExclusionMetadataArgs[];
     readonly columns: ColumnMetadataArgs[];
     readonly generations: GeneratedMetadataArgs[];
     readonly relations: RelationMetadataArgs[];
@@ -65,6 +67,8 @@ export declare class MetadataArgsStorage {
     filterUniques(target: (Function | string)[]): UniqueMetadataArgs[];
     filterChecks(target: Function | string): CheckMetadataArgs[];
     filterChecks(target: (Function | string)[]): CheckMetadataArgs[];
+    filterExclusions(target: Function | string): ExclusionMetadataArgs[];
+    filterExclusions(target: (Function | string)[]): ExclusionMetadataArgs[];
     filterListeners(target: Function | string): EntityListenerMetadataArgs[];
     filterListeners(target: (Function | string)[]): EntityListenerMetadataArgs[];
     filterEmbeddeds(target: Function | string): EmbeddedMetadataArgs[];
@@ -93,4 +97,8 @@ export declare class MetadataArgsStorage {
         target: Function | string;
         propertyName: string;
     }>(array: T[], target: (Function | string) | (Function | string)[]): T[];
+    /**
+     * Filters given array by a given target or targets and prevents duplicate embedded property names.
+     */
+    protected filterByTargetAndWithoutDuplicateEmbeddedProperties<T extends EmbeddedMetadataArgs>(array: T[], target: (Function | string) | (Function | string)[]): T[];
 }

@@ -21,6 +21,7 @@ var MetadataArgsStorage = /** @class */ (function () {
         this.indices = [];
         this.uniques = [];
         this.checks = [];
+        this.exclusions = [];
         this.columns = [];
         this.generations = [];
         this.relations = [];
@@ -74,11 +75,16 @@ var MetadataArgsStorage = /** @class */ (function () {
             return target instanceof Array ? target.indexOf(check.target) !== -1 : check.target === target;
         });
     };
+    MetadataArgsStorage.prototype.filterExclusions = function (target) {
+        return this.exclusions.filter(function (exclusion) {
+            return target instanceof Array ? target.indexOf(exclusion.target) !== -1 : exclusion.target === target;
+        });
+    };
     MetadataArgsStorage.prototype.filterListeners = function (target) {
         return this.filterByTarget(this.entityListeners, target);
     };
     MetadataArgsStorage.prototype.filterEmbeddeds = function (target) {
-        return this.filterByTargetAndWithoutDuplicateProperties(this.embeddeds, target);
+        return this.filterByTargetAndWithoutDuplicateEmbeddedProperties(this.embeddeds, target);
     };
     MetadataArgsStorage.prototype.findJoinTable = function (target, propertyName) {
         return this.joinTables.find(function (joinTable) {
@@ -141,6 +147,23 @@ var MetadataArgsStorage = /** @class */ (function () {
             var sameTarget = target instanceof Array ? target.indexOf(item.target) !== -1 : item.target === target;
             if (sameTarget) {
                 if (!newArray.find(function (newItem) { return newItem.propertyName === item.propertyName; }))
+                    newArray.push(item);
+            }
+        });
+        return newArray;
+    };
+    /**
+     * Filters given array by a given target or targets and prevents duplicate embedded property names.
+     */
+    MetadataArgsStorage.prototype.filterByTargetAndWithoutDuplicateEmbeddedProperties = function (array, target) {
+        var newArray = [];
+        array.forEach(function (item) {
+            var sameTarget = target instanceof Array ? target.indexOf(item.target) !== -1 : item.target === target;
+            if (sameTarget) {
+                var isDuplicateEmbeddedProperty = newArray.find(function (newItem) {
+                    return newItem.prefix === item.prefix && newItem.propertyName === item.propertyName;
+                });
+                if (!isDuplicateEmbeddedProperty)
                     newArray.push(item);
             }
         });

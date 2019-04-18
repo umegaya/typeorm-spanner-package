@@ -1,64 +1,4 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { TransactionAlreadyStartedError } from "../../error/TransactionAlreadyStartedError";
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
 import { TableColumn } from "../../schema-builder/table/TableColumn";
@@ -76,7 +16,7 @@ import { PromiseUtils } from "../../index";
  * Runs queries on a single mysql database connection.
  */
 var MysqlQueryRunner = /** @class */ (function (_super) {
-    __extends(MysqlQueryRunner, _super);
+    tslib_1.__extends(MysqlQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -130,22 +70,26 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Starts transaction on the current connection.
      */
     MysqlQueryRunner.prototype.startTransaction = function (isolationLevel) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.isTransactionActive)
                             throw new TransactionAlreadyStartedError();
                         this.isTransactionActive = true;
-                        return [4 /*yield*/, this.query("START TRANSACTION")];
+                        if (!isolationLevel) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.query("SET TRANSACTION ISOLATION LEVEL " + isolationLevel)];
                     case 1:
                         _a.sent();
-                        if (!isolationLevel) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.query("SET SESSION TRANSACTION ISOLATION LEVEL " + isolationLevel)];
+                        return [4 /*yield*/, this.query("START TRANSACTION")];
                     case 2:
                         _a.sent();
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, this.query("START TRANSACTION")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -155,8 +99,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     MysqlQueryRunner.prototype.commitTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -175,8 +119,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     MysqlQueryRunner.prototype.rollbackTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -197,10 +141,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
         var _this = this;
         if (this.isReleased)
             throw new QueryRunnerAlreadyReleasedError();
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var databaseConnection, queryStartTime_1, err_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -239,9 +183,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
         var _this = this;
         if (this.isReleased)
             throw new QueryRunnerAlreadyReleasedError();
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var databaseConnection, stream, err_2;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -269,8 +213,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Returns all available database names including system databases.
      */
     MysqlQueryRunner.prototype.getDatabases = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -280,8 +224,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * If database parameter specified, returns schemas of that database.
      */
     MysqlQueryRunner.prototype.getSchemas = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql driver does not support table schemas");
             });
         });
@@ -290,9 +234,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Checks if database with the given name exist.
      */
     MysqlQueryRunner.prototype.hasDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT * FROM `INFORMATION_SCHEMA`.`SCHEMATA` WHERE `SCHEMA_NAME` = '" + database + "'")];
                     case 1:
@@ -306,8 +250,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Checks if schema with the given name exist.
      */
     MysqlQueryRunner.prototype.hasSchema = function (schema) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql driver does not support table schemas");
             });
         });
@@ -316,9 +260,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Checks if table with the given name exist in the database.
      */
     MysqlQueryRunner.prototype.hasTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var parsedTableName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         parsedTableName = this.parseTableName(tableOrName);
@@ -335,9 +279,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Checks if column with the given name exist in the given table.
      */
     MysqlQueryRunner.prototype.hasColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var parsedTableName, columnName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         parsedTableName = this.parseTableName(tableOrName);
@@ -355,9 +299,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new database.
      */
     MysqlQueryRunner.prototype.createDatabase = function (database, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifNotExist ? "CREATE DATABASE IF NOT EXISTS `" + database + "`" : "CREATE DATABASE `" + database + "`";
@@ -374,9 +318,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops database.
      */
     MysqlQueryRunner.prototype.dropDatabase = function (database, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifExist ? "DROP DATABASE IF EXISTS `" + database + "`" : "DROP DATABASE `" + database + "`";
@@ -393,8 +337,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new table schema.
      */
     MysqlQueryRunner.prototype.createSchema = function (schema, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("Schema create queries are not supported by MySql driver.");
             });
         });
@@ -403,8 +347,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops table schema.
      */
     MysqlQueryRunner.prototype.dropSchema = function (schemaPath, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("Schema drop queries are not supported by MySql driver.");
             });
         });
@@ -415,10 +359,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
     MysqlQueryRunner.prototype.createTable = function (table, ifNotExist, createForeignKeys) {
         if (ifNotExist === void 0) { ifNotExist = false; }
         if (createForeignKeys === void 0) { createForeignKeys = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifNotExist) return [3 /*break*/, 2];
@@ -452,10 +396,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      */
     MysqlQueryRunner.prototype.dropTable = function (target, ifExist, dropForeignKeys) {
         if (dropForeignKeys === void 0) { dropForeignKeys = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, createForeignKeys, tableName, table, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifExist) return [3 /*break*/, 2];
@@ -490,10 +434,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Renames a table.
      */
     MysqlQueryRunner.prototype.renameTable = function (oldTableOrName, newTableName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, oldTable, _a, newTable, dbName;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         upQueries = [];
@@ -570,9 +514,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new column from the column in the table.
      */
     MysqlQueryRunner.prototype.addColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, skipColumnLevelPrimary, generatedColumn, nonGeneratedColumn, primaryColumns, columnNames, nonGeneratedColumn, columnIndex, uniqueIndex;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -650,9 +594,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new columns from the column in the table.
      */
     MysqlQueryRunner.prototype.addColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(columns, function (column) { return _this.addColumn(tableOrName, column); })];
                     case 1:
@@ -666,9 +610,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Renames column in the given table.
      */
     MysqlQueryRunner.prototype.renameColumn = function (tableOrName, oldTableColumnOrName, newTableColumnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, oldColumn, newColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -703,10 +647,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     MysqlQueryRunner.prototype.changeColumn = function (tableOrName, oldColumnOrName, newColumn) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, oldColumn, oldTableColumn, generatedColumn, nonGeneratedColumn, primaryColumns, columnNames, column, columnNames, primaryColumn, column, columnNames, nonGeneratedColumn, uniqueIndex, uniqueIndex_1, tableUnique;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -883,9 +827,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     MysqlQueryRunner.prototype.changeColumns = function (tableOrName, changedColumns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(changedColumns, function (changedColumn) { return _this.changeColumn(tableOrName, changedColumn.oldColumn, changedColumn.newColumn); })];
                     case 1:
@@ -899,9 +843,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops column in the table.
      */
     MysqlQueryRunner.prototype.dropColumn = function (tableOrName, columnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, column, clonedTable, upQueries, downQueries, generatedColumn, nonGeneratedColumn, columnNames, tableColumn, columnNames_1, nonGeneratedColumn, columnIndex, uniqueName_1, foundUnique, indexName_1, foundIndex;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -983,9 +927,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops the columns in the table.
      */
     MysqlQueryRunner.prototype.dropColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(columns, function (column) { return _this.dropColumn(tableOrName, column); })];
                     case 1:
@@ -999,9 +943,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new primary key.
      */
     MysqlQueryRunner.prototype.createPrimaryKey = function (tableOrName, columnNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1033,9 +977,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Updates composite primary keys.
      */
     MysqlQueryRunner.prototype.updatePrimaryKeys = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, columnNames, upQueries, downQueries, generatedColumn, nonGeneratedColumn, primaryColumns, columnNames_2, columnNamesString, newOrExistGeneratedColumn, nonGeneratedColumn, changedGeneratedColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1096,9 +1040,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops a primary key.
      */
     MysqlQueryRunner.prototype.dropPrimaryKey = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1127,8 +1071,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraint.
      */
     MysqlQueryRunner.prototype.createUniqueConstraint = function (tableOrName, uniqueConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support unique constraints. Use unique index instead.");
             });
         });
@@ -1137,8 +1081,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraints.
      */
     MysqlQueryRunner.prototype.createUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support unique constraints. Use unique index instead.");
             });
         });
@@ -1147,8 +1091,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraint.
      */
     MysqlQueryRunner.prototype.dropUniqueConstraint = function (tableOrName, uniqueOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support unique constraints. Use unique index instead.");
             });
         });
@@ -1157,8 +1101,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraints.
      */
     MysqlQueryRunner.prototype.dropUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support unique constraints. Use unique index instead.");
             });
         });
@@ -1167,8 +1111,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new check constraint.
      */
     MysqlQueryRunner.prototype.createCheckConstraint = function (tableOrName, checkConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support check constraints.");
             });
         });
@@ -1177,8 +1121,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new check constraints.
      */
     MysqlQueryRunner.prototype.createCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support check constraints.");
             });
         });
@@ -1187,8 +1131,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops check constraint.
      */
     MysqlQueryRunner.prototype.dropCheckConstraint = function (tableOrName, checkOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support check constraints.");
             });
         });
@@ -1197,9 +1141,49 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops check constraints.
      */
     MysqlQueryRunner.prototype.dropCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("MySql does not support check constraints.");
+            });
+        });
+    };
+    /**
+     * Creates a new exclusion constraint.
+     */
+    MysqlQueryRunner.prototype.createExclusionConstraint = function (tableOrName, exclusionConstraint) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Creates a new exclusion constraints.
+     */
+    MysqlQueryRunner.prototype.createExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraint.
+     */
+    MysqlQueryRunner.prototype.dropExclusionConstraint = function (tableOrName, exclusionOrName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraints.
+     */
+    MysqlQueryRunner.prototype.dropExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
             });
         });
     };
@@ -1207,9 +1191,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign key.
      */
     MysqlQueryRunner.prototype.createForeignKey = function (tableOrName, foreignKey) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1239,10 +1223,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign keys.
      */
     MysqlQueryRunner.prototype.createForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.createForeignKey(tableOrName, foreignKey); });
@@ -1258,9 +1242,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign key.
      */
     MysqlQueryRunner.prototype.dropForeignKey = function (tableOrName, foreignKeyOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, foreignKey, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1290,10 +1274,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign keys from the table.
      */
     MysqlQueryRunner.prototype.dropForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.dropForeignKey(tableOrName, foreignKey); });
@@ -1309,9 +1293,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new index.
      */
     MysqlQueryRunner.prototype.createIndex = function (tableOrName, index) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1341,10 +1325,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Creates a new indices
      */
     MysqlQueryRunner.prototype.createIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.createIndex(tableOrName, index); });
@@ -1360,9 +1344,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops an index.
      */
     MysqlQueryRunner.prototype.dropIndex = function (tableOrName, indexOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, index, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1392,10 +1376,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Drops an indices from the table.
      */
     MysqlQueryRunner.prototype.dropIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.dropIndex(tableOrName, index); });
@@ -1412,8 +1396,8 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     MysqlQueryRunner.prototype.clearTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("TRUNCATE TABLE " + this.escapeTableName(tableOrName))];
                     case 1:
@@ -1429,10 +1413,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * (because it can clear all your database).
      */
     MysqlQueryRunner.prototype.clearDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var dbName, isDatabaseExist, disableForeignKeysCheckQuery, dropTablesQuery, enableForeignKeysCheckQuery, dropQueries, error_1, rollbackError_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         dbName = database ? database : this.driver.database;
@@ -1494,9 +1478,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Returns current database.
      */
     MysqlQueryRunner.prototype.getCurrentDatabase = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var currentDBQuery;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT DATABASE() AS `db_name`")];
                     case 1:
@@ -1510,10 +1494,10 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     MysqlQueryRunner.prototype.loadTables = function (tableNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var currentDatabase, tablesCondition, tablesSql, columnsSql, primaryKeySql, collationsSql, indicesCondition, indicesSql, foreignKeysCondition, foreignKeysSql, _a, dbTables, dbColumns, dbPrimaryKeys, dbCollations, dbIndices, dbForeignKeys, isMariaDb;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         // if no tables given then no need to proceed
@@ -1523,7 +1507,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                     case 1:
                         currentDatabase = _b.sent();
                         tablesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), database = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(tableName.split("."), 2), database = _a[0], name = _a[1];
                             if (!name) {
                                 name = database;
                                 database = _this.driver.database || currentDatabase;
@@ -1535,7 +1519,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                         primaryKeySql = "SELECT * FROM `INFORMATION_SCHEMA`.`KEY_COLUMN_USAGE` WHERE `CONSTRAINT_NAME` = 'PRIMARY' AND (" + tablesCondition + ")";
                         collationsSql = "SELECT `SCHEMA_NAME`, `DEFAULT_CHARACTER_SET_NAME` as `CHARSET`, `DEFAULT_COLLATION_NAME` AS `COLLATION` FROM `INFORMATION_SCHEMA`.`SCHEMATA`";
                         indicesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), database = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(tableName.split("."), 2), database = _a[0], name = _a[1];
                             if (!name) {
                                 name = database;
                                 database = _this.driver.database || currentDatabase;
@@ -1546,7 +1530,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                             "LEFT JOIN `INFORMATION_SCHEMA`.`REFERENTIAL_CONSTRAINTS` `rc` ON `s`.`INDEX_NAME` = `rc`.`CONSTRAINT_NAME` " +
                             ("WHERE (" + indicesCondition + ") AND `s`.`INDEX_NAME` != 'PRIMARY' AND `rc`.`CONSTRAINT_NAME` IS NULL");
                         foreignKeysCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), database = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(tableName.split("."), 2), database = _a[0], name = _a[1];
                             if (!name) {
                                 name = database;
                                 database = _this.driver.database || currentDatabase;
@@ -1567,16 +1551,16 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                                 this.query(foreignKeysSql)
                             ])];
                     case 2:
-                        _a = __read.apply(void 0, [_b.sent(), 6]), dbTables = _a[0], dbColumns = _a[1], dbPrimaryKeys = _a[2], dbCollations = _a[3], dbIndices = _a[4], dbForeignKeys = _a[5];
+                        _a = tslib_1.__read.apply(void 0, [_b.sent(), 6]), dbTables = _a[0], dbColumns = _a[1], dbPrimaryKeys = _a[2], dbCollations = _a[3], dbIndices = _a[4], dbForeignKeys = _a[5];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];
                         isMariaDb = this.driver.options.type === "mariadb";
                         // create tables for loaded tables
-                        return [2 /*return*/, Promise.all(dbTables.map(function (dbTable) { return __awaiter(_this, void 0, void 0, function () {
+                        return [2 /*return*/, Promise.all(dbTables.map(function (dbTable) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var table, dbCollation, defaultCollation, defaultCharset, db, tableFullName, tableForeignKeyConstraints, tableIndexConstraints;
                                 var _this = this;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     table = new Table();
                                     dbCollation = dbCollations.find(function (coll) { return coll["SCHEMA_NAME"] === dbTable["TABLE_SCHEMA"]; });
                                     defaultCollation = dbCollation["COLLATION"];
@@ -1614,7 +1598,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                                             tableColumn.default = dbColumn["COLUMN_DEFAULT"] === "CURRENT_TIMESTAMP" ? dbColumn["COLUMN_DEFAULT"] : "'" + dbColumn["COLUMN_DEFAULT"] + "'";
                                         }
                                         if (dbColumn["EXTRA"].indexOf("on update") !== -1) {
-                                            tableColumn.onUpdate = dbColumn["EXTRA"].substring(10);
+                                            tableColumn.onUpdate = dbColumn["EXTRA"].substring(dbColumn["EXTRA"].indexOf("on update") + 10);
                                         }
                                         if (dbColumn["GENERATION_EXPRESSION"]) {
                                             tableColumn.asExpression = dbColumn["GENERATION_EXPRESSION"];
@@ -1646,7 +1630,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                                             if (dbColumn["NUMERIC_SCALE"] !== null && !_this.isDefaultColumnScale(table, tableColumn, dbColumn["NUMERIC_SCALE"]))
                                                 tableColumn.scale = parseInt(dbColumn["NUMERIC_SCALE"]);
                                         }
-                                        if (tableColumn.type === "enum") {
+                                        if (tableColumn.type === "enum" || tableColumn.type === "simple-enum") {
                                             var colType = dbColumn["COLUMN_TYPE"];
                                             var items = colType.substring(colType.indexOf("(") + 1, colType.indexOf(")")).split(",");
                                             tableColumn.enum = items.map(function (item) {
@@ -1654,7 +1638,9 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                                             });
                                             tableColumn.length = "";
                                         }
-                                        if ((tableColumn.type === "datetime" || tableColumn.type === "time" || tableColumn.type === "timestamp") && dbColumn["DATETIME_PRECISION"]) {
+                                        if ((tableColumn.type === "datetime" || tableColumn.type === "time" || tableColumn.type === "timestamp")
+                                            && dbColumn["DATETIME_PRECISION"] !== null && dbColumn["DATETIME_PRECISION"] !== undefined
+                                            && !_this.isDefaultColumnPrecision(table, tableColumn, parseInt(dbColumn["DATETIME_PRECISION"]))) {
                                             tableColumn.precision = parseInt(dbColumn["DATETIME_PRECISION"]);
                                         }
                                         return tableColumn;
@@ -1791,7 +1777,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
             indexType += "SPATIAL ";
         if (index.isFulltext)
             indexType += "FULLTEXT ";
-        return "CREATE " + indexType + "INDEX `" + index.name + "` ON " + this.escapeTableName(table) + "(" + columns + ")";
+        return "CREATE " + indexType + "INDEX `" + index.name + "` ON " + this.escapeTableName(table) + " (" + columns + ")";
     };
     /**
      * Builds drop index sql.

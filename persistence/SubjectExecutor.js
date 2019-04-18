@@ -1,56 +1,6 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var PromiseUtils_1 = require("../util/PromiseUtils");
 var SubjectTopoligicalSorter_1 = require("./SubjectTopoligicalSorter");
 var SubjectChangedColumnsComputer_1 = require("./SubjectChangedColumnsComputer");
@@ -63,6 +13,7 @@ var OracleDriver_1 = require("../driver/oracle/OracleDriver");
 var NestedSetSubjectExecutor_1 = require("./tree/NestedSetSubjectExecutor");
 var ClosureSubjectExecutor_1 = require("./tree/ClosureSubjectExecutor");
 var MaterializedPathSubjectExecutor_1 = require("./tree/MaterializedPathSubjectExecutor");
+var OrmUtils_1 = require("../util/OrmUtils");
 /**
  * Executes all database operations (inserts, updated, deletes) that must be executed
  * with given persistence subjects.
@@ -105,9 +56,9 @@ var SubjectExecutor = /** @class */ (function () {
      * Executes queries using given query runner.
      */
     SubjectExecutor.prototype.execute = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var broadcasterResult;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         broadcasterResult = undefined;
@@ -124,6 +75,9 @@ var SubjectExecutor = /** @class */ (function () {
                         // recompute only in the case if any listener or subscriber was really executed
                         if (broadcasterResult && broadcasterResult.count > 0) {
                             // console.time(".recompute");
+                            this.insertSubjects.forEach(function (subject) { return subject.recompute(); });
+                            this.updateSubjects.forEach(function (subject) { return subject.recompute(); });
+                            this.removeSubjects.forEach(function (subject) { return subject.recompute(); });
                             this.recompute();
                             // console.timeEnd(".recompute");
                         }
@@ -210,7 +164,7 @@ var SubjectExecutor = /** @class */ (function () {
         if (this.insertSubjects.length)
             this.insertSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastBeforeInsertEvent(result, subject.metadata, subject.entity); });
         if (this.updateSubjects.length)
-            this.updateSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastBeforeUpdateEvent(result, subject.metadata, subject.entity, subject.databaseEntity); });
+            this.updateSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastBeforeUpdateEvent(result, subject.metadata, subject.entity, subject.databaseEntity, subject.diffColumns, subject.diffRelations); });
         if (this.removeSubjects.length)
             this.removeSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastBeforeRemoveEvent(result, subject.metadata, subject.entity, subject.databaseEntity); });
         return result;
@@ -226,7 +180,7 @@ var SubjectExecutor = /** @class */ (function () {
         if (this.insertSubjects.length)
             this.insertSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastAfterInsertEvent(result, subject.metadata, subject.entity); });
         if (this.updateSubjects.length)
-            this.updateSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastAfterUpdateEvent(result, subject.metadata, subject.entity, subject.databaseEntity); });
+            this.updateSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastAfterUpdateEvent(result, subject.metadata, subject.entity, subject.databaseEntity, subject.diffColumns, subject.diffRelations); });
         if (this.removeSubjects.length)
             this.removeSubjects.forEach(function (subject) { return _this.queryRunner.broadcaster.broadcastAfterRemoveEvent(result, subject.metadata, subject.entity, subject.databaseEntity); });
         return result;
@@ -235,18 +189,18 @@ var SubjectExecutor = /** @class */ (function () {
      * Executes insert operations.
      */
     SubjectExecutor.prototype.executeInsertOperations = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, groupedInsertSubjects, groupedInsertSubjectKeys;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.groupBulkSubjects(this.insertSubjects, "insert"), 2), groupedInsertSubjects = _a[0], groupedInsertSubjectKeys = _a[1];
+                        _a = tslib_1.__read(this.groupBulkSubjects(this.insertSubjects, "insert"), 2), groupedInsertSubjects = _a[0], groupedInsertSubjectKeys = _a[1];
                         // then we run insertion in the sequential order which is important since we have an ordered subjects
-                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(groupedInsertSubjectKeys, function (groupName) { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(groupedInsertSubjectKeys, function (groupName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var subjects, bulkInsertMaps, bulkInsertSubjects, singleInsertSubjects, manager, insertResult_1, insertResult_2;
                                 var _this = this;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             subjects = groupedInsertSubjects[groupName];
@@ -255,6 +209,13 @@ var SubjectExecutor = /** @class */ (function () {
                                             singleInsertSubjects = [];
                                             if (this.queryRunner.connection.driver instanceof MongoDriver_1.MongoDriver) {
                                                 subjects.forEach(function (subject) {
+                                                    if (subject.metadata.createDateColumn && subject.entity) {
+                                                        subject.entity[subject.metadata.createDateColumn.databaseName] = new Date();
+                                                    }
+                                                    if (subject.metadata.updateDateColumn && subject.entity) {
+                                                        subject.entity[subject.metadata.updateDateColumn.databaseName] = new Date();
+                                                    }
+                                                    subject.createValueSetAndPopChangeMap();
                                                     bulkInsertSubjects.push(subject);
                                                     bulkInsertMaps.push(subject.entity);
                                                 });
@@ -314,8 +275,8 @@ var SubjectExecutor = /** @class */ (function () {
                                             _a.label = 4;
                                         case 4:
                                             if (!(singleInsertSubjects.length > 0)) return [3 /*break*/, 6];
-                                            return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(singleInsertSubjects, function (subject) { return __awaiter(_this, void 0, void 0, function () {
-                                                    return __generator(this, function (_a) {
+                                            return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(singleInsertSubjects, function (subject) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                                    return tslib_1.__generator(this, function (_a) {
                                                         switch (_a.label) {
                                                             case 0:
                                                                 subject.insertedValueSet = subject.createValueSetAndPopChangeMap(); // important to have because query builder sets inserted values into it
@@ -386,26 +347,36 @@ var SubjectExecutor = /** @class */ (function () {
      * Updates all given subjects in the database.
      */
     SubjectExecutor.prototype.executeUpdateOperations = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Promise.all(this.updateSubjects.map(function (subject) { return __awaiter(_this, void 0, void 0, function () {
-                            var updateMap, manager, updateQueryBuilder, updateResult;
+                    case 0: return [4 /*yield*/, Promise.all(this.updateSubjects.map(function (subject) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            var partialEntity, manager, updateMap, updateQueryBuilder, updateResult;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         if (!subject.identifier)
                                             throw new SubjectWithoutIdentifierError_1.SubjectWithoutIdentifierError(subject);
-                                        updateMap = this.queryRunner.connection.driver instanceof MongoDriver_1.MongoDriver ? subject.entity : subject.createValueSetAndPopChangeMap();
                                         if (!(this.queryRunner instanceof MongoQueryRunner_1.MongoQueryRunner)) return [3 /*break*/, 2];
+                                        partialEntity = OrmUtils_1.OrmUtils.mergeDeep({}, subject.entity);
+                                        if (subject.metadata.objectIdColumn && subject.metadata.objectIdColumn.propertyName) {
+                                            delete partialEntity[subject.metadata.objectIdColumn.propertyName];
+                                        }
+                                        if (subject.metadata.createDateColumn && subject.metadata.createDateColumn.propertyName) {
+                                            delete partialEntity[subject.metadata.createDateColumn.propertyName];
+                                        }
+                                        if (subject.metadata.updateDateColumn && subject.metadata.updateDateColumn.propertyName) {
+                                            partialEntity[subject.metadata.updateDateColumn.propertyName] = new Date();
+                                        }
                                         manager = this.queryRunner.manager;
-                                        return [4 /*yield*/, manager.update(subject.metadata.target, subject.identifier, updateMap)];
+                                        return [4 /*yield*/, manager.update(subject.metadata.target, subject.identifier, partialEntity)];
                                     case 1:
                                         _a.sent();
                                         return [3 /*break*/, 4];
                                     case 2:
+                                        updateMap = subject.createValueSetAndPopChangeMap();
                                         updateQueryBuilder = this.queryRunner
                                             .manager
                                             .createQueryBuilder()
@@ -451,16 +422,16 @@ var SubjectExecutor = /** @class */ (function () {
      * todo: we need to apply topological sort here as well
      */
     SubjectExecutor.prototype.executeRemoveOperations = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, groupedRemoveSubjects, groupedRemoveSubjectKeys;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.groupBulkSubjects(this.removeSubjects, "delete"), 2), groupedRemoveSubjects = _a[0], groupedRemoveSubjectKeys = _a[1];
-                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(groupedRemoveSubjectKeys, function (groupName) { return __awaiter(_this, void 0, void 0, function () {
+                        _a = tslib_1.__read(this.groupBulkSubjects(this.removeSubjects, "delete"), 2), groupedRemoveSubjects = _a[0], groupedRemoveSubjectKeys = _a[1];
+                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(groupedRemoveSubjectKeys, function (groupName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var subjects, deleteMaps, manager;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             subjects = groupedRemoveSubjects[groupName];
@@ -512,6 +483,7 @@ var SubjectExecutor = /** @class */ (function () {
      * Also updates nullable columns and columns with default values.
      */
     SubjectExecutor.prototype.updateSpecialColumnsInPersistedEntities = function () {
+        var _this = this;
         // update inserted entity properties
         if (this.insertSubjects.length)
             this.updateSpecialColumnsInInsertedAndUpdatedEntities(this.insertSubjects);
@@ -535,6 +507,14 @@ var SubjectExecutor = /** @class */ (function () {
             subject.metadata.relationIds.forEach(function (relationId) {
                 relationId.setValue(subject.entity);
             });
+            // mongo _id remove
+            if (_this.queryRunner instanceof MongoQueryRunner_1.MongoQueryRunner) {
+                if (subject.metadata.objectIdColumn
+                    && subject.metadata.objectIdColumn.databaseName
+                    && subject.metadata.objectIdColumn.databaseName !== subject.metadata.objectIdColumn.propertyName) {
+                    delete subject.entity[subject.metadata.objectIdColumn.databaseName];
+                }
+            }
         });
     };
     /**

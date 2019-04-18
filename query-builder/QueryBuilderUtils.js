@@ -1,21 +1,6 @@
 "use strict";
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 /**
  * Helper utility functions for QueryBuilder.
  */
@@ -31,7 +16,7 @@ var QueryBuilderUtils = /** @class */ (function () {
         if (typeof str !== "string" || str.indexOf(".") === -1)
             return false;
         // extra alias and its property relation
-        var _a = __read(QueryBuilderUtils.extractAliasAndPropertyPath(str), 2), aliasName = _a[0], propertyName = _a[1];
+        var _a = tslib_1.__read(QueryBuilderUtils.extractAliasAndPropertyPath(str), 2), aliasName = _a[0], propertyName = _a[1];
         if (!aliasName || !propertyName)
             return false;
         // alias and property must be represented in a special format

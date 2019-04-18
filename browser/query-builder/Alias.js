@@ -1,8 +1,9 @@
+import { ObjectUtils } from "../util/ObjectUtils";
 /**
  */
 var Alias = /** @class */ (function () {
     function Alias(alias) {
-        Object.assign(this, alias || {});
+        ObjectUtils.assign(this, alias || {});
     }
     Object.defineProperty(Alias.prototype, "target", {
         get: function () {

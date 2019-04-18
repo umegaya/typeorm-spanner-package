@@ -1,38 +1,4 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
+import * as tslib_1 from "tslib";
 import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError";
 import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
 import { DriverUtils } from "../DriverUtils";
@@ -177,6 +143,11 @@ var SqlServerDriver = /** @class */ (function () {
             "datetime2": { precision: 7 },
             "datetimeoffset": { precision: 7 }
         };
+        /**
+         * Max length allowed by MSSQL Server for aliases (identifiers).
+         * @see https://docs.microsoft.com/en-us/sql/sql-server/maximum-capacity-specifications-for-sql-server
+         */
+        this.maxAliasLength = 128;
         this.connection = connection;
         this.options = connection.options;
         this.isReplicated = this.options.replication ? true : false;
@@ -200,10 +171,10 @@ var SqlServerDriver = /** @class */ (function () {
      * either create a pool and create connection when needed.
      */
     SqlServerDriver.prototype.connect = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, _b, _c;
             var _this = this;
-            return __generator(this, function (_d) {
+            return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         if (!this.options.replication) return [3 /*break*/, 3];
@@ -247,15 +218,35 @@ var SqlServerDriver = /** @class */ (function () {
      * Closes connection with the database.
      */
     SqlServerDriver.prototype.disconnect = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                if (!this.master)
-                    return [2 /*return*/, Promise.reject(new ConnectionIsNotSetError("mssql"))];
-                this.master.close();
-                this.slaves.forEach(function (slave) { return slave.close(); });
-                this.master = undefined;
-                this.slaves = [];
-                return [2 /*return*/];
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this.master)
+                            return [2 /*return*/, Promise.reject(new ConnectionIsNotSetError("mssql"))];
+                        return [4 /*yield*/, this.closePool(this.master)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, Promise.all(this.slaves.map(function (slave) { return _this.closePool(slave); }))];
+                    case 2:
+                        _a.sent();
+                        this.master = undefined;
+                        this.slaves = [];
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Closes connection pool.
+     */
+    SqlServerDriver.prototype.closePool = function (pool) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (ok, fail) {
+                        pool.close(function (err) { return err ? fail(err) : ok(); });
+                    })];
             });
         });
     };
@@ -363,6 +354,9 @@ var SqlServerDriver = /** @class */ (function () {
         else if (columnMetadata.type === "simple-json") {
             return DateUtils.simpleJsonToString(value);
         }
+        else if (columnMetadata.type === "simple-enum") {
+            return DateUtils.simpleEnumToString(value);
+        }
         return value;
     };
     /**
@@ -370,7 +364,7 @@ var SqlServerDriver = /** @class */ (function () {
      */
     SqlServerDriver.prototype.prepareHydratedValue = function (value, columnMetadata) {
         if (value === null || value === undefined)
-            return value;
+            return columnMetadata.transformer ? columnMetadata.transformer.from(value) : value;
         if (columnMetadata.type === Boolean) {
             value = value ? true : false;
         }
@@ -392,6 +386,9 @@ var SqlServerDriver = /** @class */ (function () {
         }
         else if (columnMetadata.type === "simple-json") {
             value = DateUtils.stringToSimpleJson(value);
+        }
+        else if (columnMetadata.type === "simple-enum") {
+            value = DateUtils.stringToSimpleEnum(value, columnMetadata);
         }
         if (columnMetadata.transformer)
             value = columnMetadata.transformer.from(value);
@@ -422,6 +419,9 @@ var SqlServerDriver = /** @class */ (function () {
         else if (column.type === "simple-array" || column.type === "simple-json") {
             return "ntext";
         }
+        else if (column.type === "simple-enum") {
+            return "nvarchar";
+        }
         else if (column.type === "dec") {
             return "decimal";
         }
@@ -429,7 +429,7 @@ var SqlServerDriver = /** @class */ (function () {
             return "float";
         }
         else if (column.type === "rowversion") {
-            return "timestamp"; // the rowversion type's name in SQL server metadata is timestamp            
+            return "timestamp"; // the rowversion type's name in SQL server metadata is timestamp
         }
         else {
             return column.type || "";
@@ -514,12 +514,13 @@ var SqlServerDriver = /** @class */ (function () {
      * Creates generated map of values generated or returned by database after INSERT query.
      */
     SqlServerDriver.prototype.createGeneratedMap = function (metadata, insertResult) {
+        var _this = this;
         if (!insertResult)
             return undefined;
         return Object.keys(insertResult).reduce(function (map, key) {
             var column = metadata.findColumnWithDatabaseName(key);
             if (column) {
-                OrmUtils.mergeDeep(map, column.createValueMap(insertResult[key]));
+                OrmUtils.mergeDeep(map, column.createValueMap(_this.prepareHydratedValue(insertResult[key], column)));
             }
             return map;
         }, {});
@@ -540,17 +541,29 @@ var SqlServerDriver = /** @class */ (function () {
                 || tableColumn.precision !== columnMetadata.precision
                 || tableColumn.scale !== columnMetadata.scale
                 // || tableColumn.comment !== columnMetadata.comment || // todo
-                || (!tableColumn.isGenerated && _this.normalizeDefault(columnMetadata) !== tableColumn.default) // we included check for generated here, because generated columns already can have default values
+                || (!tableColumn.isGenerated && _this.lowerDefaultValueIfNessesary(_this.normalizeDefault(columnMetadata)) !== _this.lowerDefaultValueIfNessesary(tableColumn.default)) // we included check for generated here, because generated columns already can have default values
                 || tableColumn.isPrimary !== columnMetadata.isPrimary
                 || tableColumn.isNullable !== columnMetadata.isNullable
                 || tableColumn.isUnique !== _this.normalizeIsUnique(columnMetadata)
                 || tableColumn.isGenerated !== columnMetadata.isGenerated;
         });
     };
+    SqlServerDriver.prototype.lowerDefaultValueIfNessesary = function (value) {
+        // SqlServer saves function calls in default value as lowercase #2733
+        if (!value) {
+            return value;
+        }
+        return value.split("'").map(function (v, i) {
+            return i % 2 === 1 ? v : v.toLowerCase();
+        }).join("'");
+    };
     /**
      * Returns true if driver supports RETURNING / OUTPUT statement.
      */
     SqlServerDriver.prototype.isReturningSqlSupported = function () {
+        if (this.options.options && this.options.options.disableOutputReturning) {
+            return false;
+        }
         return true;
     };
     /**

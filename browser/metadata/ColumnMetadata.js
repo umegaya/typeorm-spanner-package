@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { MongoDriver } from "../driver/mongodb/MongoDriver";
 import { PromiseUtils } from "../util/PromiseUtils";
 import { FindOperator } from "../find-options/FindOperator";
@@ -160,10 +141,10 @@ var ColumnMetadata = /** @class */ (function () {
         if (options.args.options.precision !== undefined)
             this.precision = options.args.options.precision;
         if (options.args.options.enum) {
-            if (options.args.options.enum instanceof Object) {
-                this.enum = Object.keys(options.args.options.enum).map(function (key) {
-                    return options.args.options.enum[key];
-                });
+            if (options.args.options.enum instanceof Object && !Array.isArray(options.args.options.enum)) {
+                this.enum = Object.keys(options.args.options.enum)
+                    .filter(function (key) { return isNaN(+key); }) // remove numeric keys - typescript numeric enum types generate them
+                    .map(function (key) { return options.args.options.enum[key]; });
             }
             else {
                 this.enum = options.args.options.enum;
@@ -228,15 +209,15 @@ var ColumnMetadata = /** @class */ (function () {
      */
     ColumnMetadata.prototype.createValueMap = function (value, useDatabaseName) {
         var _this = this;
-        if (useDatabaseName === void 0) { useDatabaseName = false; }
         var _a;
+        if (useDatabaseName === void 0) { useDatabaseName = false; }
         // extract column value from embeds of entity if column is in embedded
         if (this.embeddedMetadata) {
             // example: post[data][information][counters].id where "data", "information" and "counters" are embeddeds
             // we need to get value of "id" column from the post real entity object and return it in a
             // { data: { information: { counters: { id: ... } } } } format
             // first step - we extract all parent properties of the entity relative to this column, e.g. [data, information, counters]
-            var propertyNames = __spread(this.embeddedMetadata.parentPropertyNames);
+            var propertyNames = tslib_1.__spread(this.embeddedMetadata.parentPropertyNames);
             // now need to access post[data][information][counters] to get column value from the counters
             // and on each step we need to create complex literal object, e.g. first { data },
             // then { data: { information } }, then { data: { information: { counters } } },
@@ -250,7 +231,7 @@ var ColumnMetadata = /** @class */ (function () {
                     return map;
                 }
                 // this is bugfix for #720 when increment number is bigint we need to make sure its a string
-                if (_this.generationStrategy === "increment" && _this.type === "bigint")
+                if ((_this.generationStrategy === "increment" || _this.generationStrategy === "rowid") && _this.type === "bigint")
                     value = String(value);
                 map[useDatabaseName ? _this.databaseName : _this.propertyName] = value;
                 return map;
@@ -259,7 +240,7 @@ var ColumnMetadata = /** @class */ (function () {
         }
         else { // no embeds - no problems. Simply return column property name and its value of the entity
             // this is bugfix for #720 when increment number is bigint we need to make sure its a string
-            if (this.generationStrategy === "increment" && this.type === "bigint")
+            if ((this.generationStrategy === "increment" || this.generationStrategy === "rowid") && this.type === "bigint")
                 value = String(value);
             return _a = {}, _a[useDatabaseName ? this.databaseName : this.propertyName] = value, _a;
         }
@@ -281,7 +262,7 @@ var ColumnMetadata = /** @class */ (function () {
             // we need to get value of "id" column from the post real entity object and return it in a
             // { data: { information: { counters: { id: ... } } } } format
             // first step - we extract all parent properties of the entity relative to this column, e.g. [data, information, counters]
-            var propertyNames = __spread(this.embeddedMetadata.parentPropertyNames);
+            var propertyNames = tslib_1.__spread(this.embeddedMetadata.parentPropertyNames);
             // now need to access post[data][information][counters] to get column value from the counters
             // and on each step we need to create complex literal object, e.g. first { data },
             // then { data: { information } }, then { data: { information: { counters } } },
@@ -330,15 +311,16 @@ var ColumnMetadata = /** @class */ (function () {
      * If column is in embedded (or recursive embedded) it extracts its value from there.
      */
     ColumnMetadata.prototype.getEntityValue = function (entity, transform) {
-        // if (entity === undefined || entity === null) return undefined; // uncomment if needed
         if (transform === void 0) { transform = false; }
+        if (entity === undefined || entity === null)
+            return undefined;
         // extract column value from embeddeds of entity if column is in embedded
         var value = undefined;
         if (this.embeddedMetadata) {
             // example: post[data][information][counters].id where "data", "information" and "counters" are embeddeds
             // we need to get value of "id" column from the post real entity object
             // first step - we extract all parent properties of the entity relative to this column, e.g. [data, information, counters]
-            var propertyNames = __spread(this.embeddedMetadata.parentPropertyNames);
+            var propertyNames = tslib_1.__spread(this.embeddedMetadata.parentPropertyNames);
             // next we need to access post[data][information][counters][this.propertyName] to get column value from the counters
             // this recursive function takes array of generated property names and gets the post[data][information][counters] embed
             var extractEmbeddedColumnValue_3 = function (propertyNames, value) {
@@ -413,7 +395,7 @@ var ColumnMetadata = /** @class */ (function () {
                 map[_this.propertyName] = value;
                 return map;
             };
-            return extractEmbeddedColumnValue_4(__spread(this.embeddedMetadata.embeddedMetadataTree), entity);
+            return extractEmbeddedColumnValue_4(tslib_1.__spread(this.embeddedMetadata.embeddedMetadataTree), entity);
         }
         else {
             entity[this.propertyName] = value;

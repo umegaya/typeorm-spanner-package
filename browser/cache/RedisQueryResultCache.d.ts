@@ -15,13 +15,17 @@ export declare class RedisQueryResultCache implements QueryResultCache {
      * Connected redis client.
      */
     protected client: any;
-    constructor(connection: Connection);
+    /**
+     * Type of the Redis Client (redis or ioredis).
+     */
+    protected clientType: "redis" | "ioredis" | "ioredis/cluster";
+    constructor(connection: Connection, clientType: "redis" | "ioredis" | "ioredis/cluster");
     /**
      * Creates a connection with given cache provider.
      */
     connect(): Promise<void>;
     /**
-     * Creates a connection with given cache provider.
+     * Disconnects the connection
      */
     disconnect(): Promise<void>;
     /**

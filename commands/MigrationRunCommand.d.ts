@@ -1,9 +1,17 @@
+import * as yargs from "yargs";
 /**
  * Runs migration command.
  */
-export declare class MigrationRunCommand {
+export declare class MigrationRunCommand implements yargs.CommandModule {
     command: string;
     describe: string;
-    builder(yargs: any): any;
-    handler(argv: any): Promise<void>;
+    aliases: string;
+    builder(args: yargs.Argv): yargs.Argv<{
+        connection: string;
+    } & {
+        transaction: string;
+    } & {
+        config: string;
+    }>;
+    handler(args: yargs.Arguments): Promise<void>;
 }

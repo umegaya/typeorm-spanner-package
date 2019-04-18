@@ -21,7 +21,9 @@ export function Index(nameOrFieldsOrOptions, maybeFieldsOrOptions, maybeOptions)
             unique: options && options.unique ? true : false,
             spatial: options && options.spatial ? true : false,
             fulltext: options && options.fulltext ? true : false,
-            sparse: options && options.sparse ? true : false
+            sparse: options && options.sparse ? true : false,
+            background: options && options.background ? true : false,
+            expireAfterSeconds: options && options.expireAfterSeconds ? options.expireAfterSeconds : undefined
         });
     };
 }

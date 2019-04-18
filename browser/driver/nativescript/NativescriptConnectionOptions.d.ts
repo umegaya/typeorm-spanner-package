@@ -11,4 +11,9 @@ export interface NativescriptConnectionOptions extends BaseConnectionOptions {
      * Database name.
      */
     readonly database: string;
+    /**
+     * The driver object
+     * you should pass `require('nativescript-sqlite') here
+     */
+    readonly driver: any;
 }

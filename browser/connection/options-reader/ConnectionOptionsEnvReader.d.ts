@@ -14,6 +14,10 @@ export declare class ConnectionOptionsEnvReader {
      */
     protected transformLogging(logging: string): any;
     /**
+     * Transforms caching option into real caching value option requires.
+     */
+    protected transformCaching(): boolean | object | undefined;
+    /**
      * Converts a string which contains multiple elements split by comma into a string array of strings.
      */
     protected stringToArray(variable?: string): string[];

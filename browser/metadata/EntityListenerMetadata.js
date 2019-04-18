@@ -38,7 +38,7 @@ var EntityListenerMetadata = /** @class */ (function () {
      */
     EntityListenerMetadata.prototype.callEntityEmbeddedMethod = function (entity, propertyPaths) {
         var propertyPath = propertyPaths.shift();
-        if (!propertyPath)
+        if (!propertyPath || !entity[propertyPath])
             return;
         if (propertyPaths.length === 0) {
             entity[propertyPath][this.propertyName]();

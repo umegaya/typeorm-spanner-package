@@ -3,6 +3,8 @@ import { ObjectLiteral } from "../common/ObjectLiteral";
 import { QueryRunner } from "../query-runner/QueryRunner";
 import { EntityMetadata } from "../metadata/EntityMetadata";
 import { BroadcasterResult } from "./BroadcasterResult";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { RelationMetadata } from "../metadata/RelationMetadata";
 /**
  * Broadcaster provides a helper methods to broadcast events to the subscribers.
  */
@@ -26,7 +28,7 @@ export declare class Broadcaster {
      *
      * Note: this method has a performance-optimized code organization, do not change code structure.
      */
-    broadcastBeforeUpdateEvent(result: BroadcasterResult, metadata: EntityMetadata, entity?: ObjectLiteral, databaseEntity?: ObjectLiteral): void;
+    broadcastBeforeUpdateEvent(result: BroadcasterResult, metadata: EntityMetadata, entity?: ObjectLiteral, databaseEntity?: ObjectLiteral, updatedColumns?: ColumnMetadata[], updatedRelations?: RelationMetadata[]): void;
     /**
      * Broadcasts "BEFORE_REMOVE" event.
      * Before remove event is executed before entity is being removed from the database.
@@ -53,7 +55,7 @@ export declare class Broadcaster {
      *
      * Note: this method has a performance-optimized code organization, do not change code structure.
      */
-    broadcastAfterUpdateEvent(result: BroadcasterResult, metadata: EntityMetadata, entity?: ObjectLiteral, databaseEntity?: ObjectLiteral): void;
+    broadcastAfterUpdateEvent(result: BroadcasterResult, metadata: EntityMetadata, entity?: ObjectLiteral, databaseEntity?: ObjectLiteral, updatedColumns?: ColumnMetadata[], updatedRelations?: RelationMetadata[]): void;
     /**
      * Broadcasts "AFTER_REMOVE" event.
      * After remove event is executed after entity is being removed from the database.

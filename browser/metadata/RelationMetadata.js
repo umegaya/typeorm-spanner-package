@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { EntityMetadata } from "./EntityMetadata";
 /**
  * Contains all information about some entity's relation.
@@ -143,6 +124,7 @@ var RelationMetadata = /** @class */ (function () {
         this.isCascadeRemove = args.options.cascade === true || (args.options.cascade instanceof Array && args.options.cascade.indexOf("remove") !== -1);
         this.isNullable = args.options.nullable === false ? false : true;
         this.onDelete = args.options.onDelete;
+        this.onUpdate = args.options.onUpdate;
         this.isEager = args.options.eager || false;
         this.persistenceEnabled = args.options.persistence === false ? false : true;
         this.isTreeParent = args.isTreeParent || false;
@@ -189,12 +171,14 @@ var RelationMetadata = /** @class */ (function () {
      */
     RelationMetadata.prototype.getEntityValue = function (entity, getLazyRelationsPromiseValue) {
         if (getLazyRelationsPromiseValue === void 0) { getLazyRelationsPromiseValue = false; }
+        if (entity === null || entity === undefined)
+            return undefined;
         // extract column value from embeddeds of entity if column is in embedded
         if (this.embeddedMetadata) {
             // example: post[data][information][counters].id where "data", "information" and "counters" are embeddeds
             // we need to get value of "id" column from the post real entity object
             // first step - we extract all parent properties of the entity relative to this column, e.g. [data, information, counters]
-            var propertyNames = __spread(this.embeddedMetadata.parentPropertyNames);
+            var propertyNames = tslib_1.__spread(this.embeddedMetadata.parentPropertyNames);
             // next we need to access post[data][information][counters][this.propertyName] to get column value from the counters
             // this recursive function takes array of generated property names and gets the post[data][information][counters] embed
             var extractEmbeddedColumnValue_1 = function (propertyNames, value) {
@@ -252,7 +236,7 @@ var RelationMetadata = /** @class */ (function () {
                 map[propertyName] = value;
                 return map;
             };
-            return extractEmbeddedColumnValue_2(__spread(this.embeddedMetadata.embeddedMetadataTree), entity);
+            return extractEmbeddedColumnValue_2(tslib_1.__spread(this.embeddedMetadata.embeddedMetadataTree), entity);
         }
         else {
             entity[propertyName] = value;
@@ -270,7 +254,7 @@ var RelationMetadata = /** @class */ (function () {
             // we need to get value of "id" column from the post real entity object and return it in a
             // { data: { information: { counters: { id: ... } } } } format
             // first step - we extract all parent properties of the entity relative to this column, e.g. [data, information, counters]
-            var propertyNames = __spread(this.embeddedMetadata.parentPropertyNames);
+            var propertyNames = tslib_1.__spread(this.embeddedMetadata.parentPropertyNames);
             // now need to access post[data][information][counters] to get column value from the counters
             // and on each step we need to create complex literal object, e.g. first { data },
             // then { data: { information } }, then { data: { information: { counters } } },
@@ -308,12 +292,12 @@ var RelationMetadata = /** @class */ (function () {
      * This builder method should be used to register foreign key in the relation.
      */
     RelationMetadata.prototype.registerForeignKeys = function () {
+        var _a;
         var foreignKeys = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             foreignKeys[_i] = arguments[_i];
         }
-        var _a;
-        (_a = this.foreignKeys).push.apply(_a, __spread(foreignKeys));
+        (_a = this.foreignKeys).push.apply(_a, tslib_1.__spread(foreignKeys));
         this.joinColumns = this.foreignKeys[0] ? this.foreignKeys[0].columns : [];
         this.inverseJoinColumns = this.foreignKeys[1] ? this.foreignKeys[1].columns : [];
         this.isOwning = this.isManyToOne || ((this.isManyToMany || this.isOneToOne) && this.joinColumns.length > 0);

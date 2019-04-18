@@ -1,38 +1,4 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
+import * as tslib_1 from "tslib";
 import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError";
 import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
 import { DriverUtils } from "../DriverUtils";
@@ -61,27 +27,40 @@ var MysqlDriver = /** @class */ (function () {
          * Gets list of supported column data types by a driver.
          *
          * @see https://www.tutorialspoint.com/mysql/mysql-data-types.htm
-         * @see https://dev.mysql.com/doc/refman/5.7/en/data-types.html
+         * @see https://dev.mysql.com/doc/refman/8.0/en/data-types.html
          */
         this.supportedDataTypes = [
+            // numeric types
+            "bit",
             "int",
+            "integer",
             "tinyint",
             "smallint",
             "mediumint",
             "bigint",
             "float",
             "double",
-            "dec",
+            "double precision",
+            "real",
             "decimal",
+            "dec",
             "numeric",
+            "fixed",
+            "bool",
+            "boolean",
+            // date and time types
             "date",
             "datetime",
             "timestamp",
             "time",
             "year",
+            // string types
             "char",
+            "nchar",
+            "national char",
             "varchar",
             "nvarchar",
+            "national varchar",
             "blob",
             "text",
             "tinyblob",
@@ -91,9 +70,11 @@ var MysqlDriver = /** @class */ (function () {
             "longblob",
             "longtext",
             "enum",
-            "json",
             "binary",
             "varbinary",
+            // json data type
+            "json",
+            // spatial data types
             "geometry",
             "point",
             "linestring",
@@ -130,10 +111,12 @@ var MysqlDriver = /** @class */ (function () {
          * Gets list of column data types that support length by a driver.
          */
         this.withWidthColumnTypes = [
+            "bit",
             "tinyint",
             "smallint",
             "mediumint",
             "int",
+            "integer",
             "bigint"
         ];
         /**
@@ -141,8 +124,13 @@ var MysqlDriver = /** @class */ (function () {
          */
         this.withPrecisionColumnTypes = [
             "decimal",
+            "dec",
+            "numeric",
+            "fixed",
             "float",
             "double",
+            "double precision",
+            "real",
             "time",
             "datetime",
             "timestamp"
@@ -152,21 +140,32 @@ var MysqlDriver = /** @class */ (function () {
          */
         this.withScaleColumnTypes = [
             "decimal",
+            "dec",
+            "numeric",
+            "fixed",
             "float",
             "double",
+            "double precision",
+            "real"
         ];
         /**
          * Gets list of column data types that supports UNSIGNED and ZEROFILL attributes.
          */
         this.unsignedAndZerofillTypes = [
             "int",
+            "integer",
             "smallint",
             "tinyint",
             "mediumint",
             "bigint",
             "decimal",
+            "dec",
+            "numeric",
+            "fixed",
             "float",
-            "double"
+            "double",
+            "double precision",
+            "real"
         ];
         /**
          * ORM has special columns and we need to know what database column types should be for those columns.
@@ -197,18 +196,33 @@ var MysqlDriver = /** @class */ (function () {
          */
         this.dataTypeDefaults = {
             "varchar": { length: 255 },
+            "nvarchar": { length: 255 },
+            "national varchar": { length: 255 },
             "char": { length: 1 },
             "binary": { length: 1 },
             "varbinary": { length: 255 },
             "decimal": { precision: 10, scale: 0 },
+            "dec": { precision: 10, scale: 0 },
+            "numeric": { precision: 10, scale: 0 },
+            "fixed": { precision: 10, scale: 0 },
             "float": { precision: 12 },
             "double": { precision: 22 },
+            "time": { precision: 0 },
+            "datetime": { precision: 0 },
+            "timestamp": { precision: 0 },
+            "bit": { width: 1 },
             "int": { width: 11 },
+            "integer": { width: 11 },
             "tinyint": { width: 4 },
             "smallint": { width: 6 },
             "mediumint": { width: 9 },
             "bigint": { width: 20 }
         };
+        /**
+         * Max length allowed by MySQL for aliases.
+         * @see https://dev.mysql.com/doc/refman/5.5/en/identifiers.html
+         */
+        this.maxAliasLength = 63;
         this.connection = connection;
         this.options = connection.options;
         this.isReplicated = this.options.replication ? true : false;
@@ -233,10 +247,10 @@ var MysqlDriver = /** @class */ (function () {
      * Performs connection to the database.
      */
     MysqlDriver.prototype.connect = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!this.options.replication) return [3 /*break*/, 1];
@@ -273,9 +287,9 @@ var MysqlDriver = /** @class */ (function () {
      * Closes connection with the database.
      */
     MysqlDriver.prototype.disconnect = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 if (!this.poolCluster && !this.pool)
                     return [2 /*return*/, Promise.reject(new ConnectionIsNotSetError("mysql"))];
                 if (this.poolCluster) {
@@ -380,6 +394,9 @@ var MysqlDriver = /** @class */ (function () {
         else if (columnMetadata.type === "simple-json") {
             return DateUtils.simpleJsonToString(value);
         }
+        else if (columnMetadata.type === "enum" || columnMetadata.type === "simple-enum") {
+            return "" + value;
+        }
         return value;
     };
     /**
@@ -387,8 +404,8 @@ var MysqlDriver = /** @class */ (function () {
      */
     MysqlDriver.prototype.prepareHydratedValue = function (value, columnMetadata) {
         if (value === null || value === undefined)
-            return value;
-        if (columnMetadata.type === Boolean) {
+            return columnMetadata.transformer ? columnMetadata.transformer.from(value) : value;
+        if (columnMetadata.type === Boolean || columnMetadata.type === "bool" || columnMetadata.type === "boolean") {
             value = value ? true : false;
         }
         else if (columnMetadata.type === "datetime" || columnMetadata.type === Date) {
@@ -409,6 +426,14 @@ var MysqlDriver = /** @class */ (function () {
         else if (columnMetadata.type === "simple-json") {
             value = DateUtils.stringToSimpleJson(value);
         }
+        else if ((columnMetadata.type === "enum"
+            || columnMetadata.type === "simple-enum")
+            && columnMetadata.enum
+            && !isNaN(value)
+            && columnMetadata.enum.indexOf(parseInt(value)) >= 0) {
+            // convert to number if that exists in poosible enum options
+            value = parseInt(value);
+        }
         if (columnMetadata.transformer)
             value = columnMetadata.transformer.from(value);
         return value;
@@ -420,7 +445,7 @@ var MysqlDriver = /** @class */ (function () {
         if (column.type === Number || column.type === "integer") {
             return "int";
         }
-        else if (column.type === String || column.type === "nvarchar") {
+        else if (column.type === String) {
             return "varchar";
         }
         else if (column.type === Date) {
@@ -432,14 +457,29 @@ var MysqlDriver = /** @class */ (function () {
         else if (column.type === Boolean) {
             return "tinyint";
         }
-        else if (column.type === "numeric" || column.type === "dec") {
-            return "decimal";
-        }
         else if (column.type === "uuid") {
             return "varchar";
         }
         else if (column.type === "simple-array" || column.type === "simple-json") {
             return "text";
+        }
+        else if (column.type === "simple-enum") {
+            return "enum";
+        }
+        else if (column.type === "double precision" || column.type === "real") {
+            return "double";
+        }
+        else if (column.type === "dec" || column.type === "numeric" || column.type === "fixed") {
+            return "decimal";
+        }
+        else if (column.type === "bool" || column.type === "boolean") {
+            return "tinyint";
+        }
+        else if (column.type === "nvarchar" || column.type === "national varchar") {
+            return "varchar";
+        }
+        else if (column.type === "nchar" || column.type === "national char") {
+            return "char";
         }
         else {
             return column.type || "";
@@ -450,6 +490,11 @@ var MysqlDriver = /** @class */ (function () {
      */
     MysqlDriver.prototype.normalizeDefault = function (columnMetadata) {
         var defaultValue = columnMetadata.default;
+        if ((columnMetadata.type === "enum" ||
+            columnMetadata.type === "simple-enum") &&
+            defaultValue !== undefined) {
+            return "'" + defaultValue + "'";
+        }
         if (typeof defaultValue === "number") {
             return "" + defaultValue;
         }
@@ -461,6 +506,9 @@ var MysqlDriver = /** @class */ (function () {
         }
         else if (typeof defaultValue === "string") {
             return "'" + defaultValue + "'";
+        }
+        else if (defaultValue === null) {
+            return "null";
         }
         else {
             return defaultValue;
@@ -478,13 +526,17 @@ var MysqlDriver = /** @class */ (function () {
     MysqlDriver.prototype.getColumnLength = function (column) {
         if (column.length)
             return column.length.toString();
+        /**
+         * fix https://github.com/typeorm/typeorm/issues/1139
+         */
+        if (column.generationStrategy === "uuid")
+            return "36";
         switch (column.type) {
             case String:
             case "varchar":
             case "nvarchar":
+            case "national varchar":
                 return "255";
-            case "uuid":
-                return "36";
             case "varbinary":
                 return "255";
             default:
@@ -596,10 +648,15 @@ var MysqlDriver = /** @class */ (function () {
             // console.log("isNullable:", tableColumn.isNullable, columnMetadata.isNullable);
             // console.log("isUnique:", tableColumn.isUnique, this.normalizeIsUnique(columnMetadata));
             // console.log("isGenerated:", tableColumn.isGenerated, columnMetadata.isGenerated);
+            // console.log((columnMetadata.generationStrategy !== "uuid" && tableColumn.isGenerated !== columnMetadata.isGenerated));
             // console.log("==========================================");
+            var columnMetadataLength = columnMetadata.length;
+            if (!columnMetadataLength && columnMetadata.generationStrategy === "uuid") { // fixing #3374
+                columnMetadataLength = _this.getColumnLength(columnMetadata);
+            }
             return tableColumn.name !== columnMetadata.databaseName
                 || tableColumn.type !== _this.normalizeType(columnMetadata)
-                || tableColumn.length !== columnMetadata.length
+                || tableColumn.length !== columnMetadataLength
                 || tableColumn.width !== columnMetadata.width
                 || tableColumn.precision !== columnMetadata.precision
                 || tableColumn.scale !== columnMetadata.scale
@@ -688,7 +745,9 @@ var MysqlDriver = /** @class */ (function () {
             database: credentials.database,
             port: credentials.port,
             ssl: options.ssl
-        }, options.extra || {});
+        }, options.acquireTimeout === undefined
+            ? {}
+            : { acquireTimeout: options.acquireTimeout }, options.extra || {});
     };
     /**
      * Creates a new connection pool for a given database credentials.

@@ -24,7 +24,7 @@ var TableUtils = /** @class */ (function () {
             isPrimary: columnMetadata.isPrimary,
             isUnique: driver.normalizeIsUnique(columnMetadata),
             isArray: columnMetadata.isArray || false,
-            enum: columnMetadata.enum,
+            enum: columnMetadata.enum ? columnMetadata.enum.map(function (val) { return val + ""; }) : columnMetadata.enum,
             spatialFeatureType: columnMetadata.spatialFeatureType,
             srid: columnMetadata.srid
         };

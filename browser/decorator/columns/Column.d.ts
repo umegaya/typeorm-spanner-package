@@ -52,6 +52,11 @@ export declare function Column(type: "enum", options?: ColumnCommonOptions & Col
  * Column decorator is used to mark a specific class property as a table column.
  * Only properties decorated with this decorator will be persisted to the database when entity be saved.
  */
+export declare function Column(type: "simple-enum", options?: ColumnCommonOptions & ColumnEnumOptions): Function;
+/**
+ * Column decorator is used to mark a specific class property as a table column.
+ * Only properties decorated with this decorator will be persisted to the database when entity be saved.
+ */
 export declare function Column(type: "hstore", options?: ColumnCommonOptions & ColumnHstoreOptions): Function;
 /**
  * Column decorator is used to mark a specific class property as a table column.

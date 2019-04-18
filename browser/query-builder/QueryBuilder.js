@@ -1,58 +1,4 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { QueryExpressionMap } from "./QueryExpressionMap";
 import { Brackets } from "./Brackets";
 import { EntityMetadata } from "../metadata/EntityMetadata";
@@ -61,6 +7,7 @@ import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver";
 import { OracleDriver } from "../driver/oracle/OracleDriver";
 import { EntitySchema } from "../";
 import { FindOperator } from "../find-options/FindOperator";
+import { In } from "../find-options/operator/In";
 // todo: completely cover query builder with tests
 // todo: entityOrProperty can be target name. implement proper behaviour if it is.
 // todo: check in persistment if id exist on object and throw exception (can be in partial selection?)
@@ -230,6 +177,12 @@ var QueryBuilder = /** @class */ (function () {
      */
     QueryBuilder.prototype.setParameters = function (parameters) {
         var _this = this;
+        // remove function parameters
+        Object.keys(parameters).forEach(function (key) {
+            if (parameters[key] instanceof Function) {
+                throw new Error("Function parameter isn't supported in the parameters. Please check \"" + key + "\" parameter.");
+            }
+        });
         // set parent query builder parameters as well in sub-query mode
         if (this.expressionMap.parentQueryBuilder)
             this.expressionMap.parentQueryBuilder.setParameters(parameters);
@@ -271,7 +224,7 @@ var QueryBuilder = /** @class */ (function () {
      * Prints sql to stdout using console.log.
      */
     QueryBuilder.prototype.printSql = function () {
-        var _a = __read(this.getQueryAndParameters(), 2), query = _a[0], parameters = _a[1];
+        var _a = tslib_1.__read(this.getQueryAndParameters(), 2), query = _a[0], parameters = _a[1];
         this.connection.logger.logQuery(query, parameters);
         return this;
     };
@@ -295,9 +248,9 @@ var QueryBuilder = /** @class */ (function () {
      * Executes sql generated by query builder and returns raw database results.
      */
     QueryBuilder.prototype.execute = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queryRunner;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         queryRunner = this.obtainQueryRunner();
@@ -393,31 +346,7 @@ var QueryBuilder = /** @class */ (function () {
      * schema name, otherwise returns escaped table name.
      */
     QueryBuilder.prototype.getTableName = function (tablePath) {
-        // let tablePath = tableName;
-        // const driver = this.connection.driver;
-        // const schema = (driver.options as SqlServerConnectionOptions|PostgresConnectionOptions).schema;
-        // const metadata = this.connection.hasMetadata(tableName) ? this.connection.getMetadata(tableName) : undefined;
         var _this = this;
-        /*if (driver instanceof SqlServerDriver || driver instanceof PostgresDriver || driver instanceof MysqlDriver) {
-            if (metadata) {
-                if (metadata.schema) {
-                    tablePath = `${metadata.schema}.${tableName}`;
-                } else if (schema) {
-                    tablePath = `${schema}.${tableName}`;
-                }
-
-                if (metadata.database && !(driver instanceof PostgresDriver)) {
-                    if (!schema && !metadata.schema && driver instanceof SqlServerDriver) {
-                        tablePath = `${metadata.database}..${tablePath}`;
-                    } else {
-                        tablePath = `${metadata.database}.${tablePath}`;
-                    }
-                }
-
-            } else if (schema) {
-                tablePath = `${schema!}.${tableName}`;
-            }
-        }*/
         return tablePath.split(".")
             .map(function (i) {
             // this condition need because in SQL Server driver when custom database name was specified and schema name was not, we got `dbName..tableName` string, and doesn't need to escape middle empty string
@@ -488,7 +417,7 @@ var QueryBuilder = /** @class */ (function () {
                 statement = statement.replace(new RegExp(expression2, "gm"), "$1" + replacementAliasNamePrefix + _this.escape(column.databaseName) + "$2");
             });
             alias.metadata.relations.forEach(function (relation) {
-                __spread(relation.joinColumns, relation.inverseJoinColumns).forEach(function (joinColumn) {
+                tslib_1.__spread(relation.joinColumns, relation.inverseJoinColumns).forEach(function (joinColumn) {
                     var expression = "([ =\(]|^.{0})" + replaceAliasNamePrefix + relation.propertyPath + "\\." + joinColumn.referencedColumn.propertyPath + "([ =\)\,]|.{0}$)";
                     statement = statement.replace(new RegExp(expression, "gm"), "$1" + replacementAliasNamePrefix + _this.escape(joinColumn.databaseName) + "$2"); // todo: fix relation.joinColumns[0], what if multiple columns
                 });
@@ -533,7 +462,7 @@ var QueryBuilder = /** @class */ (function () {
         if (typeof this.expressionMap.returning !== "string" &&
             this.expressionMap.extraReturningColumns.length > 0 &&
             driver.isReturningSqlSupported()) {
-            columns.push.apply(columns, __spread(this.expressionMap.extraReturningColumns.filter(function (column) {
+            columns.push.apply(columns, tslib_1.__spread(this.expressionMap.extraReturningColumns.filter(function (column) {
                 return columns.indexOf(column) === -1;
             })));
         }
@@ -576,7 +505,7 @@ var QueryBuilder = /** @class */ (function () {
         if (this.expressionMap.returning instanceof Array) {
             this.expressionMap.returning.forEach(function (columnName) {
                 if (_this.expressionMap.mainAlias.hasMetadata) {
-                    columns.push.apply(columns, __spread(_this.expressionMap.mainAlias.metadata.findColumnsWithPropertyPath(columnName)));
+                    columns.push.apply(columns, tslib_1.__spread(_this.expressionMap.mainAlias.metadata.findColumnsWithPropertyPath(columnName)));
                 }
             });
         }
@@ -603,14 +532,26 @@ var QueryBuilder = /** @class */ (function () {
      */
     QueryBuilder.prototype.createWhereIdsExpression = function (ids) {
         var _this = this;
-        ids = ids instanceof Array ? ids : [ids];
+        var _a;
         var metadata = this.expressionMap.mainAlias.metadata;
+        var normalized = (Array.isArray(ids) ? ids : [ids]).map(function (id) { return metadata.ensureEntityIdMap(id); });
+        // using in(...ids) for single primary key entities
+        if (!metadata.hasMultiplePrimaryKeys
+            && metadata.embeddeds.length === 0) {
+            var primaryColumn_1 = metadata.primaryColumns[0];
+            // getEntityValue will try to transform `In`, it is a bug
+            // todo: remove this transformer check after #2390 is fixed
+            if (!primaryColumn_1.transformer) {
+                return this.computeWhereParameter((_a = {},
+                    _a[primaryColumn_1.propertyName] = In(normalized.map(function (id) { return primaryColumn_1.getEntityValue(id, false); })),
+                    _a));
+            }
+        }
         // create shortcuts for better readability
         var alias = this.expressionMap.aliasNamePrefixingEnabled ? this.escape(this.expressionMap.mainAlias.name) + "." : "";
         var parameterIndex = Object.keys(this.expressionMap.nativeParameters).length;
         if (metadata.primaryColumns.length > 1) {
-            var whereStrings = ids.map(function (id, index) {
-                id = metadata.ensureEntityIdMap(id);
+            var whereStrings = normalized.map(function (id, index) {
                 var whereSubStrings = [];
                 metadata.primaryColumns.forEach(function (primaryColumn, secondIndex) {
                     var parameterName = "id_" + index + "_" + secondIndex;
@@ -621,20 +562,17 @@ var QueryBuilder = /** @class */ (function () {
                 });
                 return whereSubStrings.join(" AND ");
             });
-            return whereStrings.length > 1 ? whereStrings.map(function (whereString) { return "(" + whereString + ")"; }).join(" OR ") : whereStrings[0];
+            return whereStrings.length > 1 ? "(" + whereStrings.map(function (whereString) { return "(" + whereString + ")"; }).join(" OR ") + ")" : whereStrings[0];
         }
         else {
-            var _a = __read(metadata.primaryColumns, 1), primaryColumn_1 = _a[0];
-            var transformedIds = ids.map(function (id) {
-                return primaryColumn_1.getEntityValue(metadata.ensureEntityIdMap(id), true);
-            });
-            var areAllNumbers = transformedIds.every(function (id) { return typeof id === "number"; });
+            var _b = tslib_1.__read(metadata.primaryColumns, 1), primaryColumn_2 = _b[0];
+            var areAllNumbers = normalized.every(function (id) { return typeof id === "number"; });
             if (areAllNumbers) {
-                return alias + this.escape(primaryColumn_1.databaseName) + " IN (" + transformedIds.join(", ") + ")";
+                return alias + this.escape(primaryColumn_2.databaseName) + " IN (" + normalized.join(", ") + ")";
             }
             else {
-                this.expressionMap.parameters["qb_ids"] = transformedIds;
-                return alias + this.escape(primaryColumn_1.databaseName) + " IN (:...qb_ids)";
+                this.expressionMap.parameters["qb_ids"] = normalized.map(function (val) { return primaryColumn_2.getEntityValue(val, true); });
+                return alias + this.escape(primaryColumn_2.databaseName) + " IN (:...qb_ids)";
             }
         }
     };

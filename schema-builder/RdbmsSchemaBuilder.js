@@ -1,49 +1,18 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var CockroachDriver_1 = require("../driver/cockroachdb/CockroachDriver");
 var Table_1 = require("./table/Table");
 var TableColumn_1 = require("./table/TableColumn");
 var TableForeignKey_1 = require("./table/TableForeignKey");
 var TableIndex_1 = require("./table/TableIndex");
 var PromiseUtils_1 = require("../util/PromiseUtils");
 var TableUtils_1 = require("./util/TableUtils");
+var PostgresDriver_1 = require("../driver/postgres/PostgresDriver");
 var MysqlDriver_1 = require("../driver/mysql/MysqlDriver");
 var TableUnique_1 = require("./table/TableUnique");
 var TableCheck_1 = require("./table/TableCheck");
+var TableExclusion_1 = require("./table/TableExclusion");
 /**
  * Creates complete tables schemas in the database based on the entity metadatas.
  *
@@ -72,18 +41,19 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Creates complete schemas for the given entity metadatas.
      */
     RdbmsSchemaBuilder.prototype.build = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tablePaths, error_1, rollbackError_1;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.queryRunner = this.connection.createQueryRunner("master");
+                        if (!!(this.connection.driver instanceof CockroachDriver_1.CockroachDriver)) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.queryRunner.startTransaction()];
                     case 1:
                         _a.sent();
                         _a.label = 2;
                     case 2:
-                        _a.trys.push([2, 8, 13, 15]);
+                        _a.trys.push([2, 9, 15, 17]);
                         tablePaths = this.entityToSyncMetadatas.map(function (metadata) { return metadata.tablePath; });
                         return [4 /*yield*/, this.queryRunner.getTables(tablePaths)];
                     case 3:
@@ -96,28 +66,33 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
                     case 5:
                         _a.sent();
                         _a.label = 6;
-                    case 6: return [4 /*yield*/, this.queryRunner.commitTransaction()];
+                    case 6:
+                        if (!!(this.connection.driver instanceof CockroachDriver_1.CockroachDriver)) return [3 /*break*/, 8];
+                        return [4 /*yield*/, this.queryRunner.commitTransaction()];
                     case 7:
                         _a.sent();
-                        return [3 /*break*/, 15];
-                    case 8:
-                        error_1 = _a.sent();
-                        _a.label = 9;
+                        _a.label = 8;
+                    case 8: return [3 /*break*/, 17];
                     case 9:
-                        _a.trys.push([9, 11, , 12]);
-                        return [4 /*yield*/, this.queryRunner.rollbackTransaction()];
+                        error_1 = _a.sent();
+                        _a.label = 10;
                     case 10:
-                        _a.sent();
-                        return [3 /*break*/, 12];
+                        _a.trys.push([10, 13, , 14]);
+                        if (!!(this.connection.driver instanceof CockroachDriver_1.CockroachDriver)) return [3 /*break*/, 12];
+                        return [4 /*yield*/, this.queryRunner.rollbackTransaction()];
                     case 11:
+                        _a.sent();
+                        _a.label = 12;
+                    case 12: return [3 /*break*/, 14];
+                    case 13:
                         rollbackError_1 = _a.sent();
-                        return [3 /*break*/, 12];
-                    case 12: throw error_1;
-                    case 13: return [4 /*yield*/, this.queryRunner.release()];
-                    case 14:
+                        return [3 /*break*/, 14];
+                    case 14: throw error_1;
+                    case 15: return [4 /*yield*/, this.queryRunner.release()];
+                    case 16:
                         _a.sent();
                         return [7 /*endfinally*/];
-                    case 15: return [2 /*return*/];
+                    case 17: return [2 /*return*/];
                 }
             });
         });
@@ -126,9 +101,9 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Returns sql queries to be executed by schema builder.
      */
     RdbmsSchemaBuilder.prototype.log = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tablePaths;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.queryRunner = this.connection.createQueryRunner("master");
@@ -181,8 +156,8 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Order of operations matter here.
      */
     RdbmsSchemaBuilder.prototype.executeSchemaSyncOperationsInProperOrder = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.dropOldForeignKeys()];
                     case 1:
@@ -193,40 +168,46 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
                         return [4 /*yield*/, this.dropOldChecks()];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, this.dropCompositeUniqueConstraints()];
+                        return [4 /*yield*/, this.dropOldExclusions()];
                     case 4:
+                        _a.sent();
+                        return [4 /*yield*/, this.dropCompositeUniqueConstraints()];
+                    case 5:
                         _a.sent();
                         // await this.renameTables();
                         return [4 /*yield*/, this.renameColumns()];
-                    case 5:
+                    case 6:
                         // await this.renameTables();
                         _a.sent();
                         return [4 /*yield*/, this.createNewTables()];
-                    case 6:
-                        _a.sent();
-                        return [4 /*yield*/, this.dropRemovedColumns()];
                     case 7:
                         _a.sent();
-                        return [4 /*yield*/, this.addNewColumns()];
+                        return [4 /*yield*/, this.dropRemovedColumns()];
                     case 8:
                         _a.sent();
-                        return [4 /*yield*/, this.updatePrimaryKeys()];
+                        return [4 /*yield*/, this.addNewColumns()];
                     case 9:
                         _a.sent();
-                        return [4 /*yield*/, this.updateExistColumns()];
+                        return [4 /*yield*/, this.updatePrimaryKeys()];
                     case 10:
                         _a.sent();
-                        return [4 /*yield*/, this.createNewIndices()];
+                        return [4 /*yield*/, this.updateExistColumns()];
                     case 11:
                         _a.sent();
-                        return [4 /*yield*/, this.createNewChecks()];
+                        return [4 /*yield*/, this.createNewIndices()];
                     case 12:
                         _a.sent();
-                        return [4 /*yield*/, this.createCompositeUniqueConstraints()];
+                        return [4 /*yield*/, this.createNewChecks()];
                     case 13:
                         _a.sent();
-                        return [4 /*yield*/, this.createForeignKeys()];
+                        return [4 /*yield*/, this.createNewExclusions()];
                     case 14:
+                        _a.sent();
+                        return [4 /*yield*/, this.createCompositeUniqueConstraints()];
+                    case 15:
+                        _a.sent();
+                        return [4 /*yield*/, this.createForeignKeys()];
+                    case 16:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -237,13 +218,13 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Drops all (old) foreign keys that exist in the tables, but do not exist in the entity metadata.
      */
     RdbmsSchemaBuilder.prototype.dropOldForeignKeys = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, tableForeignKeysToDrop;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -252,8 +233,8 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
                                         tableForeignKeysToDrop = table.foreignKeys.filter(function (tableForeignKey) {
                                             var metadataFK = metadata.foreignKeys.find(function (metadataForeignKey) { return metadataForeignKey.name === tableForeignKey.name; });
                                             return !metadataFK
-                                                || metadataFK.onDelete && metadataFK.onDelete !== tableForeignKey.onDelete
-                                                || metadataFK.onUpdate && metadataFK.onUpdate !== tableForeignKey.onUpdate;
+                                                || (metadataFK.onDelete && metadataFK.onDelete !== tableForeignKey.onDelete)
+                                                || (metadataFK.onUpdate && metadataFK.onUpdate !== tableForeignKey.onUpdate);
                                         });
                                         if (tableForeignKeysToDrop.length === 0)
                                             return [2 /*return*/];
@@ -278,12 +259,12 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Rename tables
      */
     RdbmsSchemaBuilder.prototype.renameTables = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            return tslib_1.__generator(this, function (_a) {
                                 return [2 /*return*/];
                             });
                         }); })];
@@ -300,14 +281,14 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Changes only column name. If something besides name was changed, these changes will be ignored.
      */
     RdbmsSchemaBuilder.prototype.renameColumns = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, renamedMetadataColumns, renamedTableColumns, renamedColumn;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -353,14 +334,14 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
         });
     };
     RdbmsSchemaBuilder.prototype.dropOldIndices = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, dropQueries;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -384,8 +365,8 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
                                             }
                                             return true;
                                         })
-                                            .map(function (tableIndex) { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
+                                            .map(function (tableIndex) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                            return tslib_1.__generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
                                                         this.connection.logger.logSchemaBuild("dropping an index: \"" + tableIndex.name + "\" from table " + table.name);
@@ -411,17 +392,17 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
         });
     };
     RdbmsSchemaBuilder.prototype.dropOldChecks = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         // Mysql does not support check constraints
                         if (this.connection.driver instanceof MysqlDriver_1.MysqlDriver)
                             return [2 /*return*/];
-                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var table, oldChecks;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -448,13 +429,13 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
         });
     };
     RdbmsSchemaBuilder.prototype.dropCompositeUniqueConstraints = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, compositeUniques;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -480,20 +461,57 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
             });
         });
     };
+    RdbmsSchemaBuilder.prototype.dropOldExclusions = function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        // Only PostgreSQL supports exclusion constraints
+                        if (!(this.connection.driver instanceof PostgresDriver_1.PostgresDriver))
+                            return [2 /*return*/];
+                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var table, oldExclusions;
+                                return tslib_1.__generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
+                                            if (!table)
+                                                return [2 /*return*/];
+                                            oldExclusions = table.exclusions.filter(function (tableExclusion) {
+                                                return !metadata.exclusions.find(function (exclusionMetadata) { return exclusionMetadata.name === tableExclusion.name; });
+                                            });
+                                            if (oldExclusions.length === 0)
+                                                return [2 /*return*/];
+                                            this.connection.logger.logSchemaBuild("dropping old exclusion constraint: " + oldExclusions.map(function (exclusion) { return "\"" + exclusion.name + "\""; }).join(", ") + " from table \"" + table.name + "\"");
+                                            return [4 /*yield*/, this.queryRunner.dropExclusionConstraints(table, oldExclusions)];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     /**
      * Creates tables that do not exist in the database yet.
      * New tables are created without foreign and primary keys.
      * Primary key only can be created in conclusion with auto generated column.
      */
     RdbmsSchemaBuilder.prototype.createNewTables = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var existTable, table;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         existTable = this.queryRunner.loadedTables.find(function (table) {
@@ -526,13 +544,13 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * We drop their keys too, since it should be safe.
      */
     RdbmsSchemaBuilder.prototype.dropRemovedColumns = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, droppedTableColumns;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -565,13 +583,13 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Columns are created without keys.
      */
     RdbmsSchemaBuilder.prototype.addNewColumns = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, newColumnMetadatas, newTableColumnOptions, newTableColumns;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -605,14 +623,14 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Updates composite primary keys.
      */
     RdbmsSchemaBuilder.prototype.updatePrimaryKeys = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, primaryMetadataColumns, primaryTableColumns, changedPrimaryColumns;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -644,14 +662,14 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Still don't create keys. Also we don't touch foreign keys of the changed columns.
      */
     RdbmsSchemaBuilder.prototype.updateExistColumns = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, changedColumns, newAndOldTableColumns;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -706,13 +724,13 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Creates composite indices which are missing in db yet.
      */
     RdbmsSchemaBuilder.prototype.createNewIndices = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, newIndices;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -739,17 +757,17 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
         });
     };
     RdbmsSchemaBuilder.prototype.createNewChecks = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         // Mysql does not support check constraints
                         if (this.connection.driver instanceof MysqlDriver_1.MysqlDriver)
                             return [2 /*return*/];
-                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var table, newChecks;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -779,13 +797,13 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Creates composite uniques which are missing in db yet.
      */
     RdbmsSchemaBuilder.prototype.createCompositeUniqueConstraints = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, compositeUniques;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -812,16 +830,56 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
         });
     };
     /**
+     * Creates exclusions which are missing in db yet.
+     */
+    RdbmsSchemaBuilder.prototype.createNewExclusions = function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        // Only PostgreSQL supports exclusion constraints
+                        if (!(this.connection.driver instanceof PostgresDriver_1.PostgresDriver))
+                            return [2 /*return*/];
+                        return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var table, newExclusions;
+                                return tslib_1.__generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
+                                            if (!table)
+                                                return [2 /*return*/];
+                                            newExclusions = metadata.exclusions
+                                                .filter(function (exclusionMetadata) { return !table.exclusions.find(function (tableExclusion) { return tableExclusion.name === exclusionMetadata.name; }); })
+                                                .map(function (exclusionMetadata) { return TableExclusion_1.TableExclusion.create(exclusionMetadata); });
+                                            if (newExclusions.length === 0)
+                                                return [2 /*return*/];
+                                            this.connection.logger.logSchemaBuild("adding new exclusion constraints: " + newExclusions.map(function (exclusion) { return "\"" + exclusion.name + "\""; }).join(", ") + " in table \"" + table.name + "\"");
+                                            return [4 /*yield*/, this.queryRunner.createExclusionConstraints(table, newExclusions)];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
      * Creates foreign keys which does not exist in the table yet.
      */
     RdbmsSchemaBuilder.prototype.createForeignKeys = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return __awaiter(_this, void 0, void 0, function () {
+                    case 0: return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(this.entityToSyncMetadatas, function (metadata) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var table, newKeys, dbForeignKeys;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === metadata.tablePath; });
@@ -852,10 +910,10 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Drops all foreign keys where given column of the given table is being used.
      */
     RdbmsSchemaBuilder.prototype.dropColumnReferencedForeignKeys = function (tablePath, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, tablesWithFK, columnForeignKey, clonedTable;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === tablePath; });
@@ -897,9 +955,9 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Drops all composite indices, related to given column.
      */
     RdbmsSchemaBuilder.prototype.dropColumnCompositeIndices = function (tablePath, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, relatedIndices;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === tablePath; });
@@ -921,9 +979,9 @@ var RdbmsSchemaBuilder = /** @class */ (function () {
      * Drops all composite uniques, related to given column.
      */
     RdbmsSchemaBuilder.prototype.dropColumnCompositeUniques = function (tablePath, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, relatedUniques;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         table = this.queryRunner.loadedTables.find(function (table) { return table.name === tablePath; });

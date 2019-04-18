@@ -2,6 +2,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
+var yargs = require("yargs");
 var SchemaSyncCommand_1 = require("./commands/SchemaSyncCommand");
 var SchemaDropCommand_1 = require("./commands/SchemaDropCommand");
 var QueryCommand_1 = require("./commands/QueryCommand");
@@ -15,7 +16,7 @@ var MigrationGenerateCommand_1 = require("./commands/MigrationGenerateCommand");
 var VersionCommand_1 = require("./commands/VersionCommand");
 var InitCommand_1 = require("./commands/InitCommand");
 var CacheClearCommand_1 = require("./commands/CacheClearCommand");
-require("yargs")
+yargs
     .usage("Usage: $0 <command> [options]")
     .command(new SchemaSyncCommand_1.SchemaSyncCommand())
     .command(new SchemaLogCommand_1.SchemaLogCommand())
@@ -30,6 +31,7 @@ require("yargs")
     .command(new VersionCommand_1.VersionCommand())
     .command(new CacheClearCommand_1.CacheClearCommand())
     .command(new InitCommand_1.InitCommand())
+    .recommendCommands()
     .demandCommand(1)
     .strict()
     .alias("v", "version")

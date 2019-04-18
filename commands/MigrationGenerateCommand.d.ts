@@ -1,11 +1,21 @@
+import * as yargs from "yargs";
 /**
  * Generates a new migration file with sql needs to be executed to update schema.
  */
-export declare class MigrationGenerateCommand {
+export declare class MigrationGenerateCommand implements yargs.CommandModule {
     command: string;
     describe: string;
-    builder(yargs: any): any;
-    handler(argv: any): Promise<void>;
+    aliases: string;
+    builder(args: yargs.Argv): yargs.Argv<{
+        c: string;
+    } & {
+        n: unknown;
+    } & {
+        d: unknown;
+    } & {
+        f: string;
+    }>;
+    handler(args: yargs.Arguments): Promise<void>;
     /**
      * Gets contents of the migration file.
      */

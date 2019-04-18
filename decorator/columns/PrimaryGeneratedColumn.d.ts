@@ -16,3 +16,7 @@ export declare function PrimaryGeneratedColumn(strategy: "increment", options?: 
  * Column decorator is used to mark a specific class property as a table column.
  */
 export declare function PrimaryGeneratedColumn(strategy: "uuid", options?: PrimaryGeneratedColumnUUIDOptions): Function;
+/**
+ * Column decorator is used to mark a specific class property as a table column.
+ */
+export declare function PrimaryGeneratedColumn(strategy: "rowid", options?: PrimaryGeneratedColumnUUIDOptions): Function;

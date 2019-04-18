@@ -3,9 +3,9 @@ import { ObjectType } from "../common/ObjectType";
 import { Connection } from "../connection/Connection";
 import { ObjectID } from "../driver/mongodb/typings";
 import { IsolationLevel } from "../driver/types/IsolationLevel";
+import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity";
 import { FindExtraOptions, FindOptions, FindOptionsWhere } from "../find-options/FindOptions";
 import { EntitySchema } from "../index";
-import { QueryPartialEntity } from "../query-builder/QueryPartialEntity";
 import { DeleteResult } from "../query-builder/result/DeleteResult";
 import { InsertResult } from "../query-builder/result/InsertResult";
 import { UpdateResult } from "../query-builder/result/UpdateResult";
@@ -17,7 +17,7 @@ import { RemoveOptions } from "../repository/RemoveOptions";
 import { Repository } from "../repository/Repository";
 import { SaveOptions } from "../repository/SaveOptions";
 import { TreeRepository } from "../repository/TreeRepository";
-import Observable = require("zen-observable");
+import * as Observable from "zen-observable";
 /**
  * Entity manager supposed to work with any entity, automatically find its repository and call its methods,
  * whatever entity type are you passing.
@@ -45,8 +45,12 @@ export declare class EntityManager {
      * Wraps given function execution (and all operations made there) in a transaction.
      * All database operations must be executed using provided entity manager.
      */
-    transaction<T>(runInTransaction: (entityManger: EntityManager) => Promise<T>): Promise<T>;
-    transaction<T>(isolationLevel: IsolationLevel, runInTransaction: (entityManger: EntityManager) => Promise<T>): Promise<T>;
+    transaction<T>(runInTransaction: (entityManager: EntityManager) => Promise<T>): Promise<T>;
+    /**
+     * Wraps given function execution (and all operations made there) in a transaction.
+     * All database operations must be executed using provided entity manager.
+     */
+    transaction<T>(isolationLevel: IsolationLevel, runInTransaction: (entityManager: EntityManager) => Promise<T>): Promise<T>;
     /**
      * Executes raw SQL query and returns raw database results.
      */
@@ -54,7 +58,15 @@ export declare class EntityManager {
     /**
      * Creates a new query builder that can be used to build a sql query.
      */
-    createQueryBuilder<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | Function | string, alias: string, queryRunner?: QueryRunner): SelectQueryBuilder<Entity>;
+    createQueryBuilder<Entity>(entityClass: ObjectType<Entity>, alias: string, queryRunner?: QueryRunner): SelectQueryBuilder<Entity>;
+    /**
+     * Creates a new query builder that can be used to build a sql query.
+     */
+    createQueryBuilder<Entity>(entityClass: EntitySchema<Entity>, alias: string, queryRunner?: QueryRunner): SelectQueryBuilder<Entity>;
+    /**
+     * Creates a new query builder that can be used to build a sql query.
+     */
+    createQueryBuilder<Entity>(entityName: string, alias: string, queryRunner?: QueryRunner): SelectQueryBuilder<Entity>;
     /**
      * Creates a new query builder that can be used to build a sql query.
      */
@@ -76,30 +88,68 @@ export declare class EntityManager {
      */
     getId(target: Function | string, entity: any): any;
     /**
-     * Creates a new entity instance.
-     */
-    create<Entity>(entityClass: ObjectType<Entity>): Entity;
-    /**
      * Creates a new entity instance and copies all entity properties from this object into a new entity.
      * Note that it copies only properties that present in entity schema.
      */
-    create<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, plainObject: DeepPartial<Entity>): Entity;
+    create<Entity>(entityClass: ObjectType<Entity>, plainObject?: DeepPartial<Entity>): Entity;
     /**
      * Creates a new entities and copies all entity properties from given objects into their new entities.
      * Note that it copies only properties that present in entity schema.
      */
-    create<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, plainObjects: DeepPartial<Entity>[]): Entity[];
+    create<Entity>(entityClass: ObjectType<Entity>, plainObjects?: DeepPartial<Entity>[]): Entity[];
+    /**
+     * Creates a new entity instance and copies all entity properties from this object into a new entity.
+     * Note that it copies only properties that present in entity schema.
+     */
+    create<Entity>(entitySchema: EntitySchema<Entity>, plainObject?: DeepPartial<Entity>): Entity;
+    /**
+     * Creates a new entities and copies all entity properties from given objects into their new entities.
+     * Note that it copies only properties that present in entity schema.
+     */
+    create<Entity>(entitySchema: EntitySchema<Entity>, plainObjects?: DeepPartial<Entity>[]): Entity[];
+    /**
+     * Creates a new entity instance and copies all entity properties from this object into a new entity.
+     * Note that it copies only properties that present in entity schema.
+     */
+    create<Entity>(entityName: string, plainObject?: DeepPartial<Entity>): Entity;
+    /**
+     * Creates a new entities and copies all entity properties from given objects into their new entities.
+     * Note that it copies only properties that present in entity schema.
+     */
+    create<Entity>(entityName: string, plainObjects?: DeepPartial<Entity>[]): Entity[];
     /**
      * Merges two entities into one new entity.
      */
-    merge<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, mergeIntoEntity: Entity, ...entityLikes: DeepPartial<Entity>[]): Entity;
+    merge<Entity>(entityClass: ObjectType<Entity>, mergeIntoEntity: Entity, ...entityLikes: DeepPartial<Entity>[]): Entity;
+    /**
+     * Merges two entities into one new entity.
+     */
+    merge<Entity>(entitySchema: EntitySchema<Entity>, mergeIntoEntity: Entity, ...entityLikes: DeepPartial<Entity>[]): Entity;
+    /**
+     * Merges two entities into one new entity.
+     */
+    merge<Entity>(entityName: string, mergeIntoEntity: Entity, ...entityLikes: DeepPartial<Entity>[]): Entity;
     /**
      * Creates a new entity from the given plan javascript object. If entity already exist in the database, then
      * it loads it (and everything related to it), replaces all values with the new ones from the given object
      * and returns this new entity. This new entity is actually a loaded from the db entity with all properties
      * replaced from the new object.
      */
-    preload<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, entityLike: DeepPartial<Entity>): Promise<Entity | undefined>;
+    preload<Entity>(entityClass: ObjectType<Entity>, entityLike: DeepPartial<Entity>): Promise<Entity | undefined>;
+    /**
+     * Creates a new entity from the given plan javascript object. If entity already exist in the database, then
+     * it loads it (and everything related to it), replaces all values with the new ones from the given object
+     * and returns this new entity. This new entity is actually a loaded from the db entity with all properties
+     * replaced from the new object.
+     */
+    preload<Entity>(entitySchema: EntitySchema<Entity>, entityLike: DeepPartial<Entity>): Promise<Entity | undefined>;
+    /**
+     * Creates a new entity from the given plan javascript object. If entity already exist in the database, then
+     * it loads it (and everything related to it), replaces all values with the new ones from the given object
+     * and returns this new entity. This new entity is actually a loaded from the db entity with all properties
+     * replaced from the new object.
+     */
+    preload(entityName: string, entityLike: DeepPartial<any>): Promise<any | undefined>;
     /**
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
@@ -114,12 +164,22 @@ export declare class EntityManager {
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
      */
-    save<Entity, T extends DeepPartial<Entity>>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity> | string, entities: T[], options?: SaveOptions): Promise<T[]>;
+    save<Entity, T extends DeepPartial<Entity>>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity>, entities: T[], options?: SaveOptions): Promise<T[]>;
     /**
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
      */
-    save<Entity, T extends DeepPartial<Entity>>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity> | string, entity: T, options?: SaveOptions): Promise<T>;
+    save<Entity, T extends DeepPartial<Entity>>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity>, entity: T, options?: SaveOptions): Promise<T>;
+    /**
+     * Saves all given entities in the database.
+     * If entities do not exist in the database then inserts, otherwise updates.
+     */
+    save<T>(targetOrEntity: string, entities: T[], options?: SaveOptions): Promise<T[]>;
+    /**
+     * Saves all given entities in the database.
+     * If entities do not exist in the database then inserts, otherwise updates.
+     */
+    save<T>(targetOrEntity: string, entity: T, options?: SaveOptions): Promise<T>;
     /**
      * Removes a given entity from the database.
      */
@@ -127,7 +187,15 @@ export declare class EntityManager {
     /**
      * Removes a given entity from the database.
      */
-    remove<Entity>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity> | string, entity: Entity, options?: RemoveOptions): Promise<Entity>;
+    remove<Entity>(targetOrEntity: ObjectType<Entity>, entity: Entity, options?: RemoveOptions): Promise<Entity>;
+    /**
+     * Removes a given entity from the database.
+     */
+    remove<Entity>(targetOrEntity: EntitySchema<Entity>, entity: Entity, options?: RemoveOptions): Promise<Entity>;
+    /**
+     * Removes a given entity from the database.
+     */
+    remove<Entity>(targetOrEntity: string, entity: Entity, options?: RemoveOptions): Promise<Entity>;
     /**
      * Removes a given entity from the database.
      */
@@ -135,7 +203,15 @@ export declare class EntityManager {
     /**
      * Removes a given entity from the database.
      */
-    remove<Entity>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity> | string, entity: Entity[], options?: RemoveOptions): Promise<Entity[]>;
+    remove<Entity>(targetOrEntity: ObjectType<Entity>, entity: Entity[], options?: RemoveOptions): Promise<Entity[]>;
+    /**
+     * Removes a given entity from the database.
+     */
+    remove<Entity>(targetOrEntity: EntitySchema<Entity>, entity: Entity[], options?: RemoveOptions): Promise<Entity[]>;
+    /**
+     * Removes a given entity from the database.
+     */
+    remove<Entity>(targetOrEntity: string, entity: Entity[], options?: RemoveOptions): Promise<Entity[]>;
     /**
      * Inserts a given entity into the database.
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
@@ -143,7 +219,7 @@ export declare class EntityManager {
      * Does not check if entity exist in the database, so query will fail if duplicate entity is being inserted.
      * You can execute bulk inserts using this method.
      */
-    insert<Entity>(target: ObjectType<Entity> | EntitySchema<Entity> | string, entity: QueryPartialEntity<Entity> | (QueryPartialEntity<Entity>[]), options?: SaveOptions): Promise<InsertResult>;
+    insert<Entity>(target: ObjectType<Entity> | EntitySchema<Entity> | string, entity: QueryDeepPartialEntity<Entity> | (QueryDeepPartialEntity<Entity>[]), options?: SaveOptions): Promise<InsertResult>;
     /**
      * Updates entity partially. Entity can be found by a given condition(s).
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
@@ -151,7 +227,7 @@ export declare class EntityManager {
      * Does not check if entity exist in the database.
      * Condition(s) cannot be empty.
      */
-    update<Entity>(target: ObjectType<Entity> | EntitySchema<Entity> | string, criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<Entity>, partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult>;
+    update<Entity>(target: ObjectType<Entity> | EntitySchema<Entity> | string, criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<Entity>, partialEntity: QueryDeepPartialEntity<Entity>, options?: SaveOptions): Promise<UpdateResult>;
     /**
      * Deletes entities by a given condition(s).
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
@@ -161,64 +237,182 @@ export declare class EntityManager {
      */
     delete<Entity>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity> | string, criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<Entity>, options?: RemoveOptions): Promise<DeleteResult>;
     /**
+     * Counts entities that match given conditions.
+     * Useful for pagination.
+     */
+    count<Entity>(entityClass: ObjectType<Entity>, conditions?: FindOptionsWhere<Entity>, options?: FindExtraOptions): Promise<number>;
+    /**
+     * Counts entities that match given conditions.
+     * Useful for pagination.
+     */
+    count<Entity>(entityClass: EntitySchema<Entity>, conditions?: FindOptionsWhere<Entity>, options?: FindExtraOptions): Promise<number>;
+    /**
+     * Counts entities that match given conditions.
+     * Useful for pagination.
+     */
+    count<Entity>(entityClass: string, conditions?: FindOptionsWhere<Entity>, options?: FindExtraOptions): Promise<number>;
+    /**
      * Finds entities that match given options.
      */
-    find<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, options?: FindOptions<Entity>): Promise<Entity[]>;
+    find<Entity>(entityClass: ObjectType<Entity>, options?: FindOptions<Entity>): Promise<Entity[]>;
     /**
      * Finds entities that match given conditions.
      */
-    find<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
+    find<Entity>(entityClass: ObjectType<Entity>, conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities that match given options.
+     */
+    find<Entity>(entitySchema: EntitySchema<Entity>, options?: FindOptions<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities that match given conditions.
+     */
+    find<Entity>(entitySchema: EntitySchema<Entity>, conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities that match given conditions.
+     */
+    find<Entity>(entityClass: string, options?: FindOptions<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities that match given conditions.
+     */
+    find<Entity>(entityClass: string, conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
     /**
      * Finds entities that match given find options.
      * Also counts all entities that match given conditions,
      * but ignores pagination settings (from and take options).
      */
-    findAndCount<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, options?: FindOptions<Entity>): Promise<[Entity[], number]>;
+    findAndCount<Entity>(entityClass: ObjectType<Entity>, options?: FindOptions<Entity>): Promise<[Entity[], number]>;
+    /**
+     * Finds entities that match given find options.
+     * Also counts all entities that match given conditions,
+     * but ignores pagination settings (from and take options).
+     */
+    findAndCount<Entity>(entityClass: EntitySchema<Entity>, options?: FindOptions<Entity>): Promise<[Entity[], number]>;
+    /**
+     * Finds entities that match given find options.
+     * Also counts all entities that match given conditions,
+     * but ignores pagination settings (from and take options).
+     */
+    findAndCount<Entity>(entityClass: string, options?: FindOptions<Entity>): Promise<[Entity[], number]>;
     /**
      * Finds entities that match given conditions.
      * Also counts all entities that match given conditions,
      * but ignores pagination settings (from and take options).
      */
-    findAndCount<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions?: FindOptionsWhere<Entity>): Promise<[Entity[], number]>;
+    findAndCount<Entity>(entityClass: ObjectType<Entity>, conditions?: FindOptionsWhere<Entity>): Promise<[Entity[], number]>;
+    /**
+     * Finds entities that match given conditions.
+     * Also counts all entities that match given conditions,
+     * but ignores pagination settings (from and take options).
+     */
+    findAndCount<Entity>(entityClass: EntitySchema<Entity>, conditions?: FindOptionsWhere<Entity>): Promise<[Entity[], number]>;
+    /**
+     * Finds entities that match given conditions.
+     * Also counts all entities that match given conditions,
+     * but ignores pagination settings (from and take options).
+     */
+    findAndCount<Entity>(entityClass: string, conditions?: FindOptionsWhere<Entity>): Promise<[Entity[], number]>;
     /**
      * Finds entities with ids.
      * Optionally find options can be applied.
      */
-    findByIds<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, ids: any[], options?: FindOptions<Entity>): Promise<Entity[]>;
+    findByIds<Entity>(entityClass: ObjectType<Entity>, ids: any[], options?: FindOptions<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities with ids.
+     * Optionally find options can be applied.
+     */
+    findByIds<Entity>(entityClass: EntitySchema<Entity>, ids: any[], options?: FindOptions<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities with ids.
+     * Optionally find options can be applied.
+     */
+    findByIds<Entity>(entityClass: string, ids: any[], options?: FindOptions<Entity>): Promise<Entity[]>;
     /**
      * Finds entities with ids.
      * Optionally conditions can be applied.
      */
-    findByIds<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, ids: any[], conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
+    findByIds<Entity>(entityClass: ObjectType<Entity>, ids: any[], conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities with ids.
+     * Optionally conditions can be applied.
+     */
+    findByIds<Entity>(entityClass: EntitySchema<Entity>, ids: any[], conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
+    /**
+     * Finds entities with ids.
+     * Optionally conditions can be applied.
+     */
+    findByIds<Entity>(entityClass: string, ids: any[], conditions?: FindOptionsWhere<Entity>): Promise<Entity[]>;
     /**
      * Finds first entity that matches given find options.
      */
-    findOne<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    findOne<Entity>(entityClass: ObjectType<Entity>, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity | undefined>;
     /**
      * Finds first entity that matches given find options.
      */
-    findOne<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    findOne<Entity>(entityClass: EntitySchema<Entity>, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    /**
+     * Finds first entity that matches given find options.
+     */
+    findOne<Entity>(entityClass: string, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    /**
+     * Finds first entity that matches given find options.
+     */
+    findOne<Entity>(entityClass: ObjectType<Entity>, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    /**
+     * Finds first entity that matches given find options.
+     */
+    findOne<Entity>(entityClass: EntitySchema<Entity>, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    /**
+     * Finds first entity that matches given find options.
+     */
+    findOne<Entity>(entityClass: string, options?: FindOptions<Entity>): Promise<Entity | undefined>;
     /**
      * Finds first entity that matches given conditions.
      */
-    findOne<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    findOne<Entity>(entityClass: ObjectType<Entity>, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    /**
+     * Finds first entity that matches given conditions.
+     */
+    findOne<Entity>(entityClass: EntitySchema<Entity>, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity | undefined>;
+    /**
+     * Finds first entity that matches given conditions.
+     */
+    findOne<Entity>(entityClass: string, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity | undefined>;
     /**
      * Finds first entity that matches given find options or rejects the returned promise on error.
      */
-    findOneOrFail<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity>;
+    findOneOrFail<Entity>(entityClass: ObjectType<Entity>, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity>;
     /**
      * Finds first entity that matches given find options or rejects the returned promise on error.
      */
-    findOneOrFail<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, options?: FindOptions<Entity>): Promise<Entity>;
+    findOneOrFail<Entity>(entityClass: EntitySchema<Entity>, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity>;
+    /**
+     * Finds first entity that matches given find options or rejects the returned promise on error.
+     */
+    findOneOrFail<Entity>(entityClass: string, id?: string | number | Date | ObjectID, options?: FindOptions<Entity>): Promise<Entity>;
+    /**
+     * Finds first entity that matches given find options or rejects the returned promise on error.
+     */
+    findOneOrFail<Entity>(entityClass: ObjectType<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
+    /**
+     * Finds first entity that matches given find options or rejects the returned promise on error.
+     */
+    findOneOrFail<Entity>(entityClass: EntitySchema<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
+    /**
+     * Finds first entity that matches given find options or rejects the returned promise on error.
+     */
+    findOneOrFail<Entity>(entityClass: string, options?: FindOptions<Entity>): Promise<Entity>;
     /**
      * Finds first entity that matches given conditions or rejects the returned promise on error.
      */
-    findOneOrFail<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
+    findOneOrFail<Entity>(entityClass: ObjectType<Entity>, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
     /**
-     * Counts entities that match given conditions.
-     * Useful for pagination.
+     * Finds first entity that matches given conditions or rejects the returned promise on error.
      */
-    count<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions?: FindOptionsWhere<Entity>, options?: FindExtraOptions): Promise<number>;
+    findOneOrFail<Entity>(entityClass: EntitySchema<Entity>, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
+    /**
+     * Finds first entity that matches given conditions or rejects the returned promise on error.
+     */
+    findOneOrFail<Entity>(entityClass: string, conditions?: FindOptionsWhere<Entity>, options?: FindOptions<Entity>): Promise<Entity>;
     /**
      * Finds entities that match given options and returns observable.
      * Whenever new data appears that matches given query observable emits new value.
@@ -269,11 +463,11 @@ export declare class EntityManager {
     /**
      * Increments some column by provided value of the entities matched given conditions.
      */
-    increment<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number): Promise<void>;
+    increment<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number | string): Promise<UpdateResult>;
     /**
      * Decrements some column by provided value of the entities matched given conditions.
      */
-    decrement<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number): Promise<void>;
+    decrement<Entity>(entityClass: ObjectType<Entity> | EntitySchema<Entity> | string, conditions: FindOptionsWhere<Entity>, propertyPath: string, value: number | string): Promise<UpdateResult>;
     /**
      * Gets repository for the given entity class or name.
      * If single database connection mode is used, then repository is obtained from the

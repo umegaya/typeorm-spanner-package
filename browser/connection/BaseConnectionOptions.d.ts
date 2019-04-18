@@ -3,6 +3,7 @@ import { LoggerOptions } from "../logger/LoggerOptions";
 import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterface";
 import { DatabaseType } from "../driver/types/DatabaseType";
 import { Logger } from "../logger/Logger";
+import { EntityFactoryInterface } from '../entity-factory/EntityFactoryInterface';
 /**
  * BaseConnectionOptions is set of connection options shared by all database types.
  */
@@ -43,6 +44,11 @@ export interface BaseConnectionOptions {
      * Naming strategy to be used to name tables and columns in the database.
      */
     readonly namingStrategy?: NamingStrategyInterface;
+    /**
+     * Entity factory to be used for this connection.
+     * If this options is set, TypeOrm will use the provided factory to create instance of entities.
+     */
+    readonly entityFactory?: EntityFactoryInterface;
     /**
      * Logging options.
      */
@@ -96,7 +102,7 @@ export interface BaseConnectionOptions {
          * - "database" means cached values will be stored in the separate table in database. This is default value.
          * - "redis" means cached values will be stored inside redis. You must provide redis connection options.
          */
-        readonly type?: "database" | "redis";
+        readonly type?: "database" | "redis" | "ioredis" | "ioredis/cluster";
         /**
          * Used to provide redis connection options.
          */

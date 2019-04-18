@@ -1,7 +1,7 @@
 import { QueryBuilder } from "./QueryBuilder";
 import { ObjectLiteral } from "../common/ObjectLiteral";
 import { ObjectType } from "../common/ObjectType";
-import { QueryPartialEntity } from "./QueryPartialEntity";
+import { QueryDeepPartialEntity } from "./QueryPartialEntity";
 import { InsertResult } from "./result/InsertResult";
 import { ColumnMetadata } from "../metadata/ColumnMetadata";
 import { EntitySchema } from "../";
@@ -24,7 +24,7 @@ export declare class InsertQueryBuilder<Entity> extends QueryBuilder<Entity> {
     /**
      * Values needs to be inserted into table.
      */
-    values(values: QueryPartialEntity<Entity> | QueryPartialEntity<Entity>[]): this;
+    values(values: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): this;
     /**
      * Optional returning/output clause.
      * This will return given column values.
@@ -63,6 +63,18 @@ export declare class InsertQueryBuilder<Entity> extends QueryBuilder<Entity> {
      * Adds additional ON CONFLICT statement supported in postgres.
      */
     onConflict(statement: string): this;
+    /**
+     * Adds additional ignore statement supported in databases.
+     */
+    orIgnore(statement?: string | boolean): this;
+    /**
+     * Adds additional update statement supported in databases.
+     */
+    orUpdate(statement?: {
+        columns?: string[];
+        overwrite?: string[];
+        conflict_target?: string | string[];
+    }): this;
     /**
      * Creates INSERT express used to perform insert query.
      */

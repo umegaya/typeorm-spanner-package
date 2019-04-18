@@ -1,18 +1,9 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+import * as tslib_1 from "tslib";
 /**
  * Thrown if custom repositories that extend AbstractRepository classes does not have managed entity.
  */
 var CustomRepositoryDoesNotHaveEntityError = /** @class */ (function (_super) {
-    __extends(CustomRepositoryDoesNotHaveEntityError, _super);
+    tslib_1.__extends(CustomRepositoryDoesNotHaveEntityError, _super);
     function CustomRepositoryDoesNotHaveEntityError(repository) {
         var _this = _super.call(this) || this;
         _this.name = "CustomRepositoryDoesNotHaveEntityError";

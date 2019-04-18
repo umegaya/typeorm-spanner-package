@@ -81,6 +81,11 @@ export declare class SqlServerDriver implements Driver {
      * Used in the cases when length/precision/scale is not specified by user.
      */
     dataTypeDefaults: DataTypeDefaults;
+    /**
+     * Max length allowed by MSSQL Server for aliases (identifiers).
+     * @see https://docs.microsoft.com/en-us/sql/sql-server/maximum-capacity-specifications-for-sql-server
+     */
+    maxAliasLength: number;
     constructor(connection: Connection);
     /**
      * Performs connection to the database.
@@ -100,6 +105,10 @@ export declare class SqlServerDriver implements Driver {
      * Closes connection with the database.
      */
     disconnect(): Promise<void>;
+    /**
+     * Closes connection pool.
+     */
+    protected closePool(pool: any): Promise<void>;
     /**
      * Creates a schema builder used to build and sync a schema.
      */
@@ -176,6 +185,7 @@ export declare class SqlServerDriver implements Driver {
      * and returns only changed.
      */
     findChangedColumns(tableColumns: TableColumn[], columnMetadatas: ColumnMetadata[]): ColumnMetadata[];
+    private lowerDefaultValueIfNessesary;
     /**
      * Returns true if driver supports RETURNING / OUTPUT statement.
      */

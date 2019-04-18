@@ -2,6 +2,7 @@ import { ObjectLiteral } from "../common/ObjectLiteral";
 import { EntityMetadata } from "../metadata/EntityMetadata";
 import { SubjectChangeMap } from "./SubjectChangeMap";
 import { RelationMetadata } from "../metadata/RelationMetadata";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
 /**
  * Subject is a subject of persistence.
  * It holds information about each entity that needs to be persisted:
@@ -45,6 +46,11 @@ export declare class Subject {
      */
     databaseEntity?: ObjectLiteral;
     /**
+     * Indicates if database entity was loaded.
+     * No matter if it was found or not, it indicates the fact of loading.
+     */
+    databaseEntityLoaded: boolean;
+    /**
      * Changes needs to be applied in the database for the given subject.
      */
     changeMaps: SubjectChangeMap[];
@@ -81,6 +87,14 @@ export declare class Subject {
         relation: RelationMetadata;
         value: ObjectLiteral;
     }[];
+    /**
+     * List of updated columns
+     */
+    diffColumns: ColumnMetadata[];
+    /**
+     * List of updated relations
+     */
+    diffRelations: RelationMetadata[];
     constructor(options: {
         metadata: EntityMetadata;
         parentSubject?: Subject;
@@ -110,4 +124,8 @@ export declare class Subject {
      * Important note: this method pops data from this subject's change maps.
      */
     createValueSetAndPopChangeMap(): ObjectLiteral;
+    /**
+     * Recomputes entityWithFulfilledIds and identifier when entity changes.
+     */
+    recompute(): void;
 }

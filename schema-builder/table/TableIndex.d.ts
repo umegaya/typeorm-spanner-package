@@ -15,21 +15,21 @@ export declare class TableIndex {
     /**
      * Indicates if this index is unique.
      */
-    isUnique?: boolean;
+    isUnique: boolean;
     /**
      * The SPATIAL modifier indexes the entire column and does not allow indexed columns to contain NULL values.
      * Works only in MySQL.
      */
-    isSpatial?: boolean;
+    isSpatial: boolean;
     /**
      * The FULLTEXT modifier indexes the entire column and does not allow prefixing.
      * Works only in MySQL.
      */
-    isFulltext?: boolean;
+    isFulltext: boolean;
     /**
      * Index filter condition.
      */
-    where?: string;
+    where: string;
     constructor(options: TableIndexOptions);
     /**
      * Creates a new copy of this index with exactly same properties.

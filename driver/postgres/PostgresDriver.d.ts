@@ -86,6 +86,11 @@ export declare class PostgresDriver implements Driver {
      * Used in the cases when length/precision/scale is not specified by user.
      */
     dataTypeDefaults: DataTypeDefaults;
+    /**
+     * Max length allowed by Postgres for aliases.
+     * @see https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
+     */
+    maxAliasLength: number;
     constructor(connection: Connection);
     /**
      * Performs connection to the database.
@@ -184,6 +189,7 @@ export declare class PostgresDriver implements Driver {
      * and returns only changed.
      */
     findChangedColumns(tableColumns: TableColumn[], columnMetadatas: ColumnMetadata[]): ColumnMetadata[];
+    private lowerDefaultValueIfNecessary;
     /**
      * Returns true if driver supports RETURNING / OUTPUT statement.
      */
@@ -192,6 +198,7 @@ export declare class PostgresDriver implements Driver {
      * Returns true if driver supports uuid values generation on its own.
      */
     isUUIDGenerationSupported(): boolean;
+    readonly uuidGenerator: string;
     /**
      * Creates an escaped parameter.
      */

@@ -6,6 +6,7 @@ import { TableOptions } from "../options/TableOptions";
 import { EntityMetadata } from "../../metadata/EntityMetadata";
 import { TableUnique } from "./TableUnique";
 import { TableCheck } from "./TableCheck";
+import { TableExclusion } from "./TableExclusion";
 /**
  * Table in the database represented in this class.
  */
@@ -35,6 +36,10 @@ export declare class Table {
      * Table check constraints.
      */
     checks: TableCheck[];
+    /**
+     * Table exclusion constraints.
+     */
+    exclusions: TableExclusion[];
     /**
      * Indicates if table was just created.
      * This is needed, for example to check if we need to skip primary keys creation
@@ -75,6 +80,14 @@ export declare class Table {
      * Removes check constraint.
      */
     removeCheckConstraint(removedCheck: TableCheck): void;
+    /**
+     * Adds exclusion constraint.
+     */
+    addExclusionConstraint(exclusionConstraint: TableExclusion): void;
+    /**
+     * Removes exclusion constraint.
+     */
+    removeExclusionConstraint(removedExclusion: TableExclusion): void;
     /**
      * Adds foreign keys.
      */

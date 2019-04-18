@@ -7,6 +7,7 @@ import { RelationCountMetadata } from "./RelationCountMetadata";
 import { Connection } from "../connection/Connection";
 import { EntityListenerMetadata } from "./EntityListenerMetadata";
 import { IndexMetadata } from "./IndexMetadata";
+import { UniqueMetadata } from "./UniqueMetadata";
 /**
  * Contains all information about entity's embedded property.
  */
@@ -50,6 +51,10 @@ export declare class EmbeddedMetadata {
      */
     indices: IndexMetadata[];
     /**
+     * Uniques applied to the embed columns.
+     */
+    uniques: UniqueMetadata[];
+    /**
      * Relation ids inside this embed.
      */
     relationIds: RelationIdMetadata[];
@@ -64,19 +69,19 @@ export declare class EmbeddedMetadata {
     /**
      * Indicates if this embedded is in array mode.
      *
-     * This option works only in monogodb.
+     * This option works only in mongodb.
      */
     isArray: boolean;
     /**
      * Prefix of the embedded, used instead of propertyName.
-     * If set to empty string, then prefix is not set at all.
+     * If set to empty string or false, then prefix is not set at all.
      */
     customPrefix: string | boolean | undefined;
     /**
      * Gets the prefix of the columns.
      * By default its a property name of the class where this prefix is.
      * But if custom prefix is set then it takes its value as a prefix.
-     * However if custom prefix is set to empty string prefix to column is not applied at all.
+     * However if custom prefix is set to empty string or false, then prefix to column is not applied at all.
      */
     prefix: string;
     /**
@@ -118,6 +123,10 @@ export declare class EmbeddedMetadata {
      */
     indicesFromTree: IndexMetadata[];
     /**
+     * Uniques of this embed and all uniques from its child embeds.
+     */
+    uniquesFromTree: UniqueMetadata[];
+    /**
      * Relation ids of this embed and all relation ids from its child embeds.
      */
     relationIdsFromTree: RelationIdMetadata[];
@@ -134,6 +143,7 @@ export declare class EmbeddedMetadata {
      */
     create(): any;
     build(connection: Connection): this;
+    protected buildPartialPrefix(): string[];
     protected buildPrefix(connection: Connection): string;
     protected buildParentPropertyNames(): string[];
     protected buildParentPrefixes(): string[];
@@ -142,6 +152,7 @@ export declare class EmbeddedMetadata {
     protected buildRelationsFromTree(): RelationMetadata[];
     protected buildListenersFromTree(): EntityListenerMetadata[];
     protected buildIndicesFromTree(): IndexMetadata[];
+    protected buildUniquesFromTree(): UniqueMetadata[];
     protected buildRelationIdsFromTree(): RelationIdMetadata[];
     protected buildRelationCountsFromTree(): RelationCountMetadata[];
 }

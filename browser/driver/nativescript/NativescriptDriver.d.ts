@@ -11,6 +11,12 @@ export declare class NativescriptDriver extends AbstractSqliteDriver {
      * Connection options.
      */
     options: NativescriptConnectionOptions;
+    /**
+     * Nativescript driver module
+     * this is most likely `nativescript-sqlite`
+     * but user can pass his own
+     */
+    driver: any;
     constructor(connection: Connection);
     /**
      * Closes connection with database.

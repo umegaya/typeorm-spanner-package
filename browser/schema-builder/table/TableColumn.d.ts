@@ -29,8 +29,9 @@ export declare class TableColumn {
     isGenerated: boolean;
     /**
      * Specifies generation strategy if this column will use auto increment.
+     * `rowid` option supported only in CockroachDB.
      */
-    generationStrategy?: "uuid" | "increment";
+    generationStrategy?: "uuid" | "increment" | "rowid";
     /**
      * Indicates if column is a primary key.
      */
@@ -87,7 +88,7 @@ export declare class TableColumn {
     /**
      * Array of possible enumerated values.
      */
-    enum?: any[];
+    enum?: string[];
     /**
      * Generated column expression. Supports only in MySQL.
      */

@@ -1,6 +1,6 @@
 import { FindOptions, FindOptionsWhereCondition } from "../find-options/FindOptions";
 import { Connection, EntityMetadata, InsertEvent, ObjectLiteral, RemoveEvent, UpdateEvent } from "../index";
-import Observable = require("zen-observable");
+import * as Observable from "zen-observable";
 /**
  * Entity manager supposed to work with any entity, automatically find its repository and call its methods,
  * whatever entity type are you passing.

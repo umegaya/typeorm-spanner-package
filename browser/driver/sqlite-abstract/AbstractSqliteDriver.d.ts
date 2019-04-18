@@ -79,6 +79,11 @@ export declare abstract class AbstractSqliteDriver implements Driver {
      * Used in the cases when length/precision/scale is not specified by user.
      */
     dataTypeDefaults: DataTypeDefaults;
+    /**
+     * No documentation specifying a maximum length for identifiers could be found
+     * for SQLite.
+     */
+    maxAliasLength?: number;
     constructor(connection: Connection);
     /**
      * Creates a query runner used to execute database queries.

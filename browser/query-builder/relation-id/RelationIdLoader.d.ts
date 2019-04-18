@@ -8,9 +8,4 @@ export declare class RelationIdLoader {
     protected relationIdAttributes: RelationIdAttribute[];
     constructor(connection: Connection, queryRunner: QueryRunner | undefined, relationIdAttributes: RelationIdAttribute[]);
     load(rawEntities: any[]): Promise<RelationIdLoadResult[]>;
-    /**
-     * Builds column alias from given alias name and column name,
-     * If alias length is more than 29, abbreviates column name.
-     */
-    protected buildColumnAlias(aliasName: string, columnName: string): string;
 }

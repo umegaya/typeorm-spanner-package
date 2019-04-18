@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 var OrmUtils = /** @class */ (function () {
     function OrmUtils() {
     }
@@ -77,11 +58,11 @@ var OrmUtils = /** @class */ (function () {
      * @see http://stackoverflow.com/a/34749873
      */
     OrmUtils.mergeDeep = function (target) {
+        var _a, _b;
         var sources = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             sources[_i - 1] = arguments[_i];
         }
-        var _a, _b;
         if (!sources.length)
             return target;
         var source = sources.shift();
@@ -99,7 +80,7 @@ var OrmUtils = /** @class */ (function () {
                     && !(source[propertyKey] instanceof Date)
                     && !(source[propertyKey] instanceof Buffer)) {
                     if (!target[key])
-                        Object.assign(target, (_a = {}, _a[key] = {}, _a));
+                        Object.assign(target, (_a = {}, _a[key] = Object.create(Object.getPrototypeOf(source[propertyKey])), _a));
                     this.mergeDeep(target[key], source[propertyKey]);
                 }
                 else {
@@ -107,7 +88,7 @@ var OrmUtils = /** @class */ (function () {
                 }
             }
         }
-        return this.mergeDeep.apply(this, __spread([target], sources));
+        return this.mergeDeep.apply(this, tslib_1.__spread([target], sources));
     };
     /**
      * Deep compare objects.
@@ -188,7 +169,13 @@ var OrmUtils = /** @class */ (function () {
         // Especially useful on the step where we compare prototypes
         if (x === y)
             return true;
-        if (x.equals instanceof Function && x.equals(y))
+        // Unequal, but either is null or undefined (use case: jsonb comparasion)
+        // PR #3776, todo: add tests
+        if (x === null || y === null || x === undefined || y === undefined)
+            return false;
+        // Fix the buffer compare bug.
+        // See: https://github.com/typeorm/typeorm/issues/3654
+        if ((typeof x.equals === "function" || x.equals instanceof Function) && x.equals(y))
             return true;
         // Works in case when functions are created in constructor.
         // Comparing dates is a common scenario. Another built-ins?

@@ -1,3 +1,5 @@
+
+import { TlsOptions } from "tls";
 /**
  * Postgres specific connection credential options.
  */
@@ -29,5 +31,5 @@ export interface PostgresConnectionCredentialsOptions {
     /**
      * Object with ssl parameters
      */
-    readonly ssl?: any;
+    readonly ssl?: boolean | TlsOptions;
 }

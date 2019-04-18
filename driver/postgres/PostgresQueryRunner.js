@@ -1,66 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var TransactionAlreadyStartedError_1 = require("../../error/TransactionAlreadyStartedError");
 var TransactionNotStartedError_1 = require("../../error/TransactionNotStartedError");
 var TableColumn_1 = require("../../schema-builder/table/TableColumn");
@@ -75,11 +15,12 @@ var BaseQueryRunner_1 = require("../../query-runner/BaseQueryRunner");
 var OrmUtils_1 = require("../../util/OrmUtils");
 var __1 = require("../../");
 var TableCheck_1 = require("../../schema-builder/table/TableCheck");
+var TableExclusion_1 = require("../../schema-builder/table/TableExclusion");
 /**
  * Runs queries on a single postgres database connection.
  */
 var PostgresQueryRunner = /** @class */ (function (_super) {
-    __extends(PostgresQueryRunner, _super);
+    tslib_1.__extends(PostgresQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -107,7 +48,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
             return this.databaseConnectionPromise;
         if (this.mode === "slave" && this.driver.isReplicated) {
             this.databaseConnectionPromise = this.driver.obtainSlaveConnection().then(function (_a) {
-                var _b = __read(_a, 2), connection = _b[0], release = _b[1];
+                var _b = tslib_1.__read(_a, 2), connection = _b[0], release = _b[1];
                 _this.driver.connectedQueryRunners.push(_this);
                 _this.databaseConnection = connection;
                 _this.releaseCallback = release;
@@ -116,7 +57,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         }
         else { // master
             this.databaseConnectionPromise = this.driver.obtainMasterConnection().then(function (_a) {
-                var _b = __read(_a, 2), connection = _b[0], release = _b[1];
+                var _b = tslib_1.__read(_a, 2), connection = _b[0], release = _b[1];
                 _this.driver.connectedQueryRunners.push(_this);
                 _this.databaseConnection = connection;
                 _this.releaseCallback = release;
@@ -142,8 +83,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Starts transaction.
      */
     PostgresQueryRunner.prototype.startTransaction = function (isolationLevel) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.isTransactionActive)
@@ -167,8 +108,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     PostgresQueryRunner.prototype.commitTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -187,8 +128,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     PostgresQueryRunner.prototype.rollbackTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -209,10 +150,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         var _this = this;
         if (this.isReleased)
             throw new QueryRunnerAlreadyReleasedError_1.QueryRunnerAlreadyReleasedError();
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var databaseConnection, queryStartTime_1, err_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -233,7 +174,14 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                 fail(new QueryFailedError_1.QueryFailedError(query, parameters, err));
                             }
                             else {
-                                ok(result.rows);
+                                switch (result.command) {
+                                    case "DELETE":
+                                        // for DELETE query additionally return number of affected rows
+                                        ok([result.rows, result.rowCount]);
+                                        break;
+                                    default:
+                                        ok(result.rows);
+                                }
                             }
                         });
                         return [3 /*break*/, 3];
@@ -254,9 +202,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         var QueryStream = this.driver.loadStreamDependency();
         if (this.isReleased)
             throw new QueryRunnerAlreadyReleasedError_1.QueryRunnerAlreadyReleasedError();
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var databaseConnection, stream, err_2;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -284,8 +232,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Returns all available database names including system databases.
      */
     PostgresQueryRunner.prototype.getDatabases = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -295,8 +243,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * If database parameter specified, returns schemas of that database.
      */
     PostgresQueryRunner.prototype.getSchemas = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -305,8 +253,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Checks if database with the given name exist.
      */
     PostgresQueryRunner.prototype.hasDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve(false)];
             });
         });
@@ -315,9 +263,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Checks if schema with the given name exist.
      */
     PostgresQueryRunner.prototype.hasSchema = function (schema) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT * FROM \"information_schema\".\"schemata\" WHERE \"schema_name\" = '" + schema + "'")];
                     case 1:
@@ -331,9 +279,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Checks if table with the given name exist in the database.
      */
     PostgresQueryRunner.prototype.hasTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var parsedTableName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         parsedTableName = this.parseTableName(tableOrName);
@@ -350,9 +298,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Checks if column with the given name exist in the given table.
      */
     PostgresQueryRunner.prototype.hasColumn = function (tableOrName, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var parsedTableName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         parsedTableName = this.parseTableName(tableOrName);
@@ -370,8 +318,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Postgres does not supports database creation inside a transaction block.
      */
     PostgresQueryRunner.prototype.createDatabase = function (database, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, Promise.resolve()];
                     case 1:
@@ -386,8 +334,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Postgres does not supports database drop inside a transaction block.
      */
     PostgresQueryRunner.prototype.dropDatabase = function (database, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve()];
             });
         });
@@ -396,9 +344,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new table schema.
      */
     PostgresQueryRunner.prototype.createSchema = function (schema, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifNotExist ? "CREATE SCHEMA IF NOT EXISTS \"" + schema + "\"" : "CREATE SCHEMA \"" + schema + "\"";
@@ -415,9 +363,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops table schema.
      */
     PostgresQueryRunner.prototype.dropSchema = function (schemaPath, ifExist, isCascade) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var schema, up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         schema = schemaPath.indexOf(".") === -1 ? schemaPath : schemaPath.split(".")[0];
@@ -438,10 +386,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         if (ifNotExist === void 0) { ifNotExist = false; }
         if (createForeignKeys === void 0) { createForeignKeys = true; }
         if (createIndices === void 0) { createIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifNotExist) return [3 /*break*/, 2];
@@ -456,10 +404,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         downQueries = [];
                         // if table have column with ENUM type, we must create this type in postgres.
                         return [4 /*yield*/, Promise.all(table.columns
-                                .filter(function (column) { return column.type === "enum"; })
-                                .map(function (column) { return __awaiter(_this, void 0, void 0, function () {
+                                .filter(function (column) { return column.type === "enum" || column.type === "simple-enum"; })
+                                .map(function (column) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var hasEnum;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0: return [4 /*yield*/, this.hasEnumType(table, column)];
                                         case 1:
@@ -504,10 +452,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
     PostgresQueryRunner.prototype.dropTable = function (target, ifExist, dropForeignKeys, dropIndices) {
         if (dropForeignKeys === void 0) { dropForeignKeys = true; }
         if (dropIndices === void 0) { dropIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, createForeignKeys, tableName, table, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifExist) return [3 /*break*/, 2];
@@ -547,10 +495,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Renames the given table.
      */
     PostgresQueryRunner.prototype.renameTable = function (oldTableOrName, newTableName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, oldTable, _a, newTable, oldTableName, schemaName, columnNames, oldPkName, newPkName;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         upQueries = [];
@@ -613,7 +561,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         });
                         // rename ENUM types
                         newTable.columns
-                            .filter(function (column) { return column.type === "enum"; })
+                            .filter(function (column) { return column.type === "enum" || column.type === "simple-enum"; })
                             .forEach(function (column) {
                             upQueries.push("ALTER TYPE " + _this.buildEnumName(oldTable, column) + " RENAME TO " + _this.buildEnumName(newTable, column, false));
                             downQueries.push("ALTER TYPE " + _this.buildEnumName(newTable, column) + " RENAME TO " + _this.buildEnumName(oldTable, column, false));
@@ -630,9 +578,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new column from the column in the table.
      */
     PostgresQueryRunner.prototype.addColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, hasEnum, primaryColumns, pkName_1, columnNames_1, pkName, columnNames, columnIndex, uniqueConstraint;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -647,7 +595,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         clonedTable = table.clone();
                         upQueries = [];
                         downQueries = [];
-                        if (!(column.type === "enum")) return [3 /*break*/, 5];
+                        if (!(column.type === "enum" || column.type === "simple-enum")) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.hasEnumType(table, column)];
                     case 4:
                         hasEnum = _b.sent();
@@ -704,9 +652,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new columns from the column in the table.
      */
     PostgresQueryRunner.prototype.addColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(columns, function (column) { return _this.addColumn(tableOrName, column); })];
                     case 1:
@@ -720,9 +668,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Renames column in the given table.
      */
     PostgresQueryRunner.prototype.renameColumn = function (tableOrName, oldTableColumnOrName, newTableColumnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, oldColumn, newColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -753,10 +701,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     PostgresQueryRunner.prototype.changeColumn = function (tableOrName, oldTableColumnOrName, newColumn) {
-        return __awaiter(this, void 0, void 0, function () {
-            var table, _a, clonedTable, upQueries, downQueries, oldColumn, primaryColumns, columnNames, oldPkName, newPkName, schema, seqName, newSeqName, up, down, oldTableColumn, enumName, enumNameWithoutSchema, oldEnumName, oldEnumNameWithoutSchema, upType, downType, primaryColumns, pkName, columnNames, column, pkName, columnNames, primaryColumn, column, pkName, columnNames, uniqueConstraint, uniqueConstraint;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var table, _a, clonedTable, upQueries, downQueries, oldColumn, primaryColumns, columnNames, oldPkName, newPkName, schema, seqName, newSeqName, up, down, oldTableColumn, enumName, enumNameWithoutSchema, arraySuffix, oldEnumName, oldEnumNameWithoutSchema, upType, downType, primaryColumns, pkName, columnNames, column, pkName, columnNames, primaryColumn, column, pkName, columnNames, uniqueConstraint, uniqueConstraint;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -794,7 +742,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                             upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " RENAME COLUMN \"" + oldColumn.name + "\" TO \"" + newColumn.name + "\"");
                             downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " RENAME COLUMN \"" + newColumn.name + "\" TO \"" + oldColumn.name + "\"");
                             // rename ENUM type
-                            if (oldColumn.type === "enum") {
+                            if (oldColumn.type === "enum" || oldColumn.type === "simple-enum") {
                                 upQueries.push("ALTER TYPE " + this.buildEnumName(table, oldColumn) + " RENAME TO " + this.buildEnumName(table, newColumn, false));
                                 downQueries.push("ALTER TYPE " + this.buildEnumName(table, newColumn) + " RENAME TO " + this.buildEnumName(table, oldColumn, false));
                             }
@@ -867,9 +815,12 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                             upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" TYPE " + this.driver.createFullType(newColumn));
                             downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" TYPE " + this.driver.createFullType(oldColumn));
                         }
-                        if (newColumn.type === "enum" && oldColumn.type === "enum" && !OrmUtils_1.OrmUtils.isArraysEqual(newColumn.enum, oldColumn.enum)) {
+                        if ((newColumn.type === "enum" || newColumn.type === "simple-enum")
+                            && (oldColumn.type === "enum" || newColumn.type === "simple-enum")
+                            && !OrmUtils_1.OrmUtils.isArraysEqual(newColumn.enum, oldColumn.enum)) {
                             enumName = this.buildEnumName(table, newColumn);
                             enumNameWithoutSchema = this.buildEnumName(table, newColumn, false);
+                            arraySuffix = newColumn.isArray ? "[]" : "";
                             oldEnumName = this.buildEnumName(table, newColumn, true, false, true);
                             oldEnumNameWithoutSchema = this.buildEnumName(table, newColumn, false, false, true);
                             // rename old ENUM
@@ -883,8 +834,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                 upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" DROP DEFAULT");
                                 downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" SET DEFAULT " + newColumn.default);
                             }
-                            upType = enumNameWithoutSchema + " USING \"" + newColumn.name + "\"::\"text\"::" + enumNameWithoutSchema;
-                            downType = oldEnumNameWithoutSchema + " USING \"" + newColumn.name + "\"::\"text\"::" + oldEnumNameWithoutSchema;
+                            upType = "" + enumName + arraySuffix + " USING \"" + newColumn.name + "\"::\"text\"::" + enumName + arraySuffix;
+                            downType = "" + oldEnumName + arraySuffix + " USING \"" + newColumn.name + "\"::\"text\"::" + oldEnumName + arraySuffix;
                             // update column to use new type
                             upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" TYPE " + upType);
                             downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" TYPE " + downType);
@@ -1009,9 +960,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     PostgresQueryRunner.prototype.changeColumns = function (tableOrName, changedColumns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(changedColumns, function (changedColumn) { return _this.changeColumn(tableOrName, changedColumn.oldColumn, changedColumn.newColumn); })];
                     case 1:
@@ -1025,9 +976,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops column in the table.
      */
     PostgresQueryRunner.prototype.dropColumn = function (tableOrName, columnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, column, clonedTable, upQueries, downQueries, pkName, columnNames, tableColumn, pkName_2, columnNames_2, columnIndex, columnCheck, columnUnique, hasEnum;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1081,7 +1032,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         }
                         upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " DROP COLUMN \"" + column.name + "\"");
                         downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ADD " + this.buildCreateColumnSql(table, column));
-                        if (!(column.type === "enum")) return [3 /*break*/, 5];
+                        if (!(column.type === "enum" || column.type === "simple-enum")) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.hasEnumType(table, column)];
                     case 4:
                         hasEnum = _b.sent();
@@ -1104,9 +1055,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops the columns in the table.
      */
     PostgresQueryRunner.prototype.dropColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(columns, function (column) { return _this.dropColumn(tableOrName, column); })];
                     case 1:
@@ -1120,9 +1071,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new primary key.
      */
     PostgresQueryRunner.prototype.createPrimaryKey = function (tableOrName, columnNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1155,9 +1106,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Updates composite primary keys.
      */
     PostgresQueryRunner.prototype.updatePrimaryKeys = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, columnNames, upQueries, downQueries, primaryColumns, pkName_3, columnNamesString_1, pkName, columnNamesString;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1201,9 +1152,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops a primary key.
      */
     PostgresQueryRunner.prototype.dropPrimaryKey = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1232,9 +1183,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates new unique constraint.
      */
     PostgresQueryRunner.prototype.createUniqueConstraint = function (tableOrName, uniqueConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1264,9 +1215,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates new unique constraints.
      */
     PostgresQueryRunner.prototype.createUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(uniqueConstraints, function (uniqueConstraint) { return _this.createUniqueConstraint(tableOrName, uniqueConstraint); })];
                     case 1:
@@ -1280,9 +1231,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops unique constraint.
      */
     PostgresQueryRunner.prototype.dropUniqueConstraint = function (tableOrName, uniqueOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, uniqueConstraint, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1312,9 +1263,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops unique constraints.
      */
     PostgresQueryRunner.prototype.dropUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(uniqueConstraints, function (uniqueConstraint) { return _this.dropUniqueConstraint(tableOrName, uniqueConstraint); })];
                     case 1:
@@ -1328,9 +1279,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates new check constraint.
      */
     PostgresQueryRunner.prototype.createCheckConstraint = function (tableOrName, checkConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1360,10 +1311,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates new check constraints.
      */
     PostgresQueryRunner.prototype.createCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = checkConstraints.map(function (checkConstraint) { return _this.createCheckConstraint(tableOrName, checkConstraint); });
@@ -1379,9 +1330,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops check constraint.
      */
     PostgresQueryRunner.prototype.dropCheckConstraint = function (tableOrName, checkOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, checkConstraint, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1411,10 +1362,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops check constraints.
      */
     PostgresQueryRunner.prototype.dropCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = checkConstraints.map(function (checkConstraint) { return _this.dropCheckConstraint(tableOrName, checkConstraint); });
@@ -1427,12 +1378,114 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         });
     };
     /**
+     * Creates new exclusion constraint.
+     */
+    PostgresQueryRunner.prototype.createExclusionConstraint = function (tableOrName, exclusionConstraint) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var table, _a, up, down;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
+                        _a = tableOrName;
+                        return [3 /*break*/, 3];
+                    case 1: return [4 /*yield*/, this.getCachedTable(tableOrName)];
+                    case 2:
+                        _a = _b.sent();
+                        _b.label = 3;
+                    case 3:
+                        table = _a;
+                        // new unique constraint may be passed without name. In this case we generate unique name manually.
+                        if (!exclusionConstraint.name)
+                            exclusionConstraint.name = this.connection.namingStrategy.exclusionConstraintName(table.name, exclusionConstraint.expression);
+                        up = this.createExclusionConstraintSql(table, exclusionConstraint);
+                        down = this.dropExclusionConstraintSql(table, exclusionConstraint);
+                        return [4 /*yield*/, this.executeQueries(up, down)];
+                    case 4:
+                        _b.sent();
+                        table.addExclusionConstraint(exclusionConstraint);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Creates new exclusion constraints.
+     */
+    PostgresQueryRunner.prototype.createExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var promises;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        promises = exclusionConstraints.map(function (exclusionConstraint) { return _this.createExclusionConstraint(tableOrName, exclusionConstraint); });
+                        return [4 /*yield*/, Promise.all(promises)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraint.
+     */
+    PostgresQueryRunner.prototype.dropExclusionConstraint = function (tableOrName, exclusionOrName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var table, _a, exclusionConstraint, up, down;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
+                        _a = tableOrName;
+                        return [3 /*break*/, 3];
+                    case 1: return [4 /*yield*/, this.getCachedTable(tableOrName)];
+                    case 2:
+                        _a = _b.sent();
+                        _b.label = 3;
+                    case 3:
+                        table = _a;
+                        exclusionConstraint = exclusionOrName instanceof TableExclusion_1.TableExclusion ? exclusionOrName : table.exclusions.find(function (c) { return c.name === exclusionOrName; });
+                        if (!exclusionConstraint)
+                            throw new Error("Supplied exclusion constraint was not found in table " + table.name);
+                        up = this.dropExclusionConstraintSql(table, exclusionConstraint);
+                        down = this.createExclusionConstraintSql(table, exclusionConstraint);
+                        return [4 /*yield*/, this.executeQueries(up, down)];
+                    case 4:
+                        _b.sent();
+                        table.removeExclusionConstraint(exclusionConstraint);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraints.
+     */
+    PostgresQueryRunner.prototype.dropExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var promises;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        promises = exclusionConstraints.map(function (exclusionConstraint) { return _this.dropExclusionConstraint(tableOrName, exclusionConstraint); });
+                        return [4 /*yield*/, Promise.all(promises)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
      * Creates a new foreign key.
      */
     PostgresQueryRunner.prototype.createForeignKey = function (tableOrName, foreignKey) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1462,9 +1515,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign keys.
      */
     PostgresQueryRunner.prototype.createForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(foreignKeys, function (foreignKey) { return _this.createForeignKey(tableOrName, foreignKey); })];
                     case 1:
@@ -1478,9 +1531,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign key from the table.
      */
     PostgresQueryRunner.prototype.dropForeignKey = function (tableOrName, foreignKeyOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, foreignKey, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1510,9 +1563,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign keys from the table.
      */
     PostgresQueryRunner.prototype.dropForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(foreignKeys, function (foreignKey) { return _this.dropForeignKey(tableOrName, foreignKey); })];
                     case 1:
@@ -1526,9 +1579,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new index.
      */
     PostgresQueryRunner.prototype.createIndex = function (tableOrName, index) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1558,9 +1611,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Creates a new indices
      */
     PostgresQueryRunner.prototype.createIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(indices, function (index) { return _this.createIndex(tableOrName, index); })];
                     case 1:
@@ -1574,9 +1627,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops an index from the table.
      */
     PostgresQueryRunner.prototype.dropIndex = function (tableOrName, indexOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, index, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1606,9 +1659,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops an indices from the table.
      */
     PostgresQueryRunner.prototype.dropIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, __1.PromiseUtils.runInSequence(indices, function (index) { return _this.dropIndex(tableOrName, index); })];
                     case 1:
@@ -1623,8 +1676,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     PostgresQueryRunner.prototype.clearTable = function (tableName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("TRUNCATE TABLE " + this.escapeTableName(tableName))];
                     case 1:
@@ -1638,10 +1691,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Removes all tables from the currently connected database.
      */
     PostgresQueryRunner.prototype.clearDatabase = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var schemas, schemaNamesString, selectDropsQuery, dropQueries, error_1, rollbackError_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         schemas = [];
@@ -1701,10 +1754,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     PostgresQueryRunner.prototype.loadTables = function (tableNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var currentSchemaQuery, currentSchema, tablesCondition, tablesSql, columnsSql, constraintsCondition, constraintsSql, indicesSql, foreignKeysCondition, foreignKeysSql, _a, dbTables, dbColumns, dbConstraints, dbIndices, dbForeignKeys;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         // if no tables given then no need to proceed
@@ -1715,7 +1768,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         currentSchemaQuery = _b.sent();
                         currentSchema = currentSchemaQuery[0]["current_schema"];
                         tablesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), schema = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(tableName.split("."), 2), schema = _a[0], name = _a[1];
                             if (!name) {
                                 name = schema;
                                 schema = _this.driver.options.schema || currentSchema;
@@ -1723,21 +1776,22 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                             return "(\"table_schema\" = '" + schema + "' AND \"table_name\" = '" + name + "')";
                         }).join(" OR ");
                         tablesSql = "SELECT * FROM \"information_schema\".\"tables\" WHERE " + tablesCondition;
-                        columnsSql = "SELECT *, \"udt_name\"::\"regtype\" AS \"regtype\" FROM \"information_schema\".\"columns\" WHERE " + tablesCondition;
+                        columnsSql = "SELECT *, ('\"' || \"udt_schema\" || '\".\"' || \"udt_name\" || '\"')::\"regtype\" AS \"regtype\" FROM \"information_schema\".\"columns\" WHERE " + tablesCondition;
                         constraintsCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), schema = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(tableName.split("."), 2), schema = _a[0], name = _a[1];
                             if (!name) {
                                 name = schema;
                                 schema = _this.driver.options.schema || currentSchema;
                             }
                             return "(\"ns\".\"nspname\" = '" + schema + "' AND \"t\".\"relname\" = '" + name + "')";
                         }).join(" OR ");
-                        constraintsSql = "SELECT \"ns\".\"nspname\" AS \"table_schema\", \"t\".\"relname\" AS \"table_name\", \"cnst\".\"conname\" AS \"constraint_name\", \"cnst\".\"consrc\" AS \"expression\", " +
-                            "CASE \"cnst\".\"contype\" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' END AS \"constraint_type\", \"a\".\"attname\" AS \"column_name\" " +
+                        constraintsSql = "SELECT \"ns\".\"nspname\" AS \"table_schema\", \"t\".\"relname\" AS \"table_name\", \"cnst\".\"conname\" AS \"constraint_name\", " +
+                            "CASE \"cnst\".\"contype\" WHEN 'x' THEN pg_get_constraintdef(\"cnst\".\"oid\", true) ELSE \"cnst\".\"consrc\" END AS \"expression\", " +
+                            "CASE \"cnst\".\"contype\" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS \"constraint_type\", \"a\".\"attname\" AS \"column_name\" " +
                             "FROM \"pg_constraint\" \"cnst\" " +
                             "INNER JOIN \"pg_class\" \"t\" ON \"t\".\"oid\" = \"cnst\".\"conrelid\" " +
                             "INNER JOIN \"pg_namespace\" \"ns\" ON \"ns\".\"oid\" = \"cnst\".\"connamespace\" " +
-                            "INNER JOIN \"pg_attribute\" \"a\" ON \"a\".\"attrelid\" = \"cnst\".\"conrelid\" AND \"a\".\"attnum\" = ANY (\"cnst\".\"conkey\") " +
+                            "LEFT JOIN \"pg_attribute\" \"a\" ON \"a\".\"attrelid\" = \"cnst\".\"conrelid\" AND \"a\".\"attnum\" = ANY (\"cnst\".\"conkey\") " +
                             ("WHERE \"t\".\"relkind\" = 'r' AND (" + constraintsCondition + ")");
                         indicesSql = "SELECT \"ns\".\"nspname\" AS \"table_schema\", \"t\".\"relname\" AS \"table_name\", \"i\".\"relname\" AS \"constraint_name\", \"a\".\"attname\" AS \"column_name\", " +
                             "CASE \"ix\".\"indisunique\" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS \"is_unique\", pg_get_expr(\"ix\".\"indpred\", \"ix\".\"indrelid\") AS \"condition\", " +
@@ -1751,7 +1805,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                             "LEFT JOIN \"pg_constraint\" \"cnst\" ON \"cnst\".\"conname\" = \"i\".\"relname\" " +
                             ("WHERE \"t\".\"relkind\" = 'r' AND \"cnst\".\"contype\" IS NULL AND (" + constraintsCondition + ")");
                         foreignKeysCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), schema = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(tableName.split("."), 2), schema = _a[0], name = _a[1];
                             if (!name) {
                                 name = schema;
                                 schema = _this.driver.options.schema || currentSchema;
@@ -1781,15 +1835,15 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                 this.query(foreignKeysSql),
                             ])];
                     case 2:
-                        _a = __read.apply(void 0, [_b.sent(), 5]), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbIndices = _a[3], dbForeignKeys = _a[4];
+                        _a = tslib_1.__read.apply(void 0, [_b.sent(), 5]), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbIndices = _a[3], dbForeignKeys = _a[4];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];
                         // create tables for loaded tables
-                        return [2 /*return*/, Promise.all(dbTables.map(function (dbTable) { return __awaiter(_this, void 0, void 0, function () {
-                                var table, schema, tableFullName, _a, tableUniqueConstraints, tableCheckConstraints, tableForeignKeyConstraints, tableIndexConstraints;
+                        return [2 /*return*/, Promise.all(dbTables.map(function (dbTable) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var table, schema, tableFullName, _a, tableUniqueConstraints, tableCheckConstraints, tableExclusionConstraints, tableForeignKeyConstraints, tableIndexConstraints;
                                 var _this = this;
-                                return __generator(this, function (_b) {
+                                return tslib_1.__generator(this, function (_b) {
                                     switch (_b.label) {
                                         case 0:
                                             table = new Table_1.Table();
@@ -1800,10 +1854,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                             _a = table;
                                             return [4 /*yield*/, Promise.all(dbColumns
                                                     .filter(function (dbColumn) { return _this.driver.buildTableName(dbColumn["table_name"], dbColumn["table_schema"]) === tableFullName; })
-                                                    .map(function (dbColumn) { return __awaiter(_this, void 0, void 0, function () {
+                                                    .map(function (dbColumn) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                                     var columnConstraints, tableColumn, type, sql, results, geometryColumnSql, results, geographyColumnSql, results, length, uniqueConstraint, isConstraintComposite;
                                                     var _this = this;
-                                                    return __generator(this, function (_a) {
+                                                    return tslib_1.__generator(this, function (_a) {
                                                         switch (_a.label) {
                                                             case 0:
                                                                 columnConstraints = dbConstraints.filter(function (dbConstraint) {
@@ -1853,7 +1907,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                                 _a.label = 2;
                                                             case 2:
                                                                 if (!(tableColumn.type === "geometry")) return [3 /*break*/, 4];
-                                                                geometryColumnSql = "SELECT * FROM (\n                        SELECT\n                          f_table_schema table_schema,\n                          f_table_name table_name,\n                          f_geometry_column column_name,\n                          srid,\n                          type\n                        FROM geometry_columns\n                      ) AS _\n                      WHERE " + tablesCondition + " AND column_name = '" + tableColumn.name + "'";
+                                                                geometryColumnSql = "SELECT * FROM (\n                        SELECT\n                          \"f_table_schema\" \"table_schema\",\n                          \"f_table_name\" \"table_name\",\n                          \"f_geometry_column\" \"column_name\",\n                          \"srid\",\n                          \"type\"\n                        FROM \"geometry_columns\"\n                      ) AS _\n                      WHERE " + tablesCondition + " AND \"column_name\" = '" + tableColumn.name + "'";
                                                                 return [4 /*yield*/, this.query(geometryColumnSql)];
                                                             case 3:
                                                                 results = _a.sent();
@@ -1862,7 +1916,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                                 _a.label = 4;
                                                             case 4:
                                                                 if (!(tableColumn.type === "geography")) return [3 /*break*/, 6];
-                                                                geographyColumnSql = "SELECT * FROM (\n                        SELECT\n                          f_table_schema table_schema,\n                          f_table_name table_name,\n                          f_geography_column column_name,\n                          srid,\n                          type\n                        FROM geography_columns\n                      ) AS _\n                      WHERE " + tablesCondition + " AND column_name = '" + tableColumn.name + "'";
+                                                                geographyColumnSql = "SELECT * FROM (\n                        SELECT\n                          \"f_table_schema\" \"table_schema\",\n                          \"f_table_name\" \"table_name\",\n                          \"f_geography_column\" \"column_name\",\n                          \"srid\",\n                          \"type\"\n                        FROM \"geography_columns\"\n                      ) AS _\n                      WHERE " + tablesCondition + " AND \"column_name\" = '" + tableColumn.name + "'";
                                                                 return [4 /*yield*/, this.query(geographyColumnSql)];
                                                             case 5:
                                                                 results = _a.sent();
@@ -1889,7 +1943,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                                         tableColumn.isGenerated = true;
                                                                         tableColumn.generationStrategy = "increment";
                                                                     }
-                                                                    else if (/^uuid_generate_v\d\(\)/.test(dbColumn["column_default"])) {
+                                                                    else if (dbColumn["column_default"] === "gen_random_uuid()" || /^uuid_generate_v\d\(\)/.test(dbColumn["column_default"])) {
                                                                         tableColumn.isGenerated = true;
                                                                         tableColumn.generationStrategy = "uuid";
                                                                     }
@@ -1930,6 +1984,16 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                     name: constraint["constraint_name"],
                                                     columnNames: checks.map(function (c) { return c["column_name"]; }),
                                                     expression: constraint["expression"] // column names are not escaped, may cause problems
+                                                });
+                                            });
+                                            tableExclusionConstraints = OrmUtils_1.OrmUtils.uniq(dbConstraints.filter(function (dbConstraint) {
+                                                return _this.driver.buildTableName(dbConstraint["table_name"], dbConstraint["table_schema"]) === tableFullName
+                                                    && dbConstraint["constraint_type"] === "EXCLUDE";
+                                            }), function (dbConstraint) { return dbConstraint["constraint_name"]; });
+                                            table.exclusions = tableExclusionConstraints.map(function (constraint) {
+                                                return new TableExclusion_1.TableExclusion({
+                                                    name: constraint["constraint_name"],
+                                                    expression: constraint["expression"].substring(8) // trim EXCLUDE from start of expression
                                                 });
                                             });
                                             tableForeignKeyConstraints = OrmUtils_1.OrmUtils.uniq(dbForeignKeys.filter(function (dbForeignKey) {
@@ -2004,6 +2068,13 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
             }).join(", ");
             sql += ", " + checksSql;
         }
+        if (table.exclusions.length > 0) {
+            var exclusionsSql = table.exclusions.map(function (exclusion) {
+                var exclusionName = exclusion.name ? exclusion.name : _this.connection.namingStrategy.exclusionConstraintName(table.name, exclusion.expression);
+                return "CONSTRAINT \"" + exclusionName + "\" EXCLUDE " + exclusion.expression;
+            }).join(", ");
+            sql += ", " + exclusionsSql;
+        }
         if (table.foreignKeys.length > 0 && createForeignKeys) {
             var foreignKeysSql = table.foreignKeys.map(function (fk) {
                 var columnNames = fk.columnNames.map(function (columnName) { return "\"" + columnName + "\""; }).join(", ");
@@ -2039,10 +2110,10 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Drops ENUM type from given schemas.
      */
     PostgresQueryRunner.prototype.dropEnumTypes = function (schemaNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var selectDropsQuery, dropQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         selectDropsQuery = "SELECT 'DROP TYPE IF EXISTS \"' || n.nspname || '\".\"' || t.typname || '\" CASCADE;' as \"query\" FROM \"pg_type\" \"t\" " +
@@ -2064,9 +2135,9 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      * Checks if enum with the given name exist in the database.
      */
     PostgresQueryRunner.prototype.hasEnumType = function (table, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var schema, enumName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         schema = this.parseTableName(table).schema;
@@ -2110,7 +2181,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      */
     PostgresQueryRunner.prototype.createIndexSql = function (table, index) {
         var columns = index.columnNames.map(function (columnName) { return "\"" + columnName + "\""; }).join(", ");
-        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON " + this.escapeTableName(table) + " " + (index.isSpatial ? "USING GiST " : "") + " (" + columns + ") " + (index.where ? "WHERE " + index.where : "");
+        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON " + this.escapeTableName(table) + " " + (index.isSpatial ? "USING GiST " : "") + "(" + columns + ") " + (index.where ? "WHERE " + index.where : "");
     };
     /**
      * Builds drop index sql.
@@ -2164,6 +2235,19 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         return "ALTER TABLE " + this.escapeTableName(table) + " DROP CONSTRAINT \"" + checkName + "\"";
     };
     /**
+     * Builds create exclusion constraint sql.
+     */
+    PostgresQueryRunner.prototype.createExclusionConstraintSql = function (table, exclusionConstraint) {
+        return "ALTER TABLE " + this.escapeTableName(table) + " ADD CONSTRAINT \"" + exclusionConstraint.name + "\" EXCLUDE " + exclusionConstraint.expression;
+    };
+    /**
+     * Builds drop exclusion constraint sql.
+     */
+    PostgresQueryRunner.prototype.dropExclusionConstraintSql = function (table, exclusionOrName) {
+        var exclusionName = exclusionOrName instanceof TableExclusion_1.TableExclusion ? exclusionOrName.name : exclusionOrName;
+        return "ALTER TABLE " + this.escapeTableName(table) + " DROP CONSTRAINT \"" + exclusionName + "\"";
+    };
+    /**
      * Builds create foreign key sql.
      */
     PostgresQueryRunner.prototype.createForeignKeySql = function (table, foreignKey) {
@@ -2213,12 +2297,12 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         var columnName = columnOrName instanceof TableColumn_1.TableColumn ? columnOrName.name : columnOrName;
         var schema = table.name.indexOf(".") === -1 ? this.driver.options.schema : table.name.split(".")[0];
         var tableName = table.name.indexOf(".") === -1 ? table.name : table.name.split(".")[1];
-        var enumName = schema && withSchema ? schema + "." + tableName + "_" + columnName.toLowerCase() + "_enum" : tableName + "_" + columnName.toLowerCase() + "_enum";
+        var enumName = schema && withSchema ? schema + "." + tableName + "_" + columnName + "_enum" : tableName + "_" + columnName + "_enum";
         if (toOld)
             enumName = enumName + "_old";
         return enumName.split(".").map(function (i) {
             return disableEscape ? i : "\"" + i + "\"";
-        }).join(".");
+        }).join(".").toLowerCase();
     };
     /**
      * Escapes given table path.
@@ -2261,8 +2345,8 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
             if (column.type === "bigint" || column.type === "int8")
                 c += " BIGSERIAL";
         }
-        if (column.type === "enum") {
-            c += " " + this.buildEnumName(table, column, false);
+        if (column.type === "enum" || column.type === "simple-enum") {
+            c += " " + this.buildEnumName(table, column);
             if (column.isArray)
                 c += " array";
         }
@@ -2278,7 +2362,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         if (column.default !== undefined && column.default !== null)
             c += " DEFAULT " + column.default;
         if (column.isGenerated && column.generationStrategy === "uuid" && !column.default)
-            c += " DEFAULT uuid_generate_v4()";
+            c += " DEFAULT " + this.driver.uuidGenerator;
         return c;
     };
     return PostgresQueryRunner;

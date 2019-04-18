@@ -14,6 +14,7 @@ import { IsolationLevel } from "../types/IsolationLevel";
 import { EntityManager } from "../../entity-manager/EntityManager";
 import { QueryBuilder } from "../../query-builder/QueryBuilder";
 import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
 /**
  * Runs queries on a single mysql database connection.
  */
@@ -270,6 +271,22 @@ export declare class SpannerQueryRunner extends BaseQueryRunner implements Query
      * systemTables means internally used table, such as migrations.
      */
     syncExtendSchemas(metadata: EntityMetadata[]): Promise<SpannerExtendSchemas>;
+    /**
+     * Creates a new exclusion constraint.
+     */
+    createExclusionConstraint(table: Table | string, exclusionConstraint: TableExclusion): Promise<void>;
+    /**
+     * Creates new exclusion constraints.
+     */
+    createExclusionConstraints(table: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
+    /**
+     * Drops a exclusion constraint.
+     */
+    dropExclusionConstraint(table: Table | string, exclusionOrName: TableExclusion | string): Promise<void>;
+    /**
+     * Drops exclusion constraints.
+     */
+    dropExclusionConstraints(table: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
     /**
      * helper for createAndLoadSchemaTable.
      * create schema object from schemas table column

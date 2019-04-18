@@ -9,6 +9,7 @@ import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterf
 import { EntityMetadata } from "../metadata/EntityMetadata";
 import { Logger } from "../logger/Logger";
 import { MigrationInterface } from "../migration/MigrationInterface";
+import { Migration } from "../migration/Migration";
 import { MongoRepository } from "../repository/MongoRepository";
 import { MongoEntityManager } from "../entity-manager/MongoEntityManager";
 import { ConnectionOptions } from "./ConnectionOptions";
@@ -19,6 +20,8 @@ import { SqljsEntityManager } from "../entity-manager/SqljsEntityManager";
 import { RelationLoader } from "../query-builder/RelationLoader";
 import { RelationIdLoader } from "../query-builder/RelationIdLoader";
 import { EntitySchema } from "../";
+import { IsolationLevel } from "../driver/types/IsolationLevel";
+import { EntityFactoryInterface } from '../entity-factory/EntityFactoryInterface';
 /**
  * Connection is a single database ORM connection to a specific database.
  * Its not required to be a database connection, depend on database type it can create connection pool.
@@ -36,7 +39,7 @@ export declare class Connection {
     /**
      * Indicates if connection is initialized or not.
      */
-    readonly isConnected: boolean;
+    readonly isConnected = false;
     /**
      * Database driver used by this connection.
      */
@@ -61,6 +64,10 @@ export declare class Connection {
      * Entity subscriber instances that are registered for this connection.
      */
     readonly subscribers: EntitySubscriberInterface<any>[];
+    /**
+     * Entity factory used to instantiate entities objects
+     */
+    readonly entityFactory: EntityFactoryInterface;
     /**
      * Observers observing queries.
      */
@@ -126,7 +133,7 @@ export declare class Connection {
      */
     runMigrations(options?: {
         transaction?: boolean;
-    }): Promise<void>;
+    }): Promise<Migration[]>;
     /**
      * Reverts last executed migration.
      * Can be used only after connection to the database is established.
@@ -164,7 +171,8 @@ export declare class Connection {
      * Wraps given function execution (and all operations made there) into a transaction.
      * All database operations must be executed using provided entity manager.
      */
-    transaction(runInTransaction: (entityManager: EntityManager) => Promise<any>): Promise<any>;
+    transaction<T>(runInTransaction: (entityManager: EntityManager) => Promise<T>): Promise<T>;
+    transaction<T>(isolationLevel: IsolationLevel, runInTransaction: (entityManager: EntityManager) => Promise<T>): Promise<T>;
     /**
      * Executes raw SQL query and returns raw database results.
      */

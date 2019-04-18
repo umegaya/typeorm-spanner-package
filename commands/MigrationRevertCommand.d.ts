@@ -1,9 +1,17 @@
+import * as yargs from "yargs";
 /**
  * Reverts last migration command.
  */
-export declare class MigrationRevertCommand {
+export declare class MigrationRevertCommand implements yargs.CommandModule {
     command: string;
     describe: string;
-    builder(yargs: any): any;
-    handler(argv: any): Promise<void>;
+    aliases: string;
+    builder(args: yargs.Argv): yargs.Argv<{
+        c: string;
+    } & {
+        transaction: string;
+    } & {
+        f: string;
+    }>;
+    handler(args: yargs.Arguments): Promise<void>;
 }

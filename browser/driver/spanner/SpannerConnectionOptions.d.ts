@@ -1,4 +1,5 @@
 import { BaseConnectionOptions } from "../../connection/BaseConnectionOptions";
+import { SessionPoolOptions } from "@google-cloud/spanner/build/src/session-pool";
 /**
  * Spanner-specific connection options.
  */
@@ -27,4 +28,8 @@ export interface SpannerConnectionOptions extends BaseConnectionOptions {
      * migration ddl type. if not specified, ddl should be pure spanner's one
      */
     readonly migrationDDLType?: "mysql";
+    /**
+     * session pool settings
+     */
+    readonly sessonPool?: SessionPoolOptions;
 }

@@ -1,23 +1,4 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 /**
  * Orders insert or remove subjects in proper order (using topological sorting)
  * to make sure insert or remove operations are executed in a proper order.
@@ -27,7 +8,7 @@ var SubjectTopoligicalSorter = /** @class */ (function () {
     // Constructor
     // -------------------------------------------------------------------------
     function SubjectTopoligicalSorter(subjects) {
-        this.subjects = __spread(subjects); // copy subjects to prevent changing of sent array
+        this.subjects = tslib_1.__spread(subjects); // copy subjects to prevent changing of sent array
         this.metadatas = this.getUniqueMetadatas(this.subjects);
     }
     // -------------------------------------------------------------------------
@@ -46,7 +27,7 @@ var SubjectTopoligicalSorter = /** @class */ (function () {
         // junction subjects are subjects without entity and database entity set
         if (direction === "delete") {
             var junctionSubjects = this.subjects.filter(function (subject) { return !subject.entity && !subject.databaseEntity; });
-            sortedSubjects.push.apply(sortedSubjects, __spread(junctionSubjects));
+            sortedSubjects.push.apply(sortedSubjects, tslib_1.__spread(junctionSubjects));
             this.removeAlreadySorted(junctionSubjects);
         }
         // next we always insert entities with non-nullable relations, sort them first
@@ -59,7 +40,7 @@ var SubjectTopoligicalSorter = /** @class */ (function () {
         // add those sorted targets and remove them from original array of targets
         sortedNonNullableEntityTargets.forEach(function (sortedEntityTarget) {
             var entityTargetSubjects = _this.subjects.filter(function (subject) { return subject.metadata.targetName === sortedEntityTarget; });
-            sortedSubjects.push.apply(sortedSubjects, __spread(entityTargetSubjects));
+            sortedSubjects.push.apply(sortedSubjects, tslib_1.__spread(entityTargetSubjects));
             _this.removeAlreadySorted(entityTargetSubjects);
         });
         // next sort all other entities
@@ -70,11 +51,11 @@ var SubjectTopoligicalSorter = /** @class */ (function () {
             sortedOtherEntityTargets = sortedOtherEntityTargets.reverse();
         sortedOtherEntityTargets.forEach(function (sortedEntityTarget) {
             var entityTargetSubjects = _this.subjects.filter(function (subject) { return subject.metadata.targetName === sortedEntityTarget; });
-            sortedSubjects.push.apply(sortedSubjects, __spread(entityTargetSubjects));
+            sortedSubjects.push.apply(sortedSubjects, tslib_1.__spread(entityTargetSubjects));
             _this.removeAlreadySorted(entityTargetSubjects);
         });
         // if we have something left in the subjects add them as well
-        sortedSubjects.push.apply(sortedSubjects, __spread(this.subjects));
+        sortedSubjects.push.apply(sortedSubjects, tslib_1.__spread(this.subjects));
         return sortedSubjects;
     };
     // -------------------------------------------------------------------------

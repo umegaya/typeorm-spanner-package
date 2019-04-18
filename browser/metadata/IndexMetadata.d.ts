@@ -40,6 +40,16 @@ export declare class IndexMetadata {
      */
     isSparse?: boolean;
     /**
+     * Builds the index in the background so that building an index an does not block other database activities.
+     * This option is only supported for mongodb database.
+     */
+    isBackground?: boolean;
+    /**
+     * Specifies a time to live, in seconds.
+     * This option is only supported for mongodb database.
+     */
+    expireAfterSeconds?: number;
+    /**
      * Target class to which metadata is applied.
      */
     target?: Function | string;

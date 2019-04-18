@@ -12,7 +12,7 @@ export declare class SqljsEntityManager extends EntityManager {
      * Loads either the definition from a file (Node.js) or localstorage (browser)
      * or uses the given definition to open a new database.
      */
-    loadDatabase(fileNameOrLocalStorageOrData: string | Uint8Array): void;
+    loadDatabase(fileNameOrLocalStorageOrData: string | Uint8Array): Promise<void>;
     /**
      * Saves the current database to a file (Node.js) or localstorage (browser)
      * if fileNameOrLocalStorage is not set options.location is used.

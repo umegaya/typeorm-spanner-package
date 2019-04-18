@@ -1,16 +1,17 @@
+import { Repository } from "./Repository";
+import { FindOptions, FindOptionsWhere } from "../index";
 import { DeepPartial } from "../common/DeepPartial";
 import { ObjectType } from "../common/ObjectType";
 import { Connection } from "../connection/Connection";
 import { ObjectID } from "../driver/mongodb/typings";
-import { FindExtraOptions, FindOptions, FindOptionsWhere } from "../index";
 import { DeleteResult } from "../query-builder/result/DeleteResult";
 import { InsertResult } from "../query-builder/result/InsertResult";
 import { UpdateResult } from "../query-builder/result/UpdateResult";
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 import { RemoveOptions } from "./RemoveOptions";
-import { Repository } from "./Repository";
 import { SaveOptions } from "./SaveOptions";
-import Observable = require("zen-observable");
+import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity";
+import * as Observable from "zen-observable";
 /**
  * Base abstract entity for all entities, used in ActiveRecord patterns.
  */
@@ -116,14 +117,14 @@ export declare class BaseEntity {
      * Executes fast and efficient INSERT query.
      * Does not check if entity exist in the database, so query will fail if duplicate entity is being inserted.
      */
-    static insert<T extends BaseEntity>(this: ObjectType<T>, entity: DeepPartial<T> | DeepPartial<T>[], options?: SaveOptions): Promise<InsertResult>;
+    static insert<T extends BaseEntity>(this: ObjectType<T>, entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[], options?: SaveOptions): Promise<InsertResult>;
     /**
      * Updates entity partially. Entity can be found by a given conditions.
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
      * Executes fast and efficient UPDATE query.
      * Does not check if entity exist in the database.
      */
-    static update<T extends BaseEntity>(this: ObjectType<T>, criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<T>, partialEntity: DeepPartial<T>, options?: SaveOptions): Promise<UpdateResult>;
+    static update<T extends BaseEntity>(this: ObjectType<T>, criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<T>, partialEntity: QueryDeepPartialEntity<T>, options?: SaveOptions): Promise<UpdateResult>;
     /**
      * Deletes entities by a given criteria.
      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
@@ -132,9 +133,13 @@ export declare class BaseEntity {
      */
     static delete<T extends BaseEntity>(this: ObjectType<T>, criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindOptionsWhere<T>, options?: RemoveOptions): Promise<DeleteResult>;
     /**
+     * Counts entities that match given options.
+     */
+    static count<T extends BaseEntity>(this: ObjectType<T>, options?: FindOptionsWhere<T>): Promise<number>;
+    /**
      * Counts entities that match given conditions.
      */
-    static count<T extends BaseEntity>(this: ObjectType<T>, conditions?: FindOptionsWhere<T>, options?: FindExtraOptions): Promise<number>;
+    static count<T extends BaseEntity>(this: ObjectType<T>, conditions?: FindOptions<T>): Promise<number>;
     /**
      * Finds entities that match given options.
      */
@@ -188,7 +193,7 @@ export declare class BaseEntity {
     /**
      * Finds first entity that matches given conditions.
      */
-    static findOneOrFail<T extends BaseEntity>(this: ObjectType<T>, conditions?: DeepPartial<T>, options?: FindOptions<T>): Promise<T>;
+    static findOneOrFail<T extends BaseEntity>(this: ObjectType<T>, conditions?: FindOptionsWhere<T>, options?: FindOptions<T>): Promise<T>;
     /**
      * Finds entities that match given options and returns observable.
      * Whenever new data appears that matches given query observable emits new value.

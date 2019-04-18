@@ -1,80 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var TransactionAlreadyStartedError_1 = require("../../error/TransactionAlreadyStartedError");
 var TransactionNotStartedError_1 = require("../../error/TransactionNotStartedError");
 var TableColumn_1 = require("../../schema-builder/table/TableColumn");
@@ -95,7 +21,7 @@ var index_1 = require("../../index");
  * Runs queries on a single mysql database connection.
  */
 var SpannerQueryRunner = /** @class */ (function (_super) {
-    __extends(SpannerQueryRunner, _super);
+    tslib_1.__extends(SpannerQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -117,9 +43,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     SpannerQueryRunner.prototype.connect = function () {
         var _this = this;
         if (!this.databaseConnection) {
-            return (function () { return __awaiter(_this, void 0, void 0, function () {
+            return (function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                 var _a;
-                return __generator(this, function (_b) {
+                return tslib_1.__generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
                             _a = this;
@@ -144,9 +70,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Starts transaction on the current connection.
      */
     SpannerQueryRunner.prototype.startTransaction = function (isolationLevel) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 if (!this.driver.enableTransaction) {
                     //console.log('startTransaction(ignored)');
                     return [2 /*return*/, Promise.resolve()];
@@ -155,9 +81,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                 if (this.isTransactionActive)
                     throw new TransactionAlreadyStartedError_1.TransactionAlreadyStartedError();
                 this.isTransactionActive = true;
-                return [2 /*return*/, this.connect().then(function (db) { return __awaiter(_this, void 0, void 0, function () {
+                return [2 /*return*/, this.connect().then(function (db) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var _a;
-                        return __generator(this, function (_b) {
+                        return tslib_1.__generator(this, function (_b) {
                             switch (_b.label) {
                                 case 0:
                                     _a = this;
@@ -204,9 +130,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     SpannerQueryRunner.prototype.rollbackTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.driver.enableTransaction) {
@@ -238,21 +164,21 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction start/commit will fails
      */
     SpannerQueryRunner.prototype.runInTransaction = function (runInTransaction, isolationLevel) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (res, rej) {
-                        _this.connect().then(function (db) { return __awaiter(_this, void 0, void 0, function () {
+                        _this.connect().then(function (db) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 this.databaseConnection.runTransaction({
                                     // TODO: how specify these options?
                                     //readOnly: true,
                                     strong: !!isolationLevel
-                                }, function (err, tx) { return __awaiter(_this, void 0, void 0, function () {
+                                }, function (err, tx) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                     var r;
                                     var _this = this;
-                                    return __generator(this, function (_a) {
+                                    return tslib_1.__generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
                                                 if (err) {
@@ -289,8 +215,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Executes sql used special for schema build.
      */
     SpannerQueryRunner.prototype.executeQueries = function (upQueries, downQueries) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.disableDDLParser = true;
@@ -318,10 +244,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         else if (!query.match(/^\s*SELECT\s+(.+)/)) {
             throw new Error("the query cannot handle by this function: " + query);
         }
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var db, _a, params, types, queryStartTime_1, err_1;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
@@ -330,7 +256,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         _b.sent();
                         db = this.tx || this.databaseConnection;
                         parameters = parameters || [];
-                        _a = __read(parameters, 2), params = _a[0], types = _a[1];
+                        _a = tslib_1.__read(parameters, 2), params = _a[0], types = _a[1];
                         //console.log('query', query, params, types);
                         this.driver.connection.logger.logQuery(query, params, this);
                         queryStartTime_1 = +new Date();
@@ -387,9 +313,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         var _this = this;
         if (this.isReleased)
             throw new QueryRunnerAlreadyReleasedError_1.QueryRunnerAlreadyReleasedError();
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var db, _a, params, types, stream, err_2;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
@@ -399,7 +325,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         db = this.databaseConnection;
                         this.driver.connection.logger.logQuery(query, parameters, this);
                         parameters = parameters || [];
-                        _a = __read(parameters, 2), params = _a[0], types = _a[1];
+                        _a = tslib_1.__read(parameters, 2), params = _a[0], types = _a[1];
                         stream = db.runStream({ sql: query, params: params, types: types });
                         if (onEnd)
                             stream.on("end", onEnd);
@@ -420,8 +346,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Returns all available database names including system databases.
      */
     SpannerQueryRunner.prototype.getDatabases = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, this.driver.getDatabases()];
             });
         });
@@ -431,8 +357,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * If database parameter specified, returns schemas of that database.
      */
     SpannerQueryRunner.prototype.getSchemas = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: getSchemas");
             });
         });
@@ -441,12 +367,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Checks if database with the given name exist.
      */
     SpannerQueryRunner.prototype.hasDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.connect().then(function () { return __awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, this.connect().then(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var dbs;
-                        return __generator(this, function (_a) {
+                        return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.driver.getDatabases()];
                                 case 1:
@@ -462,8 +388,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Checks if schema with the given name exist.
      */
     SpannerQueryRunner.prototype.hasSchema = function (schema) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: hasSchema");
             });
         });
@@ -472,12 +398,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Checks if table with the given name exist in the database.
      */
     SpannerQueryRunner.prototype.hasTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.connect().then(function () { return __awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, this.connect().then(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var table;
-                        return __generator(this, function (_a) {
+                        return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.driver.loadTables(tableOrName)];
                                 case 1:
@@ -494,12 +420,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Checks if column with the given name exist in the given table.
      */
     SpannerQueryRunner.prototype.hasColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.connect().then(function () { return __awaiter(_this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, this.connect().then(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var tables;
-                        return __generator(this, function (_a) {
+                        return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.driver.loadTables(tableOrName)];
                                 case 1:
@@ -523,9 +449,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new database.
      */
     SpannerQueryRunner.prototype.createDatabase = function (database, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifNotExist ? "CREATE DATABASE IF NOT EXISTS `" + database + "`" : "CREATE DATABASE `" + database + "`";
@@ -542,9 +468,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops database.
      */
     SpannerQueryRunner.prototype.dropDatabase = function (database, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifExist ? "DROP DATABASE IF EXISTS `" + database + "`" : "DROP DATABASE `" + database + "`";
@@ -561,8 +487,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new table schema.
      */
     SpannerQueryRunner.prototype.createSchema = function (schema, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: createSchema");
             });
         });
@@ -571,8 +497,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops table schema.
      */
     SpannerQueryRunner.prototype.dropSchema = function (schemaPath, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: dropSchema");
             });
         });
@@ -585,10 +511,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     SpannerQueryRunner.prototype.createTable = function (table, ifNotExist, createForeignKeys) {
         if (ifNotExist === void 0) { ifNotExist = false; }
         if (createForeignKeys === void 0) { createForeignKeys = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifNotExist) return [3 /*break*/, 2];
@@ -624,12 +550,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 downQueries.push(_this.dropIndexSql(table, index));
                             });
                         }
-                        // we don't drop foreign key itself. because its created with table 
+                        // we don't drop foreign key itself. because its created with table
                         // if (createForeignKeys)
                         // table.foreignKeys.forEach(foreignKey => downQueries.push(this.dropForeignKeySql(table, foreignKey)));
                         return [4 /*yield*/, this.executeQueries(upQueries, downQueries)];
                     case 3:
-                        // we don't drop foreign key itself. because its created with table 
+                        // we don't drop foreign key itself. because its created with table
                         // if (createForeignKeys)
                         // table.foreignKeys.forEach(foreignKey => downQueries.push(this.dropForeignKeySql(table, foreignKey)));
                         _a.sent();
@@ -647,10 +573,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.dropTable = function (target, ifExist, dropForeignKeys) {
         if (dropForeignKeys === void 0) { dropForeignKeys = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, tableName, table, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifExist) return [3 /*break*/, 2];
@@ -691,8 +617,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Renames a table.
      */
     SpannerQueryRunner.prototype.renameTable = function (oldTableOrName, newTableName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 // TODO: re-create table
                 throw new Error("NYI: spanner: renameTable");
             });
@@ -702,9 +628,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new column from the column in the table.
      */
     SpannerQueryRunner.prototype.addColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, skipColumnLevelPrimary, columnIndex, uniqueIndex;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -790,9 +716,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new columns from the column in the table.
      */
     SpannerQueryRunner.prototype.addColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, index_1.PromiseUtils.runInSequence(columns, function (column) { return _this.addColumn(tableOrName, column); })];
                     case 1:
@@ -806,8 +732,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Renames column in the given table.
      */
     SpannerQueryRunner.prototype.renameColumn = function (tableOrName, oldTableColumnOrName, newTableColumnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: renameColumn. you can remove column first, then create with the same name.");
             });
         });
@@ -821,9 +747,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * - Enable or disable commit timestamps in value and primary key columns.
      */
     SpannerQueryRunner.prototype.changeColumn = function (tableOrName, oldColumnOrName, newColumn) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, oldColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -883,7 +809,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             oldColumn.charset !== newColumn.charset ||
                             oldColumn.collation !== newColumn.collation ||
                             // comment is not supported by spanner
-                            // default is managed by schemas table. 
+                            // default is managed by schemas table.
                             oldColumn.enum !== newColumn.enum ||
                             oldColumn.generatedType !== newColumn.generatedType ||
                             // generationStorategy is managed by schemas table
@@ -910,9 +836,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     SpannerQueryRunner.prototype.changeColumns = function (tableOrName, changedColumns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, index_1.PromiseUtils.runInSequence(changedColumns, function (changedColumn) { return _this.changeColumn(tableOrName, changedColumn.oldColumn, changedColumn.newColumn); })];
                     case 1:
@@ -926,9 +852,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops column in the table.
      */
     SpannerQueryRunner.prototype.dropColumn = function (tableOrName, columnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, column, clonedTable, upQueries, downQueries, columnIndex, uniqueName_1, foundUnique, indexName_1, foundIndex;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1023,9 +949,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops the columns in the table.
      */
     SpannerQueryRunner.prototype.dropColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, index_1.PromiseUtils.runInSequence(columns, function (column) { return _this.dropColumn(tableOrName, column); })];
                     case 1:
@@ -1039,8 +965,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new primary key.
      */
     SpannerQueryRunner.prototype.createPrimaryKey = function (tableOrName, columnNames) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: createPrimaryKey");
             });
         });
@@ -1049,8 +975,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Updates composite primary keys.
      */
     SpannerQueryRunner.prototype.updatePrimaryKeys = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: updatePrimaryKeys");
             });
         });
@@ -1059,8 +985,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops a primary key.
      */
     SpannerQueryRunner.prototype.dropPrimaryKey = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: dropPrimaryKey");
             });
         });
@@ -1069,8 +995,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraint.
      */
     SpannerQueryRunner.prototype.createUniqueConstraint = function (tableOrName, uniqueConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: createUniqueConstraint");
             });
         });
@@ -1079,8 +1005,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraints.
      */
     SpannerQueryRunner.prototype.createUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: createUniqueConstraints");
             });
         });
@@ -1089,8 +1015,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraint.
      */
     SpannerQueryRunner.prototype.dropUniqueConstraint = function (tableOrName, uniqueOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: dropUniqueConstraint");
             });
         });
@@ -1099,8 +1025,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraints.
      */
     SpannerQueryRunner.prototype.dropUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: dropUniqueConstraints");
             });
         });
@@ -1109,8 +1035,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new check constraint.
      */
     SpannerQueryRunner.prototype.createCheckConstraint = function (tableOrName, checkConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: createCheckConstraint");
             });
         });
@@ -1119,8 +1045,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new check constraints.
      */
     SpannerQueryRunner.prototype.createCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: createCheckConstraints");
             });
         });
@@ -1129,8 +1055,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops check constraint.
      */
     SpannerQueryRunner.prototype.dropCheckConstraint = function (tableOrName, checkOrName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: dropCheckConstraint");
             });
         });
@@ -1139,8 +1065,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops check constraints.
      */
     SpannerQueryRunner.prototype.dropCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("NYI: spanner: dropCheckConstraints");
             });
         });
@@ -1149,9 +1075,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign key. in spanner, it creates corresponding index too
      */
     SpannerQueryRunner.prototype.createForeignKey = function (tableOrName, foreignKey) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1181,8 +1107,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign keys.
      */
     SpannerQueryRunner.prototype.createForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/];
             });
         });
@@ -1191,9 +1117,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign key.
      */
     SpannerQueryRunner.prototype.dropForeignKey = function (tableOrName, foreignKeyOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, foreignKey, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1223,10 +1149,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign keys from the table.
      */
     SpannerQueryRunner.prototype.dropForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.dropForeignKey(tableOrName, foreignKey); });
@@ -1242,9 +1168,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new index.
      */
     SpannerQueryRunner.prototype.createIndex = function (tableOrName, index) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1274,10 +1200,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Creates a new indices
      */
     SpannerQueryRunner.prototype.createIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.createIndex(tableOrName, index); });
@@ -1293,9 +1219,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops an index.
      */
     SpannerQueryRunner.prototype.dropIndex = function (tableOrName, indexOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, index, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1325,10 +1251,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Drops an indices from the table.
      */
     SpannerQueryRunner.prototype.dropIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.dropIndex(tableOrName, index); });
@@ -1345,9 +1271,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     SpannerQueryRunner.prototype.clearTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var qb;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (tableOrName instanceof Table_1.Table) {
@@ -1369,10 +1295,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * (because it can clear all your database).
      */
     SpannerQueryRunner.prototype.clearDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tables, keys, CONCURRENT_DELETION, i, start, end, range;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.driver.getAllTablesForDrop(true)];
                     case 1:
@@ -1389,8 +1315,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         if (range.length <= 0) {
                             return [3 /*break*/, 5];
                         }
-                        return [4 /*yield*/, Promise.all(range.map(function (k) { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
+                        return [4 /*yield*/, Promise.all(range.map(function (k) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                return tslib_1.__generator(this, function (_a) {
                                     return [2 /*return*/, this.dropTable(k)];
                                 });
                             }); }))];
@@ -1411,9 +1337,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * @database: spanner's database object.
      */
     SpannerQueryRunner.prototype.createAndLoadSchemaTable = function (tableName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var e_1, _a, tableExist, rawObjects, schemas, rawObjects_1, rawObjects_1_1, rawObject, table, tableSchemas, column;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.hasTable(tableName)];
                     case 1:
@@ -1455,7 +1381,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         rawObjects = _b.sent();
                         schemas = {};
                         try {
-                            for (rawObjects_1 = __values(rawObjects), rawObjects_1_1 = rawObjects_1.next(); !rawObjects_1_1.done; rawObjects_1_1 = rawObjects_1.next()) {
+                            for (rawObjects_1 = tslib_1.__values(rawObjects), rawObjects_1_1 = rawObjects_1.next(); !rawObjects_1_1.done; rawObjects_1_1 = rawObjects_1.next()) {
                                 rawObject = rawObjects_1_1.value;
                                 table = rawObject["table"];
                                 if (!schemas[table]) {
@@ -1487,10 +1413,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * systemTables means internally used table, such as migrations.
      */
     SpannerQueryRunner.prototype.syncExtendSchemas = function (metadata) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var allSchemaObjects, raw, systemTables, tableProps, oldNormalTables, newExtendSchemas;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         allSchemaObjects = {};
@@ -1518,10 +1444,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         }));
                         oldNormalTables = Object.keys(allSchemaObjects);
                         newExtendSchemas = {};
-                        return [4 /*yield*/, Promise.all(tableProps.map(function (t) { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, Promise.all(tableProps.map(function (t) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var e_2, _a, e_3, _b, oldTableIndex, promises, schemaObjectsByTable, oldColumns, _c, _d, c, oldColumnIndex, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
                                 var _this = this;
-                                return __generator(this, function (_f) {
+                                return tslib_1.__generator(this, function (_f) {
                                     switch (_f.label) {
                                         case 0:
                                             oldTableIndex = oldNormalTables.indexOf(t.name);
@@ -1532,7 +1458,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                             schemaObjectsByTable = allSchemaObjects[t.name] || [];
                                             oldColumns = schemaObjectsByTable.map(function (o) { return o["column"]; });
                                             try {
-                                                for (_c = __values(t.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
+                                                for (_c = tslib_1.__values(t.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
                                                     c = _d.value;
                                                     oldColumnIndex = oldColumns.indexOf(c.databaseName);
                                                     if (oldColumnIndex >= 0) {
@@ -1550,14 +1476,14 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                                         return schemaObjectsByTable.find(function (o) { return o["column"] === e.column && o["type"] === e.type; });
                                                     });
                                                     if ((addFiltered.length + removeFiltered.length) > 0) {
-                                                        promises.push(Promise.all(__spread(addFiltered.map(function (e) { return _this.upsertExtendSchema(e.table, e.column, e.type, e.value); }), removeFiltered.map(function (e) { return _this.deleteExtendSchema(e.table, e.column, e.type); }))));
+                                                        promises.push(Promise.all(tslib_1.__spread(addFiltered.map(function (e) { return _this.upsertExtendSchema(e.table, e.column, e.type, e.value); }), removeFiltered.map(function (e) { return _this.deleteExtendSchema(e.table, e.column, e.type); }))));
                                                     }
                                                     if (add.length > 0) {
                                                         if (!newExtendSchemas[t.name]) {
                                                             newExtendSchemas[t.name] = {};
                                                         }
                                                         try {
-                                                            for (add_1 = __values(add), add_1_1 = add_1.next(); !add_1_1.done; add_1_1 = add_1.next()) {
+                                                            for (add_1 = tslib_1.__values(add), add_1_1 = add_1.next(); !add_1_1.done; add_1_1 = add_1.next()) {
                                                                 a = add_1_1.value;
                                                                 newExtendSchemas[t.name][c.databaseName] = this.createExtendSchemaObject(a.table, a.type, a.value);
                                                             }
@@ -1582,8 +1508,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                             // if column is no more exists in new entity metadata, remove all extend schema for such columns
                                             if (oldColumns.length > 0) {
                                                 console.log('oldColumns', oldColumns);
-                                                promises.push(Promise.all(oldColumns.map(function (c) { return __awaiter(_this, void 0, void 0, function () {
-                                                    return __generator(this, function (_a) {
+                                                promises.push(Promise.all(oldColumns.map(function (c) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                                    return tslib_1.__generator(this, function (_a) {
                                                         switch (_a.label) {
                                                             case 0: return [4 /*yield*/, this.deleteExtendSchema(t.name, c)];
                                                             case 1:
@@ -1606,8 +1532,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         _a.sent();
                         if (!(oldNormalTables.length > 0)) return [3 /*break*/, 5];
                         //console.log('oldNormalTables', oldNormalTables);
-                        return [4 /*yield*/, Promise.all(oldNormalTables.map(function (tableName) { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
+                        return [4 /*yield*/, Promise.all(oldNormalTables.map(function (tableName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0: return [4 /*yield*/, this.deleteExtendSchema(tableName)];
                                         case 1:
@@ -1622,6 +1548,46 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         _a.label = 5;
                     case 5: return [2 /*return*/, newExtendSchemas];
                 }
+            });
+        });
+    };
+    /**
+     * Creates a new exclusion constraint.
+     */
+    SpannerQueryRunner.prototype.createExclusionConstraint = function (table, exclusionConstraint) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Creates new exclusion constraints.
+     */
+    SpannerQueryRunner.prototype.createExclusionConstraints = function (table, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops a exclusion constraint.
+     */
+    SpannerQueryRunner.prototype.dropExclusionConstraint = function (table, exclusionOrName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraints.
+     */
+    SpannerQueryRunner.prototype.dropExclusionConstraints = function (table, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("MySql does not support exclusion constraints.");
             });
         });
     };
@@ -1643,8 +1609,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             }
             else if (value == "increment") {
                 columnSchema.generatorStorategy = "increment";
-                // we automatically process increment generation storategy as uuid. 
-                // because spanner strongly discourage auto increment column. 
+                // we automatically process increment generation storategy as uuid.
+                // because spanner strongly discourage auto increment column.
                 // TODO: if there is request, implement auto increment somehow.
                 if (table !== "migrations") {
                     this.driver.connection.logger.log("warn", "column value generatorStorategy `increment` treated as `uuid` on spanner, due to performance reason.");
@@ -1667,10 +1633,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             valuesSet = [valuesSet];
         }
         try {
-            for (var valuesSet_1 = __values(valuesSet), valuesSet_1_1 = valuesSet_1.next(); !valuesSet_1_1.done; valuesSet_1_1 = valuesSet_1.next()) {
+            for (var valuesSet_1 = tslib_1.__values(valuesSet), valuesSet_1_1 = valuesSet_1.next(); !valuesSet_1_1.done; valuesSet_1_1 = valuesSet_1.next()) {
                 var values = valuesSet_1_1.value;
                 try {
-                    for (var _c = __values(table.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    for (var _c = tslib_1.__values(table.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var column = _d.value;
                         if (values[column.name] === undefined) {
                             var value = this.driver.autoGenerateValue(table.name, column.name);
@@ -1710,10 +1676,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             valuesSet = [valuesSet];
         }
         try {
-            for (var valuesSet_2 = __values(valuesSet), valuesSet_2_1 = valuesSet_2.next(); !valuesSet_2_1.done; valuesSet_2_1 = valuesSet_2.next()) {
+            for (var valuesSet_2 = tslib_1.__values(valuesSet), valuesSet_2_1 = valuesSet_2.next(); !valuesSet_2_1.done; valuesSet_2_1 = valuesSet_2.next()) {
                 var values = valuesSet_2_1.value;
                 try {
-                    for (var _c = __values(table.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    for (var _c = tslib_1.__values(table.columns), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var column = _d.value;
                         if (values[column.name] !== undefined) {
                             values[column.name] = this.driver.normalizeValue(values[column.name], column.type);
@@ -1743,8 +1709,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * load formatted object from schema table
      */
     SpannerQueryRunner.prototype.loadExtendSchemaTable = function (tableName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.connection.manager
                             .createQueryBuilder(this)
@@ -1761,9 +1727,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * null means value contains all key elements already.
      */
     SpannerQueryRunner.prototype.examineKeys = function (table, qb, keysOnly) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var e_8, _a, expressionMap, m, pc_1, keys_1, keys_2, _b, _c, k, idx1, idx2, pc, _d, query, parameters, _e, params, types, pc_2, parsed, keys_3, idx, sql, _f, results, err, keys;
-            return __generator(this, function (_g) {
+            return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
                         expressionMap = qb.expressionMap;
@@ -1784,7 +1750,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         else if (table.primaryColumns.length > 1) {
                             keys_2 = [];
                             try {
-                                for (_b = __values(Object.keys(expressionMap.nativeParameters)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                                for (_b = tslib_1.__values(Object.keys(expressionMap.nativeParameters)), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     k = _c.value;
                                     m = k.match(/id_([0-9]+)_([0-9]+)/);
                                     if (m) {
@@ -1815,8 +1781,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 return [2 /*return*/, keys_2];
                             }
                         }
-                        _d = __read(qb.getQueryAndParameters(), 2), query = _d[0], parameters = _d[1];
-                        _e = __read(parameters, 2), params = _e[0], types = _e[1];
+                        _d = tslib_1.__read(qb.getQueryAndParameters(), 2), query = _d[0], parameters = _d[1];
+                        _e = tslib_1.__read(parameters, 2), params = _e[0], types = _e[1];
                         if (m = query.match(/IN\(([^)]+)\)/)) {
                             pc_2 = table.primaryColumns[0];
                             parsed = m[1].split(",");
@@ -1834,7 +1800,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             (idx >= 0 ? query.substring(idx) : ""));
                         return [4 /*yield*/, (this.tx || this.databaseConnection).run({ sql: sql, params: params, types: types, json: true })];
                     case 1:
-                        _f = __read.apply(void 0, [_g.sent(), 2]), results = _f[0], err = _f[1];
+                        _f = tslib_1.__read.apply(void 0, [_g.sent(), 2]), results = _f[0], err = _f[1];
                         if (err) {
                             this.driver.connection.logger.logQueryError(err, sql, [], this);
                             throw err;
@@ -1858,26 +1824,26 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * connect() should be already called before this function invoked.
      */
     SpannerQueryRunner.prototype.request = function (table, method) {
+        var _a, _b;
         var args = [];
         for (var _i = 2; _i < arguments.length; _i++) {
             args[_i - 2] = arguments[_i];
         }
-        var _a, _b;
         if (this.driver.connection.options.logging) {
             this.driver.connection.logger.logQuery(method + " " + table.name + " " + (this.isTransactionActive ? "tx" : "non-tx"), args[0]);
         }
         if (this.tx) {
-            return (_a = this.tx)[method].apply(_a, __spread([table.name], args));
+            return (_a = this.tx)[method].apply(_a, tslib_1.__spread([table.name], args));
         }
         else {
-            return (_b = this.databaseConnection.table(table.name))[method].apply(_b, __spread(args));
+            return (_b = this.databaseConnection.table(table.name))[method].apply(_b, tslib_1.__spread(args));
         }
     };
     /**
      * Handle select query
      */
     SpannerQueryRunner.prototype.select = function (qb) {
-        var _a = __read(qb.getQueryAndParameters(), 2), query = _a[0], parameters = _a[1];
+        var _a = tslib_1.__read(qb.getQueryAndParameters(), 2), query = _a[0], parameters = _a[1];
         return this.query(query, parameters);
     };
     /**
@@ -1885,9 +1851,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.insert = function (qb) {
         var _this = this;
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var table, vss, e_9;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
@@ -1899,16 +1865,16 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             return [2 /*return*/];
                         }
                         vss = this.verifyAndFillAutoGeneratedValues(table, qb.expressionMap.valuesSet);
-                        // NOTE: when transaction mode, callback (next args of vss) never called. 
-                        // at transaction mode, this call just change queuedMutations_ property of this.tx, 
-                        // and callback ignored. 
-                        // then actual mutation will be done when commitTransaction is called. 
+                        // NOTE: when transaction mode, callback (next args of vss) never called.
+                        // at transaction mode, this call just change queuedMutations_ property of this.tx,
+                        // and callback ignored.
+                        // then actual mutation will be done when commitTransaction is called.
                         return [4 /*yield*/, this.request(table, 'insert', vss)];
                     case 2:
-                        // NOTE: when transaction mode, callback (next args of vss) never called. 
-                        // at transaction mode, this call just change queuedMutations_ property of this.tx, 
-                        // and callback ignored. 
-                        // then actual mutation will be done when commitTransaction is called. 
+                        // NOTE: when transaction mode, callback (next args of vss) never called.
+                        // at transaction mode, this call just change queuedMutations_ property of this.tx,
+                        // and callback ignored.
+                        // then actual mutation will be done when commitTransaction is called.
                         _a.sent();
                         ok(vss);
                         return [3 /*break*/, 4];
@@ -1926,9 +1892,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.update = function (qb) {
         var _this = this;
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var e_10, _a, table, vss, value, rows, rows_1, rows_1_1, row, e_11;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 4, , 5]);
@@ -1953,7 +1919,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             return [2 /*return*/];
                         }
                         try {
-                            for (rows_1 = __values(rows), rows_1_1 = rows_1.next(); !rows_1_1.done; rows_1_1 = rows_1.next()) {
+                            for (rows_1 = tslib_1.__values(rows), rows_1_1 = rows_1.next(); !rows_1_1.done; rows_1_1 = rows_1.next()) {
                                 row = rows_1_1.value;
                                 Object.assign(row, value);
                             }
@@ -1986,9 +1952,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.upsert = function (qb) {
         var _this = this;
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var table, vss, e_12;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
@@ -2021,9 +1987,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.delete = function (qb) {
         var _this = this;
-        return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+        return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var table, rows, e_13;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, , 5]);
@@ -2080,9 +2046,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.handleAdministrativeQuery = function (type, m) {
         var _this = this;
-        return this.connect().then(function (conn) { return __awaiter(_this, void 0, void 0, function () {
+        return this.connect().then(function (conn) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var _a, p, name, p, name, name, sqls, ddl, extendSchames, tableName, table, columnName, column;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (type == "CREATE") {
@@ -2125,7 +2091,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         if (!this.disableDDLParser && this.driver.ddlParser) {
                             ddl = m[0][m[0].length - 1] === ';' ? m[0] : (m[0] + ";");
                             extendSchames = {};
-                            _a = __read(this.toSpannerQueryAndSchema(ddl), 2), sqls = _a[0], extendSchames = _a[1];
+                            _a = tslib_1.__read(this.toSpannerQueryAndSchema(ddl), 2), sqls = _a[0], extendSchames = _a[1];
                             console.log('handleAdminQuery', sqls, extendSchames);
                             for (tableName in extendSchames) {
                                 table = extendSchames[tableName];
@@ -2151,15 +2117,15 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     SpannerQueryRunner.prototype.loadTables = function (tableNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 // if no tables given then no need to proceed
                 if (!tableNames || !tableNames.length)
                     return [2 /*return*/, []];
-                return [2 /*return*/, this.connect().then(function () { return __awaiter(_this, void 0, void 0, function () {
+                return [2 /*return*/, this.connect().then(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var tables;
-                        return __generator(this, function (_a) {
+                        return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.driver.loadTables(tableNames)];
                                 case 1:
@@ -2222,10 +2188,10 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         return "DROP TABLE " + this.escapeTableName(tableOrName);
     };
     SpannerQueryRunner.prototype.dropTableSqlRecursive = function (tableOrName, upQueries, downQueries) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(typeof tableOrName == 'string')) return [3 /*break*/, 2];
@@ -2261,7 +2227,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         if (index.isSpatial)
             indexType += "NULL_FILTERED ";
         if (index.isFulltext)
-            throw new Error("NYI: spanner: index.isFulltext"); //indexType += "FULLTEXT "; 
+            throw new Error("NYI: spanner: index.isFulltext"); //indexType += "FULLTEXT ";
         return "CREATE " + indexType + "INDEX `" + index.name + "` ON " + this.escapeTableName(table) + "(" + columns + ")";
     };
     /**
@@ -2370,7 +2336,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         // we should create metadata table and get information about generated columns
         // if (column.isGenerated && column.generationStrategy === "increment") {
         // }
-        // does not support comment. 
+        // does not support comment.
         if (column.comment)
             throw new Error("NYI: spanner: column.comment"); //c += ` COMMENT '${column.comment}'`;
         // spanner ddl does not support any default value except SpannerColumnUpdateWithCommitTimestamp
@@ -2427,9 +2393,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         return ret;
     };
     SpannerQueryRunner.prototype.deleteExtendSchema = function (table, column, type) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var wh, qb;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 wh = column ? (type ?
                     "`table` = '" + table + "' AND `column` = '" + column + "' AND `type` = '" + type + "'" :
                     "`table` = '" + table + "' AND `column` = '" + column + "'") : ("`table` = '" + table + "'");
@@ -2443,9 +2409,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         });
     };
     SpannerQueryRunner.prototype.upsertExtendSchema = function (table, column, type, value) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var qb;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 qb = this.connection.manager
                     .createQueryBuilder(this)
                     .update(this.driver.options.schemaTableName || "schemas")

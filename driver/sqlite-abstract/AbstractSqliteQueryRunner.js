@@ -1,66 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var TransactionAlreadyStartedError_1 = require("../../error/TransactionAlreadyStartedError");
 var TransactionNotStartedError_1 = require("../../error/TransactionNotStartedError");
 var TableColumn_1 = require("../../schema-builder/table/TableColumn");
@@ -76,7 +16,7 @@ var TableCheck_1 = require("../../schema-builder/table/TableCheck");
  * Runs queries on a single sqlite database connection.
  */
 var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
-    __extends(AbstractSqliteQueryRunner, _super);
+    tslib_1.__extends(AbstractSqliteQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -106,10 +46,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Starts transaction.
      */
     AbstractSqliteQueryRunner.prototype.startTransaction = function (isolationLevel) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var options_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.isTransactionActive) {
@@ -156,8 +96,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     AbstractSqliteQueryRunner.prototype.commitTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -176,8 +116,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     AbstractSqliteQueryRunner.prototype.rollbackTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.isTransactionActive)
@@ -201,8 +141,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Returns all available database names including system databases.
      */
     AbstractSqliteQueryRunner.prototype.getDatabases = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -212,8 +152,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * If database parameter specified, returns schemas of that database.
      */
     AbstractSqliteQueryRunner.prototype.getSchemas = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve([])];
             });
         });
@@ -222,8 +162,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Checks if database with the given name exist.
      */
     AbstractSqliteQueryRunner.prototype.hasDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve(false)];
             });
         });
@@ -232,8 +172,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Checks if schema with the given name exist.
      */
     AbstractSqliteQueryRunner.prototype.hasSchema = function (schema) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 throw new Error("This driver does not support table schemas");
             });
         });
@@ -242,9 +182,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Checks if table with the given name exist in the database.
      */
     AbstractSqliteQueryRunner.prototype.hasTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tableName, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         tableName = tableOrName instanceof Table_1.Table ? tableOrName.name : tableOrName;
@@ -261,9 +201,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Checks if column with the given name exist in the given table.
      */
     AbstractSqliteQueryRunner.prototype.hasColumn = function (tableOrName, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tableName, sql, columns;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         tableName = tableOrName instanceof Table_1.Table ? tableOrName.name : tableOrName;
@@ -280,8 +220,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new database.
      */
     AbstractSqliteQueryRunner.prototype.createDatabase = function (database, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve()];
             });
         });
@@ -290,8 +230,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops database.
      */
     AbstractSqliteQueryRunner.prototype.dropDatabase = function (database, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve()];
             });
         });
@@ -300,8 +240,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new table schema.
      */
     AbstractSqliteQueryRunner.prototype.createSchema = function (schema, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve()];
             });
         });
@@ -310,8 +250,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops table schema.
      */
     AbstractSqliteQueryRunner.prototype.dropSchema = function (schemaPath, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 return [2 /*return*/, Promise.resolve()];
             });
         });
@@ -323,10 +263,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
         if (ifNotExist === void 0) { ifNotExist = false; }
         if (createForeignKeys === void 0) { createForeignKeys = true; }
         if (createIndices === void 0) { createIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, isTableExist;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         upQueries = [];
@@ -364,10 +304,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
     AbstractSqliteQueryRunner.prototype.dropTable = function (tableOrName, ifExist, dropForeignKeys, dropIndices) {
         if (dropForeignKeys === void 0) { dropForeignKeys = true; }
         if (dropIndices === void 0) { dropIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, createForeignKeys, table, _a, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!ifExist) return [3 /*break*/, 2];
@@ -410,10 +350,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Renames the given table.
      */
     AbstractSqliteQueryRunner.prototype.renameTable = function (oldTableOrName, newTableName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var oldTable, _a, newTable, up, down;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(oldTableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -460,9 +400,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new column from the column in the table.
      */
     AbstractSqliteQueryRunner.prototype.addColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -483,9 +423,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new columns from the column in the table.
      */
     AbstractSqliteQueryRunner.prototype.addColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -511,9 +451,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Renames column in the given table.
      */
     AbstractSqliteQueryRunner.prototype.renameColumn = function (tableOrName, oldTableColumnOrName, newTableColumnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, oldColumn, newColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -545,9 +485,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     AbstractSqliteQueryRunner.prototype.changeColumn = function (tableOrName, oldTableColumnOrName, newColumn) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, oldColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -575,10 +515,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Changed column looses all its keys in the db.
      */
     AbstractSqliteQueryRunner.prototype.changeColumns = function (tableOrName, changedColumns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -625,9 +565,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops column in the table.
      */
     AbstractSqliteQueryRunner.prototype.dropColumn = function (tableOrName, columnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, column;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -654,9 +594,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops the columns in the table.
      */
     AbstractSqliteQueryRunner.prototype.dropColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -694,9 +634,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new primary key.
      */
     AbstractSqliteQueryRunner.prototype.createPrimaryKey = function (tableOrName, columnNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -730,8 +670,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Updates composite primary keys.
      */
     AbstractSqliteQueryRunner.prototype.updatePrimaryKeys = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, Promise.resolve()];
                     case 1:
@@ -745,9 +685,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops a primary key.
      */
     AbstractSqliteQueryRunner.prototype.dropPrimaryKey = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -779,8 +719,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraint.
      */
     AbstractSqliteQueryRunner.prototype.createUniqueConstraint = function (tableOrName, uniqueConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.createUniqueConstraints(tableOrName, [uniqueConstraint])];
                     case 1:
@@ -794,9 +734,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraints.
      */
     AbstractSqliteQueryRunner.prototype.createUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -822,9 +762,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraint.
      */
     AbstractSqliteQueryRunner.prototype.dropUniqueConstraint = function (tableOrName, uniqueOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, uniqueConstraint;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -851,9 +791,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates an unique constraints.
      */
     AbstractSqliteQueryRunner.prototype.dropUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -879,8 +819,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates new check constraint.
      */
     AbstractSqliteQueryRunner.prototype.createCheckConstraint = function (tableOrName, checkConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.createCheckConstraints(tableOrName, [checkConstraint])];
                     case 1:
@@ -894,9 +834,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates new check constraints.
      */
     AbstractSqliteQueryRunner.prototype.createCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -922,9 +862,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops check constraint.
      */
     AbstractSqliteQueryRunner.prototype.dropCheckConstraint = function (tableOrName, checkOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, checkConstraint;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -951,9 +891,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops check constraints.
      */
     AbstractSqliteQueryRunner.prototype.dropCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -976,11 +916,51 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
         });
     };
     /**
+     * Creates a new exclusion constraint.
+     */
+    AbstractSqliteQueryRunner.prototype.createExclusionConstraint = function (tableOrName, exclusionConstraint) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Sqlite does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Creates a new exclusion constraints.
+     */
+    AbstractSqliteQueryRunner.prototype.createExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Sqlite does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraint.
+     */
+    AbstractSqliteQueryRunner.prototype.dropExclusionConstraint = function (tableOrName, exclusionOrName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Sqlite does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraints.
+     */
+    AbstractSqliteQueryRunner.prototype.dropExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("Sqlite does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
      * Creates a new foreign key.
      */
     AbstractSqliteQueryRunner.prototype.createForeignKey = function (tableOrName, foreignKey) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.createForeignKeys(tableOrName, [foreignKey])];
                     case 1:
@@ -994,9 +974,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign keys.
      */
     AbstractSqliteQueryRunner.prototype.createForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1022,9 +1002,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign key from the table.
      */
     AbstractSqliteQueryRunner.prototype.dropForeignKey = function (tableOrName, foreignKeyOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, foreignKey;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1051,9 +1031,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign keys from the table.
      */
     AbstractSqliteQueryRunner.prototype.dropForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, changedTable;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1079,9 +1059,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new index.
      */
     AbstractSqliteQueryRunner.prototype.createIndex = function (tableOrName, index) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1111,10 +1091,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Creates a new indices
      */
     AbstractSqliteQueryRunner.prototype.createIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.createIndex(tableOrName, index); });
@@ -1130,9 +1110,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops an index from the table.
      */
     AbstractSqliteQueryRunner.prototype.dropIndex = function (tableOrName, indexOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, index, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table_1.Table)) return [3 /*break*/, 1];
@@ -1162,10 +1142,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Drops an indices from the table.
      */
     AbstractSqliteQueryRunner.prototype.dropIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.dropIndex(tableOrName, index); });
@@ -1182,8 +1162,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     AbstractSqliteQueryRunner.prototype.clearTable = function (tableName) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("DELETE FROM \"" + tableName + "\"")];
                     case 1:
@@ -1197,10 +1177,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Removes all tables from the currently connected database.
      */
     AbstractSqliteQueryRunner.prototype.clearDatabase = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var selectDropsQuery, dropQueries, error_1, rollbackError_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("PRAGMA foreign_keys = OFF;")];
                     case 1:
@@ -1251,10 +1231,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     AbstractSqliteQueryRunner.prototype.loadTables = function (tableNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var tableNamesString, dbTables, dbIndicesDef;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         // if no tables given then no need to proceed
@@ -1271,10 +1251,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                         if (!dbTables || !dbTables.length)
                             return [2 /*return*/, []];
                         // create table schemas for loaded tables
-                        return [2 /*return*/, Promise.all(dbTables.map(function (dbTable) { return __awaiter(_this, void 0, void 0, function () {
-                                var table, sql, _a, dbColumns, dbIndices, dbForeignKeys, autoIncrementColumnName, tableSql, comma, bracket, tableForeignKeyConstraints, tableUniquePromises, _b, result, regexp, indicesPromises, indices;
+                        return [2 /*return*/, Promise.all(dbTables.map(function (dbTable) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var table, sql, _a, dbColumns, dbIndices, dbForeignKeys, autoIncrementColumnName, tableSql, autoIncrementIndex, comma, bracket, tableForeignKeyConstraints, tableUniquePromises, _b, result, regexp, indicesPromises, indices;
                                 var _this = this;
-                                return __generator(this, function (_c) {
+                                return tslib_1.__generator(this, function (_c) {
                                     switch (_c.label) {
                                         case 0:
                                             table = new Table_1.Table({ name: dbTable["name"] });
@@ -1285,11 +1265,12 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                                                     this.query("PRAGMA foreign_key_list(\"" + dbTable["name"] + "\")"),
                                                 ])];
                                         case 1:
-                                            _a = __read.apply(void 0, [_c.sent(), 3]), dbColumns = _a[0], dbIndices = _a[1], dbForeignKeys = _a[2];
+                                            _a = tslib_1.__read.apply(void 0, [_c.sent(), 3]), dbColumns = _a[0], dbIndices = _a[1], dbForeignKeys = _a[2];
                                             autoIncrementColumnName = undefined;
                                             tableSql = dbTable["sql"];
-                                            if (tableSql.indexOf("AUTOINCREMENT") !== -1) {
-                                                autoIncrementColumnName = tableSql.substr(0, tableSql.indexOf("AUTOINCREMENT"));
+                                            autoIncrementIndex = tableSql.toUpperCase().indexOf("AUTOINCREMENT");
+                                            if (autoIncrementIndex !== -1) {
+                                                autoIncrementColumnName = tableSql.substr(0, autoIncrementIndex);
                                                 comma = autoIncrementColumnName.lastIndexOf(",");
                                                 bracket = autoIncrementColumnName.lastIndexOf("(");
                                                 if (comma !== -1) {
@@ -1316,6 +1297,15 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                                                 tableColumn.isGenerated = autoIncrementColumnName === dbColumn["name"];
                                                 if (tableColumn.isGenerated) {
                                                     tableColumn.generationStrategy = "increment";
+                                                }
+                                                if (tableColumn.type === "varchar") {
+                                                    // Check if this is an enum
+                                                    var enumMatch = sql.match(new RegExp("\"(" + tableColumn.name + ")\" varchar CHECK\\s*\\(\\s*\\1\\s+IN\\s*\\(('[^']+'(?:\\s*,\\s*'[^']+')+)\\s*\\)\\s*\\)"));
+                                                    if (enumMatch) {
+                                                        // This is an enum
+                                                        tableColumn.type = "simple-enum";
+                                                        tableColumn.enum = enumMatch[2].substr(1, enumMatch[2].length - 2).split("','");
+                                                    }
                                                 }
                                                 // parse datatype and attempt to retrieve length
                                                 var pos = tableColumn.type.indexOf("(");
@@ -1351,9 +1341,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                                                 .filter(function (dbIndex) { return dbIndex["origin"] === "u"; })
                                                 .map(function (dbIndex) { return dbIndex["name"]; })
                                                 .filter(function (value, index, self) { return self.indexOf(value) === index; })
-                                                .map(function (dbIndexName) { return __awaiter(_this, void 0, void 0, function () {
+                                                .map(function (dbIndexName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                                 var dbIndex, indexInfos, indexColumns, column;
-                                                return __generator(this, function (_a) {
+                                                return tslib_1.__generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
                                                             dbIndex = dbIndices.find(function (dbIndex) { return dbIndex["name"] === dbIndexName; });
@@ -1390,9 +1380,9 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                                                 .filter(function (dbIndex) { return dbIndex["origin"] === "c"; })
                                                 .map(function (dbIndex) { return dbIndex["name"]; })
                                                 .filter(function (value, index, self) { return self.indexOf(value) === index; }) // unqiue
-                                                .map(function (dbIndexName) { return __awaiter(_this, void 0, void 0, function () {
+                                                .map(function (dbIndexName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                                 var indexDef, condition, dbIndex, indexInfos, indexColumns, isUnique;
-                                                return __generator(this, function (_a) {
+                                                return tslib_1.__generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
                                                             indexDef = dbIndicesDef.find(function (dbIndexDef) { return dbIndexDef["name"] === dbIndexName; });
@@ -1519,6 +1509,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
         else {
             c += " " + this.connection.driver.createFullType(column);
         }
+        if (column.enum)
+            c += " CHECK( " + column.name + " IN (" + column.enum.map(function (val) { return "'" + val + "'"; }).join(",") + ") )";
         if (column.isPrimary && !skipPrimary)
             c += " PRIMARY KEY";
         if (column.isGenerated === true && column.generationStrategy === "increment") // don't use skipPrimary here since updates can update already exist primary without auto inc.
@@ -1533,10 +1525,10 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
     };
     AbstractSqliteQueryRunner.prototype.recreateTable = function (newTable, oldTable, migrateData) {
         if (migrateData === void 0) { migrateData = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, newColumnNames, oldColumnNames;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         upQueries = [];

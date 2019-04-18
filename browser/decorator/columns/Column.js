@@ -49,6 +49,13 @@ export function Column(typeOrOptions, options) {
                 mode: "regular",
                 options: options
             });
+            if (options.generated) {
+                getMetadataArgsStorage().generations.push({
+                    target: object.constructor,
+                    propertyName: propertyName,
+                    strategy: typeof options.generated === "string" ? options.generated : "increment"
+                });
+            }
         }
     };
 }

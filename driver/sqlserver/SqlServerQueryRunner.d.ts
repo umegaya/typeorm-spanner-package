@@ -1,3 +1,4 @@
+
 import { QueryRunner } from "../../query-runner/QueryRunner";
 import { TableColumn } from "../../schema-builder/table/TableColumn";
 import { Table } from "../../schema-builder/table/Table";
@@ -10,6 +11,7 @@ import { TableUnique } from "../../schema-builder/table/TableUnique";
 import { TableCheck } from "../../schema-builder/table/TableCheck";
 import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
 import { IsolationLevel } from "../types/IsolationLevel";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
 /**
  * Runs queries on a single SQL Server database connection.
  */
@@ -189,6 +191,22 @@ export declare class SqlServerQueryRunner extends BaseQueryRunner implements Que
      * Drops check constraints.
      */
     dropCheckConstraints(tableOrName: Table | string, checkConstraints: TableCheck[]): Promise<void>;
+    /**
+     * Creates a new exclusion constraint.
+     */
+    createExclusionConstraint(tableOrName: Table | string, exclusionConstraint: TableExclusion): Promise<void>;
+    /**
+     * Creates a new exclusion constraints.
+     */
+    createExclusionConstraints(tableOrName: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
+    /**
+     * Drops exclusion constraint.
+     */
+    dropExclusionConstraint(tableOrName: Table | string, exclusionOrName: TableExclusion | string): Promise<void>;
+    /**
+     * Drops exclusion constraints.
+     */
+    dropExclusionConstraints(tableOrName: Table | string, exclusionConstraints: TableExclusion[]): Promise<void>;
     /**
      * Creates a new foreign key.
      */

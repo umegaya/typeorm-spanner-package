@@ -139,6 +139,10 @@ export interface SqlServerConnectionOptions extends BaseConnectionOptions, SqlSe
          */
         readonly camelCaseColumns?: boolean;
         /**
+         * A boolean, controlling whatever to disable RETURNING / OUTPUT statements.
+         */
+        readonly disableOutputReturning?: boolean;
+        /**
          * Debug options
          */
         readonly debug?: {

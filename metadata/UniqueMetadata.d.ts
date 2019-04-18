@@ -1,3 +1,4 @@
+import { EmbeddedMetadata } from "./EmbeddedMetadata";
 import { EntityMetadata } from "./EntityMetadata";
 import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterface";
 import { ColumnMetadata } from "./ColumnMetadata";
@@ -10,6 +11,10 @@ export declare class UniqueMetadata {
      * Entity metadata of the class to which this unique constraint is applied.
      */
     entityMetadata: EntityMetadata;
+    /**
+     * Embedded metadata if this unique was applied on embedded.
+     */
+    embeddedMetadata?: EmbeddedMetadata;
     /**
      * Target class to which metadata is applied.
      */
@@ -36,6 +41,7 @@ export declare class UniqueMetadata {
     name: string;
     constructor(options: {
         entityMetadata: EntityMetadata;
+        embeddedMetadata?: EmbeddedMetadata;
         columns?: ColumnMetadata[];
         args?: UniqueMetadataArgs;
     });

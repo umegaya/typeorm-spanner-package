@@ -1,19 +1,5 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
+import * as tslib_1 from "tslib";
+import * as Observable from "zen-observable";
 // todo: we probably need operation-level subscribers
 // todo: right now if we save 1000 entities within a single save call its going to call this code 1000 times
 // todo: which is not efficient
@@ -97,7 +83,7 @@ var QueryObserver = /** @class */ (function () {
                     break;
                 case "findAndCount":
                     _this.connection.manager.findAndCount(_this.metadata.target, _this.options).then(function (_a) {
-                        var _b = __read(_a, 2), entities = _b[0], count = _b[1];
+                        var _b = tslib_1.__read(_a, 2), entities = _b[0], count = _b[1];
                         subscriptionObserver.next([entities, count]);
                         _this.lastEmitCount = count;
                         _this.lastEmitEntities = entities;

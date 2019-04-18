@@ -1,11 +1,22 @@
+import * as yargs from "yargs";
 /**
  * Generates a new project with TypeORM.
  */
-export declare class InitCommand {
+export declare class InitCommand implements yargs.CommandModule {
     command: string;
     describe: string;
-    builder(yargs: any): any;
-    handler(argv: any): Promise<void>;
+    builder(args: yargs.Argv): yargs.Argv<{
+        c: string;
+    } & {
+        n: unknown;
+    } & {
+        db: unknown;
+    } & {
+        express: unknown;
+    } & {
+        docker: unknown;
+    }>;
+    handler(args: yargs.Arguments): Promise<void>;
     /**
      * Gets contents of the ormconfig file.
      */

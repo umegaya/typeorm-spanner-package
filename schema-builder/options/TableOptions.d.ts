@@ -3,6 +3,7 @@ import { TableIndexOptions } from "./TableIndexOptions";
 import { TableForeignKeyOptions } from "./TableForeignKeyOptions";
 import { TableUniqueOptions } from "./TableUniqueOptions";
 import { TableCheckOptions } from "./TableCheckOptions";
+import { TableExclusionOptions } from "./TableExclusionOptions";
 /**
  * Table options.
  */
@@ -31,6 +32,10 @@ export interface TableOptions {
      * Table check constraints.
      */
     checks?: TableCheckOptions[];
+    /**
+     * Table check constraints.
+     */
+    exclusions?: TableExclusionOptions[];
     /**
      * Indicates if table was just created.
      * This is needed, for example to check if we need to skip primary keys creation

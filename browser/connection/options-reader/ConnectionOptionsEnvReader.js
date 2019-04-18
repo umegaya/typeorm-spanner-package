@@ -16,7 +16,7 @@ var ConnectionOptionsEnvReader = /** @class */ (function () {
      */
     ConnectionOptionsEnvReader.prototype.read = function () {
         return {
-            type: PlatformTools.getEnvVariable("TYPEORM_CONNECTION"),
+            type: PlatformTools.getEnvVariable("TYPEORM_CONNECTION") || (PlatformTools.getEnvVariable("TYPEORM_URL") ? PlatformTools.getEnvVariable("TYPEORM_URL").split("://")[0] : undefined),
             url: PlatformTools.getEnvVariable("TYPEORM_URL"),
             host: PlatformTools.getEnvVariable("TYPEORM_HOST"),
             port: PlatformTools.getEnvVariable("TYPEORM_PORT"),
@@ -31,16 +31,20 @@ var ConnectionOptionsEnvReader = /** @class */ (function () {
             migrationsRun: OrmUtils.toBoolean(PlatformTools.getEnvVariable("TYPEORM_MIGRATIONS_RUN")),
             entities: this.stringToArray(PlatformTools.getEnvVariable("TYPEORM_ENTITIES")),
             migrations: this.stringToArray(PlatformTools.getEnvVariable("TYPEORM_MIGRATIONS")),
+            migrationsTableName: PlatformTools.getEnvVariable("TYPEORM_MIGRATIONS_TABLE_NAME"),
             subscribers: this.stringToArray(PlatformTools.getEnvVariable("TYPEORM_SUBSCRIBERS")),
             logging: this.transformLogging(PlatformTools.getEnvVariable("TYPEORM_LOGGING")),
             logger: PlatformTools.getEnvVariable("TYPEORM_LOGGER"),
             entityPrefix: PlatformTools.getEnvVariable("TYPEORM_ENTITY_PREFIX"),
             maxQueryExecutionTime: PlatformTools.getEnvVariable("TYPEORM_MAX_QUERY_EXECUTION_TIME"),
+            debug: PlatformTools.getEnvVariable("TYPEORM_DEBUG"),
             cli: {
                 entitiesDir: PlatformTools.getEnvVariable("TYPEORM_ENTITIES_DIR"),
                 migrationsDir: PlatformTools.getEnvVariable("TYPEORM_MIGRATIONS_DIR"),
                 subscribersDir: PlatformTools.getEnvVariable("TYPEORM_SUBSCRIBERS_DIR"),
-            }
+            },
+            cache: this.transformCaching(),
+            uuidExtension: PlatformTools.getEnvVariable("TYPEORM_UUID_EXTENSION")
         };
     };
     // -------------------------------------------------------------------------
@@ -55,6 +59,24 @@ var ConnectionOptionsEnvReader = /** @class */ (function () {
         if (logging === "all")
             return "all";
         return this.stringToArray(logging);
+    };
+    /**
+     * Transforms caching option into real caching value option requires.
+     */
+    ConnectionOptionsEnvReader.prototype.transformCaching = function () {
+        var caching = PlatformTools.getEnvVariable("TYPEORM_CACHE");
+        if (caching === "true" || caching === "TRUE" || caching === "1")
+            return true;
+        if (caching === "false" || caching === "FALSE" || caching === "0")
+            return false;
+        if (caching === "redis" || caching === "database")
+            return {
+                type: caching,
+                options: PlatformTools.getEnvVariable("TYPEORM_CACHE_OPTIONS") ? JSON.parse(PlatformTools.getEnvVariable("TYPEORM_CACHE_OPTIONS")) : undefined,
+                alwaysEnabled: PlatformTools.getEnvVariable("TYPEORM_CACHE_ALWAYS_ENABLED"),
+                duration: parseInt(PlatformTools.getEnvVariable("TYPEORM_CACHE_DURATION"))
+            };
+        return undefined;
     };
     /**
      * Converts a string which contains multiple elements split by comma into a string array of strings.

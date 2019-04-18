@@ -1,68 +1,4 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
+import * as tslib_1 from "tslib";
 import { TransactionAlreadyStartedError } from "../../error/TransactionAlreadyStartedError";
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
 import { TableColumn } from "../../schema-builder/table/TableColumn";
@@ -82,7 +18,7 @@ import { PromiseUtils } from "../../index";
  * Runs queries on a single SQL Server database connection.
  */
 var SqlServerQueryRunner = /** @class */ (function (_super) {
-    __extends(SqlServerQueryRunner, _super);
+    tslib_1.__extends(SqlServerQueryRunner, _super);
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -128,17 +64,17 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Starts transaction.
      */
     SqlServerQueryRunner.prototype.startTransaction = function (isolationLevel) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 if (this.isReleased)
                     throw new QueryRunnerAlreadyReleasedError();
                 if (this.isTransactionActive)
                     throw new TransactionAlreadyStartedError();
-                return [2 /*return*/, new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+                return [2 /*return*/, new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var pool, transactionCallback;
                         var _this = this;
-                        return __generator(this, function (_a) {
+                        return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
                                     this.isTransactionActive = true;
@@ -175,9 +111,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     SqlServerQueryRunner.prototype.commitTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 if (this.isReleased)
                     throw new QueryRunnerAlreadyReleasedError();
                 if (!this.isTransactionActive)
@@ -200,9 +136,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Error will be thrown if transaction was not started.
      */
     SqlServerQueryRunner.prototype.rollbackTransaction = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 if (this.isReleased)
                     throw new QueryRunnerAlreadyReleasedError();
                 if (!this.isTransactionActive)
@@ -224,27 +160,27 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Executes a given SQL query.
      */
     SqlServerQueryRunner.prototype.query = function (query, parameters) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var waitingOkay, waitingPromise, otherWaitingPromises, promise;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.isReleased)
                             throw new QueryRunnerAlreadyReleasedError();
                         waitingPromise = new Promise(function (ok) { return waitingOkay = ok; });
                         if (!this.queryResponsibilityChain.length) return [3 /*break*/, 2];
-                        otherWaitingPromises = __spread(this.queryResponsibilityChain);
+                        otherWaitingPromises = tslib_1.__spread(this.queryResponsibilityChain);
                         this.queryResponsibilityChain.push(waitingPromise);
                         return [4 /*yield*/, Promise.all(otherWaitingPromises)];
                     case 1:
                         _a.sent();
                         _a.label = 2;
                     case 2:
-                        promise = new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+                        promise = new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var pool, request_1, queryStartTime_1, err_1;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         _a.trys.push([0, 2, , 3]);
@@ -291,7 +227,15 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                                 resolveChain();
                                                 return fail(new QueryFailedError(query, parameters, err));
                                             }
-                                            ok(result.recordset);
+                                            var queryType = query.slice(0, query.indexOf(" "));
+                                            switch (queryType) {
+                                                case "DELETE":
+                                                    // for DELETE query additionally return number of affected rows
+                                                    ok([result.recordset, result.rowsAffected[0]]);
+                                                    break;
+                                                default:
+                                                    ok(result.recordset);
+                                            }
                                             resolveChain();
                                         });
                                         return [3 /*break*/, 3];
@@ -315,27 +259,27 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Returns raw data stream.
      */
     SqlServerQueryRunner.prototype.stream = function (query, parameters, onEnd, onError) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var waitingOkay, waitingPromise, otherWaitingPromises, promise;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.isReleased)
                             throw new QueryRunnerAlreadyReleasedError();
                         waitingPromise = new Promise(function (ok) { return waitingOkay = ok; });
                         if (!this.queryResponsibilityChain.length) return [3 /*break*/, 2];
-                        otherWaitingPromises = __spread(this.queryResponsibilityChain);
+                        otherWaitingPromises = tslib_1.__spread(this.queryResponsibilityChain);
                         this.queryResponsibilityChain.push(waitingPromise);
                         return [4 /*yield*/, Promise.all(otherWaitingPromises)];
                     case 1:
                         _a.sent();
                         _a.label = 2;
                     case 2:
-                        promise = new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
+                        promise = new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var pool, request;
                             var _this = this;
-                            return __generator(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         this.driver.connection.logger.logQuery(query, parameters, this);
@@ -392,9 +336,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Returns all available database names including system databases.
      */
     SqlServerQueryRunner.prototype.getDatabases = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var results;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("EXEC sp_databases")];
                     case 1:
@@ -409,9 +353,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * If database parameter specified, returns schemas of that database.
      */
     SqlServerQueryRunner.prototype.getSchemas = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var query, results;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         query = database ? "SELECT * FROM \"" + database + "\".\"sys\".\"schema\"" : "SELECT * FROM \"sys\".\"schemas\"";
@@ -427,9 +371,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Checks if database with the given name exist.
      */
     SqlServerQueryRunner.prototype.hasDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var result, dbId;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT DB_ID('" + database + "') as \"db_id\"")];
                     case 1:
@@ -444,9 +388,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Checks if schema with the given name exist.
      */
     SqlServerQueryRunner.prototype.hasSchema = function (schema) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var result, schemaId;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT SCHEMA_ID('" + schema + "') as \"schema_id\"")];
                     case 1:
@@ -461,9 +405,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Checks if table with the given name exist in the database.
      */
     SqlServerQueryRunner.prototype.hasTable = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var parsedTableName, schema, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         parsedTableName = this.parseTableName(tableOrName);
@@ -481,9 +425,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Checks if column exist in the table.
      */
     SqlServerQueryRunner.prototype.hasColumn = function (tableOrName, columnName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var parsedTableName, schema, sql, result;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         parsedTableName = this.parseTableName(tableOrName);
@@ -501,9 +445,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new database.
      */
     SqlServerQueryRunner.prototype.createDatabase = function (database, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifNotExist ? "IF DB_ID('" + database + "') IS NULL CREATE DATABASE \"" + database + "\"" : "CREATE DATABASE \"" + database + "\"";
@@ -520,9 +464,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops database.
      */
     SqlServerQueryRunner.prototype.dropDatabase = function (database, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var up, down;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         up = ifExist ? "IF DB_ID('" + database + "') IS NOT NULL DROP DATABASE \"" + database + "\"" : "DROP DATABASE \"" + database + "\"";
@@ -540,9 +484,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * If database name also specified (e.g. 'dbName.schemaName') schema will be created in specified database.
      */
     SqlServerQueryRunner.prototype.createSchema = function (schemaPath, ifNotExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, upQuery, dbName, schema, currentDB, upQuery;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         upQueries = [];
@@ -579,9 +523,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * If database name also specified (e.g. 'dbName.schemaName') schema will be dropped in specified database.
      */
     SqlServerQueryRunner.prototype.dropSchema = function (schemaPath, ifExist) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, upQuery, dbName, schema, currentDB, upQuery;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         upQueries = [];
@@ -620,10 +564,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
         if (ifNotExist === void 0) { ifNotExist = false; }
         if (createForeignKeys === void 0) { createForeignKeys = true; }
         if (createIndices === void 0) { createIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!ifNotExist) return [3 /*break*/, 2];
@@ -665,10 +609,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
     SqlServerQueryRunner.prototype.dropTable = function (tableOrName, ifExist, dropForeignKeys, dropIndices) {
         if (dropForeignKeys === void 0) { dropForeignKeys = true; }
         if (dropIndices === void 0) { dropIndices = true; }
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isTableExist, createForeignKeys, table, _a, upQueries, downQueries;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!ifExist) return [3 /*break*/, 2];
@@ -717,10 +661,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Renames a table.
      */
     SqlServerQueryRunner.prototype.renameTable = function (oldTableOrName, newTableName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var upQueries, downQueries, oldTable, _a, newTable, dbName, schemaName, oldTableName, splittedName, currentDB, columnNames, oldPkName, newPkName;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         upQueries = [];
@@ -819,9 +763,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new column from the column in the table.
      */
     SqlServerQueryRunner.prototype.addColumn = function (tableOrName, column) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, primaryColumns, pkName_1, columnNames_1, pkName, columnNames, columnIndex, uniqueConstraint, defaultName;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -889,9 +833,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new columns from the column in the table.
      */
     SqlServerQueryRunner.prototype.addColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(columns, function (column) { return _this.addColumn(tableOrName, column); })];
                     case 1:
@@ -905,9 +849,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Renames column in the given table.
      */
     SqlServerQueryRunner.prototype.renameColumn = function (tableOrName, oldTableColumnOrName, newTableColumnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, oldColumn, newColumn;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -942,10 +886,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     SqlServerQueryRunner.prototype.changeColumn = function (tableOrName, oldTableColumnOrName, newColumn) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, upQueries, downQueries, oldColumn, dbName_1, schemaName_1, splittedName, currentDB, primaryColumns, columnNames, oldPkName, newPkName, oldTableColumn, primaryColumns, pkName, columnNames, column, pkName, columnNames, primaryColumn, column, pkName, columnNames, uniqueConstraint, uniqueConstraint, defaultName, defaultName;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1153,9 +1097,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Changes a column in the table.
      */
     SqlServerQueryRunner.prototype.changeColumns = function (tableOrName, changedColumns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(changedColumns, function (changedColumn) { return _this.changeColumn(tableOrName, changedColumn.oldColumn, changedColumn.newColumn); })];
                     case 1:
@@ -1169,9 +1113,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops column in the table.
      */
     SqlServerQueryRunner.prototype.dropColumn = function (tableOrName, columnOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, column, clonedTable, upQueries, downQueries, pkName, columnNames, tableColumn, pkName_2, columnNames_2, columnIndex, columnCheck, columnUnique, defaultName;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1245,9 +1189,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops the columns in the table.
      */
     SqlServerQueryRunner.prototype.dropColumns = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, PromiseUtils.runInSequence(columns, function (column) { return _this.dropColumn(tableOrName, column); })];
                     case 1:
@@ -1261,9 +1205,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new primary key.
      */
     SqlServerQueryRunner.prototype.createPrimaryKey = function (tableOrName, columnNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1296,9 +1240,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Updates composite primary keys.
      */
     SqlServerQueryRunner.prototype.updatePrimaryKeys = function (tableOrName, columns) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, clonedTable, columnNames, upQueries, downQueries, primaryColumns, pkName_3, columnNamesString_1, pkName, columnNamesString;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1342,9 +1286,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops a primary key.
      */
     SqlServerQueryRunner.prototype.dropPrimaryKey = function (tableOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1373,9 +1317,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraint.
      */
     SqlServerQueryRunner.prototype.createUniqueConstraint = function (tableOrName, uniqueConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1405,10 +1349,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new unique constraints.
      */
     SqlServerQueryRunner.prototype.createUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = uniqueConstraints.map(function (uniqueConstraint) { return _this.createUniqueConstraint(tableOrName, uniqueConstraint); });
@@ -1424,9 +1368,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops unique constraint.
      */
     SqlServerQueryRunner.prototype.dropUniqueConstraint = function (tableOrName, uniqueOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, uniqueConstraint, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1456,10 +1400,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops an unique constraints.
      */
     SqlServerQueryRunner.prototype.dropUniqueConstraints = function (tableOrName, uniqueConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = uniqueConstraints.map(function (uniqueConstraint) { return _this.dropUniqueConstraint(tableOrName, uniqueConstraint); });
@@ -1475,9 +1419,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new check constraint.
      */
     SqlServerQueryRunner.prototype.createCheckConstraint = function (tableOrName, checkConstraint) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1507,10 +1451,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new check constraints.
      */
     SqlServerQueryRunner.prototype.createCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = checkConstraints.map(function (checkConstraint) { return _this.createCheckConstraint(tableOrName, checkConstraint); });
@@ -1526,9 +1470,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops check constraint.
      */
     SqlServerQueryRunner.prototype.dropCheckConstraint = function (tableOrName, checkOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, checkConstraint, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1558,10 +1502,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops check constraints.
      */
     SqlServerQueryRunner.prototype.dropCheckConstraints = function (tableOrName, checkConstraints) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = checkConstraints.map(function (checkConstraint) { return _this.dropCheckConstraint(tableOrName, checkConstraint); });
@@ -1574,12 +1518,52 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
         });
     };
     /**
+     * Creates a new exclusion constraint.
+     */
+    SqlServerQueryRunner.prototype.createExclusionConstraint = function (tableOrName, exclusionConstraint) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("SqlServer does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Creates a new exclusion constraints.
+     */
+    SqlServerQueryRunner.prototype.createExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("SqlServer does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraint.
+     */
+    SqlServerQueryRunner.prototype.dropExclusionConstraint = function (tableOrName, exclusionOrName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("SqlServer does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
+     * Drops exclusion constraints.
+     */
+    SqlServerQueryRunner.prototype.dropExclusionConstraints = function (tableOrName, exclusionConstraints) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                throw new Error("SqlServer does not support exclusion constraints.");
+            });
+        });
+    };
+    /**
      * Creates a new foreign key.
      */
     SqlServerQueryRunner.prototype.createForeignKey = function (tableOrName, foreignKey) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1609,10 +1593,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new foreign keys.
      */
     SqlServerQueryRunner.prototype.createForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.createForeignKey(tableOrName, foreignKey); });
@@ -1628,9 +1612,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign key from the table.
      */
     SqlServerQueryRunner.prototype.dropForeignKey = function (tableOrName, foreignKeyOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, foreignKey, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1660,10 +1644,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops a foreign keys from the table.
      */
     SqlServerQueryRunner.prototype.dropForeignKeys = function (tableOrName, foreignKeys) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = foreignKeys.map(function (foreignKey) { return _this.dropForeignKey(tableOrName, foreignKey); });
@@ -1679,9 +1663,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new index.
      */
     SqlServerQueryRunner.prototype.createIndex = function (tableOrName, index) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1711,10 +1695,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Creates a new indices
      */
     SqlServerQueryRunner.prototype.createIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.createIndex(tableOrName, index); });
@@ -1730,9 +1714,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops an index.
      */
     SqlServerQueryRunner.prototype.dropIndex = function (tableOrName, indexOrName) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var table, _a, index, up, down;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!(tableOrName instanceof Table)) return [3 /*break*/, 1];
@@ -1762,10 +1746,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Drops an indices from the table.
      */
     SqlServerQueryRunner.prototype.dropIndices = function (tableOrName, indices) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var promises;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         promises = indices.map(function (index) { return _this.dropIndex(tableOrName, index); });
@@ -1782,8 +1766,8 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     SqlServerQueryRunner.prototype.clearTable = function (tablePath) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("TRUNCATE TABLE " + this.escapeTableName(tablePath))];
                     case 1:
@@ -1797,10 +1781,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Removes all tables from the currently connected database.
      */
     SqlServerQueryRunner.prototype.clearDatabase = function (database) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var isDatabaseExist, allTablesSql, allTablesResults, error_1, rollbackError_1;
             var _this = this;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!database) return [3 /*break*/, 2];
@@ -1822,10 +1806,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.query(allTablesSql)];
                     case 5:
                         allTablesResults = _a.sent();
-                        return [4 /*yield*/, Promise.all(allTablesResults.map(function (tablesResult) { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, Promise.all(allTablesResults.map(function (tablesResult) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var dropForeignKeySql, dropFkQueries;
                                 var _this = this;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             dropForeignKeySql = "SELECT 'ALTER TABLE \"" + tablesResult["TABLE_CATALOG"] + "\".\"' + OBJECT_SCHEMA_NAME(\"fk\".\"parent_object_id\", DB_ID('" + tablesResult["TABLE_CATALOG"] + "')) + '\".\"' + OBJECT_NAME(\"fk\".\"parent_object_id\", DB_ID('" + tablesResult["TABLE_CATALOG"] + "')) + '\" " +
@@ -1875,9 +1859,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Return current database.
      */
     SqlServerQueryRunner.prototype.getCurrentDatabase = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var currentDBQuery;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT DB_NAME() AS \"db_name\"")];
                     case 1:
@@ -1891,9 +1875,9 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Return current schema.
      */
     SqlServerQueryRunner.prototype.getCurrentSchema = function () {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var currentSchemaQuery;
-            return __generator(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.query("SELECT SCHEMA_NAME() AS \"schema_name\"")];
                     case 1:
@@ -1907,10 +1891,10 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     SqlServerQueryRunner.prototype.loadTables = function (tableNames) {
-        return __awaiter(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var schemaNames, currentSchema, currentDatabase, extractTableSchemaAndName, dbNames, schemaNamesString, tablesCondition, tablesSql, columnsSql, constraintsCondition, constraintsSql, foreignKeysSql, identityColumnsSql, dbCollationsSql, indicesSql, _a, dbTables, dbColumns, dbConstraints, dbForeignKeys, dbIdentityColumns, dbCollations, dbIndices;
             var _this = this;
-            return __generator(this, function (_b) {
+            return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         // if no tables given then no need to proceed
@@ -1924,7 +1908,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                     case 2:
                         currentDatabase = _b.sent();
                         extractTableSchemaAndName = function (tableName) {
-                            var _a = __read(tableName.split("."), 3), database = _a[0], schema = _a[1], name = _a[2];
+                            var _a = tslib_1.__read(tableName.split("."), 3), database = _a[0], schema = _a[1], name = _a[2];
                             // if name is empty, it means that tableName have only schema name and table name or only table name
                             if (!name) {
                                 // if schema is empty, it means tableName have only name of a table. Otherwise it means that we have "schemaName"."tableName" string.
@@ -1960,7 +1944,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                             dbNames.push(this.driver.database);
                         schemaNamesString = schemaNames.map(function (name) { return "'" + name + "'"; }).join(", ");
                         tablesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(extractTableSchemaAndName(tableName), 2), schema = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(extractTableSchemaAndName(tableName), 2), schema = _a[0], name = _a[1];
                             return "(\"TABLE_SCHEMA\" = '" + schema + "' AND \"TABLE_NAME\" = '" + name + "')";
                         }).join(" OR ");
                         tablesSql = dbNames.map(function (dbName) {
@@ -1970,7 +1954,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                             return "SELECT * FROM \"" + dbName + "\".\"INFORMATION_SCHEMA\".\"COLUMNS\" WHERE " + tablesCondition;
                         }).join(" UNION ALL ");
                         constraintsCondition = tableNames.map(function (tableName) {
-                            var _a = __read(extractTableSchemaAndName(tableName), 2), schema = _a[0], name = _a[1];
+                            var _a = tslib_1.__read(extractTableSchemaAndName(tableName), 2), schema = _a[0], name = _a[1];
                             return "(\"columnUsages\".\"TABLE_SCHEMA\" = '" + schema + "' AND \"columnUsages\".\"TABLE_NAME\" = '" + name + "' " +
                                 ("AND \"tableConstraints\".\"TABLE_SCHEMA\" = '" + schema + "' AND \"tableConstraints\".\"TABLE_NAME\" = '" + name + "')");
                         }).join(" OR ");
@@ -1999,7 +1983,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                 ("FROM \"" + dbName + "\".\"INFORMATION_SCHEMA\".\"COLUMNS\" ") +
                                 ("WHERE COLUMNPROPERTY(object_id(\"TABLE_CATALOG\" + '.' + \"TABLE_SCHEMA\" + '.' + \"TABLE_NAME\"), \"COLUMN_NAME\", 'IsIdentity') = 1 AND \"TABLE_SCHEMA\" IN (" + schemaNamesString + ")");
                         }).join(" UNION ALL ");
-                        dbCollationsSql = "SELECT \"NAME\", \"COLLATION_NAME\" FROM \"SYS\".\"DATABASES\"";
+                        dbCollationsSql = "SELECT \"NAME\", \"COLLATION_NAME\" FROM \"sys\".\"databases\"";
                         indicesSql = dbNames.map(function (dbName) {
                             return "SELECT '" + dbName + "' AS \"TABLE_CATALOG\", \"s\".\"name\" AS \"TABLE_SCHEMA\", \"t\".\"name\" AS \"TABLE_NAME\", " +
                                 "\"ind\".\"name\" AS \"INDEX_NAME\", \"col\".\"name\" AS \"COLUMN_NAME\", \"ind\".\"is_unique\" AS \"IS_UNIQUE\", \"ind\".\"filter_definition\" as \"CONDITION\" " +
@@ -2020,14 +2004,14 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                 this.query(indicesSql),
                             ])];
                     case 3:
-                        _a = __read.apply(void 0, [_b.sent(), 7]), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbForeignKeys = _a[3], dbIdentityColumns = _a[4], dbCollations = _a[5], dbIndices = _a[6];
+                        _a = tslib_1.__read.apply(void 0, [_b.sent(), 7]), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbForeignKeys = _a[3], dbIdentityColumns = _a[4], dbCollations = _a[5], dbIndices = _a[6];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];
-                        return [4 /*yield*/, Promise.all(dbTables.map(function (dbTable) { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, Promise.all(dbTables.map(function (dbTable) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var table, db, schema, tableFullName, defaultCollation, tableUniqueConstraints, tableCheckConstraints, tableForeignKeyConstraints, tableIndexConstraints;
                                 var _this = this;
-                                return __generator(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     table = new Table();
                                     db = dbTable["TABLE_CATALOG"] === currentDatabase ? undefined : dbTable["TABLE_CATALOG"];
                                     schema = dbTable["TABLE_SCHEMA"] === currentSchema && !this.driver.options.schema ? undefined : dbTable["TABLE_SCHEMA"];
@@ -2038,6 +2022,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                     table.columns = dbColumns
                                         .filter(function (dbColumn) { return _this.driver.buildTableName(dbColumn["TABLE_NAME"], dbColumn["TABLE_SCHEMA"], dbColumn["TABLE_CATALOG"]) === tableFullName; })
                                         .map(function (dbColumn) {
+                                        var e_1, _a;
                                         var columnConstraints = dbConstraints.filter(function (dbConstraint) {
                                             return _this.driver.buildTableName(dbConstraint["TABLE_NAME"], dbConstraint["CONSTRAINT_SCHEMA"], dbConstraint["CONSTRAINT_CATALOG"]) === tableFullName
                                                 && dbConstraint["COLUMN_NAME"] === dbColumn["COLUMN_NAME"];
@@ -2071,6 +2056,37 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                                 tableColumn.precision = dbColumn["NUMERIC_PRECISION"];
                                             if (dbColumn["NUMERIC_SCALE"] !== null && !_this.isDefaultColumnScale(table, tableColumn, dbColumn["NUMERIC_SCALE"]))
                                                 tableColumn.scale = dbColumn["NUMERIC_SCALE"];
+                                        }
+                                        if (tableColumn.type === "nvarchar") {
+                                            // Check if this is an enum
+                                            var columnCheckConstraints = columnConstraints.filter(function (constraint) { return constraint["CONSTRAINT_TYPE"] === "CHECK"; });
+                                            if (columnCheckConstraints.length) {
+                                                var isEnumRegexp = new RegExp("^\\(\\[" + tableColumn.name + "\\]='[^']+'(?: OR \\[" + tableColumn.name + "\\]='[^']+')*\\)$");
+                                                try {
+                                                    for (var columnCheckConstraints_1 = tslib_1.__values(columnCheckConstraints), columnCheckConstraints_1_1 = columnCheckConstraints_1.next(); !columnCheckConstraints_1_1.done; columnCheckConstraints_1_1 = columnCheckConstraints_1.next()) {
+                                                        var checkConstraint = columnCheckConstraints_1_1.value;
+                                                        if (isEnumRegexp.test(checkConstraint["definition"])) {
+                                                            // This is an enum constraint, make column into an enum
+                                                            tableColumn.type = "simple-enum";
+                                                            tableColumn.enum = [];
+                                                            var enumValueRegexp = new RegExp("\\[" + tableColumn.name + "\\]='([^']+)'", "g");
+                                                            var result = void 0;
+                                                            while ((result = enumValueRegexp.exec(checkConstraint["definition"])) !== null) {
+                                                                tableColumn.enum.unshift(result[1]);
+                                                            }
+                                                            // Skip other column constraints
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                                                finally {
+                                                    try {
+                                                        if (columnCheckConstraints_1_1 && !columnCheckConstraints_1_1.done && (_a = columnCheckConstraints_1.return)) _a.call(columnCheckConstraints_1);
+                                                    }
+                                                    finally { if (e_1) throw e_1.error; }
+                                                }
+                                            }
                                         }
                                         tableColumn.default = dbColumn["COLUMN_DEFAULT"] !== null && dbColumn["COLUMN_DEFAULT"] !== undefined
                                             ? _this.removeParenthesisFromDefault(dbColumn["COLUMN_DEFAULT"])
@@ -2225,7 +2241,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      */
     SqlServerQueryRunner.prototype.createIndexSql = function (table, index) {
         var columns = index.columnNames.map(function (columnName) { return "\"" + columnName + "\""; }).join(", ");
-        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON " + this.escapeTableName(table) + "(" + columns + ") " + (index.where ? "WHERE " + index.where : "");
+        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON " + this.escapeTableName(table) + " (" + columns + ") " + (index.where ? "WHERE " + index.where : "");
     };
     /**
      * Builds drop index sql.
@@ -2375,6 +2391,8 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
      */
     SqlServerQueryRunner.prototype.buildCreateColumnSql = function (table, column, skipIdentity, createDefault) {
         var c = "\"" + column.name + "\" " + this.connection.driver.createFullType(column);
+        if (column.enum)
+            c += " CHECK( " + column.name + " IN (" + column.enum.map(function (val) { return "'" + val + "'"; }).join(",") + ") )";
         if (column.collation)
             c += " COLLATE " + column.collation;
         if (column.isNullable !== true)
@@ -2404,7 +2422,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "bigint":
                 return this.driver.mssql.BigInt;
             case "decimal":
-                return (_a = this.driver.mssql).Decimal.apply(_a, __spread(parameter.params));
+                return (_a = this.driver.mssql).Decimal.apply(_a, tslib_1.__spread(parameter.params));
             case "float":
                 return this.driver.mssql.Float;
             case "int":
@@ -2412,7 +2430,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "money":
                 return this.driver.mssql.Money;
             case "numeric":
-                return (_b = this.driver.mssql).Numeric.apply(_b, __spread(parameter.params));
+                return (_b = this.driver.mssql).Numeric.apply(_b, tslib_1.__spread(parameter.params));
             case "smallint":
                 return this.driver.mssql.SmallInt;
             case "smallmoney":
@@ -2422,29 +2440,29 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "tinyint":
                 return this.driver.mssql.TinyInt;
             case "char":
-                return (_c = this.driver.mssql).Char.apply(_c, __spread(parameter.params));
+                return (_c = this.driver.mssql).Char.apply(_c, tslib_1.__spread(parameter.params));
             case "nchar":
-                return (_d = this.driver.mssql).NChar.apply(_d, __spread(parameter.params));
+                return (_d = this.driver.mssql).NChar.apply(_d, tslib_1.__spread(parameter.params));
             case "text":
                 return this.driver.mssql.Text;
             case "ntext":
                 return this.driver.mssql.Ntext;
             case "varchar":
-                return (_e = this.driver.mssql).VarChar.apply(_e, __spread(parameter.params));
+                return (_e = this.driver.mssql).VarChar.apply(_e, tslib_1.__spread(parameter.params));
             case "nvarchar":
-                return (_f = this.driver.mssql).NVarChar.apply(_f, __spread(parameter.params));
+                return (_f = this.driver.mssql).NVarChar.apply(_f, tslib_1.__spread(parameter.params));
             case "xml":
                 return this.driver.mssql.Xml;
             case "time":
-                return (_g = this.driver.mssql).Time.apply(_g, __spread(parameter.params));
+                return (_g = this.driver.mssql).Time.apply(_g, tslib_1.__spread(parameter.params));
             case "date":
                 return this.driver.mssql.Date;
             case "datetime":
                 return this.driver.mssql.DateTime;
             case "datetime2":
-                return (_h = this.driver.mssql).DateTime2.apply(_h, __spread(parameter.params));
+                return (_h = this.driver.mssql).DateTime2.apply(_h, tslib_1.__spread(parameter.params));
             case "datetimeoffset":
-                return (_j = this.driver.mssql).DateTimeOffset.apply(_j, __spread(parameter.params));
+                return (_j = this.driver.mssql).DateTimeOffset.apply(_j, tslib_1.__spread(parameter.params));
             case "smalldatetime":
                 return this.driver.mssql.SmallDateTime;
             case "uniqueidentifier":
@@ -2454,7 +2472,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "binary":
                 return this.driver.mssql.Binary;
             case "varbinary":
-                return (_k = this.driver.mssql).VarBinary.apply(_k, __spread(parameter.params));
+                return (_k = this.driver.mssql).VarBinary.apply(_k, tslib_1.__spread(parameter.params));
             case "image":
                 return this.driver.mssql.Image;
             case "udt":

@@ -4,6 +4,7 @@ import { TableForeignKey } from "./TableForeignKey";
 import { TableUtils } from "../util/TableUtils";
 import { TableUnique } from "./TableUnique";
 import { TableCheck } from "./TableCheck";
+import { TableExclusion } from "./TableExclusion";
 /**
  * Table in the database represented in this class.
  */
@@ -33,6 +34,10 @@ var Table = /** @class */ (function () {
          */
         this.checks = [];
         /**
+         * Table exclusion constraints.
+         */
+        this.exclusions = [];
+        /**
          * Indicates if table was just created.
          * This is needed, for example to check if we need to skip primary keys creation
          * for new tables.
@@ -50,6 +55,8 @@ var Table = /** @class */ (function () {
                 this.uniques = options.uniques.map(function (unique) { return new TableUnique(unique); });
             if (options.checks)
                 this.checks = options.checks.map(function (check) { return new TableCheck(check); });
+            if (options.exclusions)
+                this.exclusions = options.exclusions.map(function (exclusion) { return new TableExclusion(exclusion); });
             if (options.justCreated !== undefined)
                 this.justCreated = options.justCreated;
             this.engine = options.engine;
@@ -79,6 +86,7 @@ var Table = /** @class */ (function () {
             foreignKeys: this.foreignKeys.map(function (constraint) { return constraint.clone(); }),
             uniques: this.uniques.map(function (constraint) { return constraint.clone(); }),
             checks: this.checks.map(function (constraint) { return constraint.clone(); }),
+            exclusions: this.exclusions.map(function (constraint) { return constraint.clone(); }),
             justCreated: this.justCreated,
             engine: this.engine,
         });
@@ -138,6 +146,21 @@ var Table = /** @class */ (function () {
         }
     };
     /**
+     * Adds exclusion constraint.
+     */
+    Table.prototype.addExclusionConstraint = function (exclusionConstraint) {
+        this.exclusions.push(exclusionConstraint);
+    };
+    /**
+     * Removes exclusion constraint.
+     */
+    Table.prototype.removeExclusionConstraint = function (removedExclusion) {
+        var foundExclusion = this.exclusions.find(function (exclusion) { return exclusion.name === removedExclusion.name; });
+        if (foundExclusion) {
+            this.exclusions.splice(this.exclusions.indexOf(foundExclusion), 1);
+        }
+    };
+    /**
      * Adds foreign keys.
      */
     Table.prototype.addForeignKey = function (foreignKey) {
@@ -176,9 +199,9 @@ var Table = /** @class */ (function () {
             // in Mysql unique indices and unique constraints are the same thing
             // if index is unique and have only one column, we move `unique` attribute from its column
             if (index.columnNames.length === 1 && index.isUnique && isMysql) {
-                var column = this.columns.find(function (c) { return c.name === index.columnNames[0]; });
-                if (column)
-                    column.isUnique = false;
+                var column_1 = this.columns.find(function (c) { return c.name === index.columnNames[0]; });
+                if (column_1)
+                    column_1.isUnique = this.indices.some(function (ind) { return ind.columnNames.length === 1 && ind.columnNames[0] === column_1.name && !!index.isUnique; });
             }
         }
     };
@@ -235,6 +258,7 @@ var Table = /** @class */ (function () {
                 .map(function (index) { return TableIndex.create(index); }),
             uniques: entityMetadata.uniques.map(function (unique) { return TableUnique.create(unique); }),
             checks: entityMetadata.checks.map(function (check) { return TableCheck.create(check); }),
+            exclusions: entityMetadata.exclusions.map(function (exclusion) { return TableExclusion.create(exclusion); }),
             foreignKeys: entityMetadata.foreignKeys.map(function (fk) { return TableForeignKey.create(fk); }),
         };
         return new Table(options);

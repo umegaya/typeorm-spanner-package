@@ -75,8 +75,12 @@ var FindOperator = /** @class */ (function () {
                 }
             case "lessThan":
                 return aliasPath + " < " + parameters[0];
+            case "lessThanOrEqual":
+                return aliasPath + " <= " + parameters[0];
             case "moreThan":
                 return aliasPath + " > " + parameters[0];
+            case "moreThanOrEqual":
+                return aliasPath + " >= " + parameters[0];
             case "equal":
                 return aliasPath + " = " + parameters[0];
             case "like":

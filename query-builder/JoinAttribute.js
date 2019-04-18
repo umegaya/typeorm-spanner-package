@@ -1,16 +1,8 @@
 "use strict";
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var QueryBuilderUtils_1 = require("./QueryBuilderUtils");
+var ObjectUtils_1 = require("../util/ObjectUtils");
 /**
  * Stores all join attributes which will be used to build a JOIN query.
  */
@@ -21,7 +13,9 @@ var JoinAttribute = /** @class */ (function () {
     function JoinAttribute(connection, queryExpressionMap, joinAttribute) {
         this.connection = connection;
         this.queryExpressionMap = queryExpressionMap;
-        Object.assign(this, joinAttribute || {});
+        this.isSelectedEvalueated = false;
+        this.relationEvalueated = false;
+        ObjectUtils_1.ObjectUtils.assign(this, joinAttribute || {});
     }
     Object.defineProperty(JoinAttribute.prototype, "isMany", {
         // -------------------------------------------------------------------------
@@ -43,30 +37,36 @@ var JoinAttribute = /** @class */ (function () {
          */
         get: function () {
             var _this = this;
-            var e_1, _a;
-            var _loop_1 = function (select) {
-                if (select.selection === this_1.alias.name)
-                    return { value: true };
-                if (this_1.metadata && !!this_1.metadata.columns.find(function (column) { return select.selection === _this.alias.name + "." + column.propertyPath; }))
-                    return { value: true };
-            };
-            var this_1 = this;
-            try {
-                for (var _b = __values(this.queryExpressionMap.selects), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var select = _c.value;
-                    var state_1 = _loop_1(select);
-                    if (typeof state_1 === "object")
-                        return state_1.value;
-                }
+            if (!this.isSelectedEvalueated) {
+                var getValue = function () {
+                    var e_1, _a;
+                    var _loop_1 = function (select) {
+                        if (select.selection === _this.alias.name)
+                            return { value: true };
+                        if (_this.metadata && !!_this.metadata.columns.find(function (column) { return select.selection === _this.alias.name + "." + column.propertyPath; }))
+                            return { value: true };
+                    };
+                    try {
+                        for (var _b = tslib_1.__values(_this.queryExpressionMap.selects), _c = _b.next(); !_c.done; _c = _b.next()) {
+                            var select = _c.value;
+                            var state_1 = _loop_1(select);
+                            if (typeof state_1 === "object")
+                                return state_1.value;
+                        }
+                    }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                    return false;
+                };
+                this.isSelectedCache = getValue();
+                this.isSelectedEvalueated = true;
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return false;
+            return this.isSelectedCache;
         },
         enumerable: true,
         configurable: true
@@ -120,20 +120,28 @@ var JoinAttribute = /** @class */ (function () {
          * Relation can be undefined if entityOrProperty is regular entity or custom table.
          */
         get: function () {
-            if (!QueryBuilderUtils_1.QueryBuilderUtils.isAliasProperty(this.entityOrProperty))
-                return undefined;
-            var relationOwnerSelection = this.queryExpressionMap.findAliasByName(this.parentAlias);
-            var relation = relationOwnerSelection.metadata.findRelationWithPropertyPath(this.relationPropertyPath);
-            if (relation) {
-                return relation;
+            var _this = this;
+            if (!this.relationEvalueated) {
+                var getValue = function () {
+                    if (!QueryBuilderUtils_1.QueryBuilderUtils.isAliasProperty(_this.entityOrProperty))
+                        return undefined;
+                    var relationOwnerSelection = _this.queryExpressionMap.findAliasByName(_this.parentAlias);
+                    var relation = relationOwnerSelection.metadata.findRelationWithPropertyPath(_this.relationPropertyPath);
+                    if (relation) {
+                        return relation;
+                    }
+                    if (relationOwnerSelection.metadata.parentEntityMetadata) {
+                        relation = relationOwnerSelection.metadata.parentEntityMetadata.findRelationWithPropertyPath(_this.relationPropertyPath);
+                        if (relation) {
+                            return relation;
+                        }
+                    }
+                    throw new Error("Relation with property path " + _this.relationPropertyPath + " in entity was not found.");
+                };
+                this.relationCache = getValue.bind(this)();
+                this.relationEvalueated = true;
             }
-            if (relationOwnerSelection.metadata.parentEntityMetadata) {
-                relation = relationOwnerSelection.metadata.parentEntityMetadata.findRelationWithPropertyPath(this.relationPropertyPath);
-                if (relation) {
-                    return relation;
-                }
-            }
-            throw new Error("Relation with property path " + this.relationPropertyPath + " in entity was not found.");
+            return this.relationCache;
         },
         enumerable: true,
         configurable: true

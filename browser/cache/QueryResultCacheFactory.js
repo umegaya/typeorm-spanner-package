@@ -20,7 +20,11 @@ var QueryResultCacheFactory = /** @class */ (function () {
         if (!this.connection.options.cache)
             throw new Error("To use cache you need to enable it in connection options by setting cache: true or providing some caching options. Example: { host: ..., username: ..., cache: true }");
         if (this.connection.options.cache.type === "redis")
-            return new RedisQueryResultCache(this.connection);
+            return new RedisQueryResultCache(this.connection, "redis");
+        if (this.connection.options.cache.type === "ioredis")
+            return new RedisQueryResultCache(this.connection, "ioredis");
+        if (this.connection.options.cache.type === "ioredis/cluster")
+            return new RedisQueryResultCache(this.connection, "ioredis/cluster");
         return new DbQueryResultCache(this.connection);
     };
     return QueryResultCacheFactory;

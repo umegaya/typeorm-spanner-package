@@ -85,10 +85,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             switch (_b.label) {
                                 case 0:
                                     _a = this;
-                                    return [4 /*yield*/, this.databaseConnection.getTransaction({
-                                            //readOnly: true,
-                                            strong: !!isolationLevel
-                                        })];
+                                    return [4 /*yield*/, this.databaseConnection.getTransaction()];
                                 case 1:
                                     _a.tx = (_b.sent())[0];
                                     return [2 /*return*/];
@@ -169,18 +166,21 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         _this.connect().then(function (db) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var _this = this;
                             return tslib_1.__generator(this, function (_a) {
-                                this.databaseConnection.runTransaction({
-                                    // TODO: how specify these options?
-                                    //readOnly: true,
-                                    strong: !!isolationLevel
-                                }, function (err, tx) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                this.databaseConnection.runTransaction(function (err, tx) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                     var r;
                                     var _this = this;
                                     return tslib_1.__generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
                                                 if (err) {
-                                                    rej(err);
+                                                    tx.rollback(function (err2) {
+                                                        if (err2) {
+                                                            rej(err2);
+                                                        }
+                                                        else {
+                                                            rej(err);
+                                                        }
+                                                    });
                                                     return [2 /*return*/];
                                                 }
                                                 this.tx = tx;
@@ -188,9 +188,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                                 return [4 /*yield*/, runInTransaction(this.manager)];
                                             case 1:
                                                 r = _a.sent();
-                                                tx.commit(function (err, _) {
-                                                    if (err) {
-                                                        rej(err);
+                                                tx.commit(function (err2, _) {
+                                                    if (err2) {
+                                                        rej(err2);
                                                     }
                                                     else {
                                                         _this.tx = null;
@@ -768,20 +768,20 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         if (!oldColumn)
                             throw new Error("Column \"" + oldColumnOrName + "\" was not found in the \"" + table.name + "\" table.");
                         if (oldColumn.name !== newColumn.name) {
-                            throw new Error("NYI: spanner: changeColumn: change column name " + oldColumn.name + " => " + newColumn.name);
+                            throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": change column name " + oldColumn.name + " => " + newColumn.name);
                         }
                         if (oldColumn.type !== newColumn.type) {
                             // - Change a STRING column to a BYTES column or a BYTES column to a STRING column.
                             if (!(oldColumn.type === "string" && newColumn.type === "bytes") &&
                                 !(oldColumn.type === "bytes" && newColumn.type === "string")) {
-                                throw new Error("NYI: spanner: changeColumn: change column type " + oldColumn.type + " => " + newColumn.type);
+                                throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": change column type " + oldColumn.type + " => " + newColumn.type);
                             }
                         }
                         if (oldColumn.length && newColumn.length && (oldColumn.length !== newColumn.length)) {
                             // - Increase or decrease the length limit for a STRING or BYTES type (including to MAX)
                             if (!(oldColumn.type === "string" && newColumn.type === "bytes") &&
                                 !(oldColumn.type === "bytes" && newColumn.type === "string")) {
-                                throw new Error("NYI: spanner: changeColumn: change column type " + oldColumn.type + " => " + newColumn.type);
+                                throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": change column type " + oldColumn.type + " => " + newColumn.type);
                             }
                             // TODO: implement following check.
                             // `unless it is a primary key column inherited by one or more child tables.`
@@ -791,14 +791,15 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             if (clonedTable.indices.find(function (index) {
                                 return index.columnNames.length === 1 && index.columnNames[0] === newColumn.name;
                             })) {
-                                throw new Error("NYI: spanner: changeColumn: change nullable for " + oldColumn.name + ", which is indexed");
+                                throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": change nullable for " + oldColumn.name + ", which is indexed");
                             }
                         }
                         // - Enable or disable commit timestamps in value and primary key columns.
                         if (oldColumn.default !== newColumn.default) {
                             if (newColumn.default !== SpannerColumnUpdateWithCommitTimestamp &&
                                 oldColumn.default !== SpannerColumnUpdateWithCommitTimestamp) {
-                                throw new Error("NYI: spanner: changeColumn: set default " + typeof oldColumn.default + " => " + typeof newColumn.default);
+                                console.log("oldColumn:" + JSON.stringify(oldColumn));
+                                throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": set default " + oldColumn.default + " => " + newColumn.default);
                             }
                         }
                         // any other invalid changes
@@ -814,7 +815,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             oldColumn.isArray !== newColumn.isArray
                         // isGenerated is managed by schemas table
                         ) {
-                            throw new Error("NYI: spanner: changeColumn: not supported change " + JSON.stringify(oldColumn) + " => " + JSON.stringify(newColumn));
+                            throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": not supported change " + JSON.stringify(oldColumn) + " => " + JSON.stringify(newColumn));
                         }
                         // if actually changed, store SQLs
                         if (this.isColumnChanged(oldColumn, newColumn, true)) {

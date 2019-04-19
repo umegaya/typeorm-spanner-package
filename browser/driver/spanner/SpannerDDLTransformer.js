@@ -11,7 +11,7 @@ var SpannerDDLTransformer = /** @class */ (function () {
         var set = this;
         return (set[ast.id] || set["transform"]).call(this, ast.def, extendSchemas);
     };
-    // common 
+    // common
     SpannerDDLTransformer.prototype.addExtendSchema = function (extendSchemas, type, value) {
         var key = this.scopedColumn || this.scopedIndex;
         if (!key) {
@@ -140,7 +140,7 @@ var SpannerDDLTransformer = /** @class */ (function () {
         return "DROP INDEX " + ast.index;
     };
     SpannerDDLTransformer.prototype.O_DATATYPE = function (ast, extendSchemas) {
-        // handle all O_XXXXX_DATATYPE 
+        // handle all O_XXXXX_DATATYPE
         var lengthTypeChecker = function (ast) {
             if (ast.datatype.indexOf("blob") >= 0 || ast.datatype.indexOf("binary") >= 0) {
                 return "bytes(" + ast.length + ")";
@@ -149,8 +149,16 @@ var SpannerDDLTransformer = /** @class */ (function () {
                 return "string(" + ast.length + ")";
             }
         };
+        var intTypeChecker = function (ast) {
+            if (ast.datatype === 'tinyint') {
+                return "bool";
+            }
+            else {
+                return "int64";
+            }
+        };
         var dataTypeMap = {
-            O_INTEGER_DATATYPE: "int64",
+            O_INTEGER_DATATYPE: intTypeChecker,
             O_FIXED_POINT_DATATYPE: "float64",
             O_FLOATING_POINT_DATATYPE: "float64",
             O_BIT_DATATYPE: "bool",

@@ -150,7 +150,7 @@ var SpannerDriver = /** @class */ (function () {
         var bytes = SpannerUtil_1.SpannerUtil.randomBytes(8);
         var as_numbers = [];
         try {
-            // TODO: is there any better(faster) way? 
+            // TODO: is there any better(faster) way?
             for (var bytes_1 = tslib_1.__values(bytes), bytes_1_1 = bytes_1.next(); !bytes_1_1.done; bytes_1_1 = bytes_1.next()) {
                 var b = bytes_1_1.value;
                 as_numbers.push(b);
@@ -206,7 +206,7 @@ var SpannerDriver = /** @class */ (function () {
             });
         });
     };
-    // get list of table names which has actual Table but not metadata. 
+    // get list of table names which has actual Table but not metadata.
     // (eg. migrations)
     SpannerDriver.prototype.systemTableNames = function () {
         return [
@@ -214,7 +214,7 @@ var SpannerDriver = /** @class */ (function () {
             "query-result-cache"
         ];
     };
-    // get list of tables which has actual Table but not metadata. 
+    // get list of tables which has actual Table but not metadata.
     // (eg. migrations)
     SpannerDriver.prototype.getSystemTables = function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
@@ -543,7 +543,7 @@ var SpannerDriver = /** @class */ (function () {
      */
     SpannerDriver.prototype.escapeQueryWithParameters = function (sql, parameters, nativeParameters) {
         // written values (for update) are likely to put in nativeParameter
-        // OTOH read values (for select, update, delete) are likely to put in parameter. 
+        // OTOH read values (for select, update, delete) are likely to put in parameter.
         if (!parameters || !Object.keys(parameters).length)
             return [sql, [nativeParameters]];
         var keys = Object.keys(parameters).map(function (parameter) { return "(:(\\.\\.\\.)?" + parameter + "\\b)"; }).join("|");
@@ -601,7 +601,7 @@ var SpannerDriver = /** @class */ (function () {
             type === "date" ||
             type === Date) {
             if (typeof (value) === 'number') {
-                // convert millisecond numeric timestamp to date object. 
+                // convert millisecond numeric timestamp to date object.
                 // because @google/spanner does not accept it
                 return new Date(value);
             }
@@ -809,10 +809,10 @@ var SpannerDriver = /** @class */ (function () {
                console.log("generatedType:", tableColumn.generatedType, columnMetadata.generatedType);
             // if (tableColumn.comment !== columnMetadata.comment)
                // console.log("comment:", tableColumn.comment, columnMetadata.comment);
-            if (tableColumn.default !== columnMetadata.default)
-               console.log("default:", tableColumn.default, columnMetadata.default);
-            if (!this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default))
-               console.log("default changed:", !this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default));
+            // if (tableColumn.default !== columnMetadata.default)
+               // console.log("default:", tableColumn.default, columnMetadata.default);
+            // if (!this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default))
+               // console.log("default changed:", !this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default));
             if (tableColumn.onUpdate !== columnMetadata.onUpdate)
                console.log("onUpdate:", tableColumn.onUpdate, columnMetadata.onUpdate);
             if (tableColumn.isPrimary !== columnMetadata.isPrimary)
@@ -821,9 +821,9 @@ var SpannerDriver = /** @class */ (function () {
                console.log("isNullable:", tableColumn.isNullable, columnMetadata.isNullable);
             if (tableColumn.isUnique !== this.normalizeIsUnique(columnMetadata))
                console.log("isUnique:", tableColumn.isUnique, this.normalizeIsUnique(columnMetadata));
-            if (tableColumn.isGenerated !== columnMetadata.isGenerated)
-               console.log("isGenerated:", tableColumn.isGenerated, columnMetadata.isGenerated);
-            console.log("=========================================="); */
+            // if (tableColumn.isGenerated !== columnMetadata.isGenerated)
+               // console.log("isGenerated:", tableColumn.isGenerated, columnMetadata.isGenerated);
+            console.log("=========================================="); //*/
             return tableColumn.name !== columnMetadata.databaseName
                 || tableColumn.type.toLowerCase() !== _this.normalizeType(columnMetadata).toLowerCase()
                 || tableColumn.length !== columnMetadata.length
@@ -835,12 +835,14 @@ var SpannerDriver = /** @class */ (function () {
                 || tableColumn.asExpression !== columnMetadata.asExpression
                 || tableColumn.generatedType !== columnMetadata.generatedType
                 // || tableColumn.comment !== columnMetadata.comment // todo
-                || !_this.compareDefaultValues(_this.normalizeDefault(columnMetadata), tableColumn.default)
+                // default value is alway sync'ed to latest definition, via extendSchema repository
+                // || !this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default)
                 || tableColumn.onUpdate !== columnMetadata.onUpdate
                 || tableColumn.isPrimary !== columnMetadata.isPrimary
                 || tableColumn.isNullable !== columnMetadata.isNullable
-                || tableColumn.isUnique !== _this.normalizeIsUnique(columnMetadata)
-                || (columnMetadata.generationStrategy !== "uuid" && tableColumn.isGenerated !== columnMetadata.isGenerated);
+                || tableColumn.isUnique !== _this.normalizeIsUnique(columnMetadata);
+            // isGenerated and generationStrategy is alway sync'ed to latest definition, via extendSchema repository
+            // || (columnMetadata.generationStrategy !== "uuid" && tableColumn.isGenerated !== columnMetadata.isGenerated);
         });
         //console.log('filtered', filtered);
         return filtered;

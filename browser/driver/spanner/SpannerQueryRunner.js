@@ -167,27 +167,23 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             var _this = this;
                             return tslib_1.__generator(this, function (_a) {
                                 this.databaseConnection.runTransaction(function (err, tx) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                    var r;
+                                    var r_1, e_1;
                                     var _this = this;
                                     return tslib_1.__generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
                                                 if (err) {
-                                                    tx.rollback(function (err2) {
-                                                        if (err2) {
-                                                            rej(err2);
-                                                        }
-                                                        else {
-                                                            rej(err);
-                                                        }
-                                                    });
+                                                    rej(err);
                                                     return [2 /*return*/];
                                                 }
                                                 this.tx = tx;
                                                 this.isTransactionActive = true;
-                                                return [4 /*yield*/, runInTransaction(this.manager)];
+                                                _a.label = 1;
                                             case 1:
-                                                r = _a.sent();
+                                                _a.trys.push([1, 3, , 4]);
+                                                return [4 /*yield*/, runInTransaction(this.manager)];
+                                            case 2:
+                                                r_1 = _a.sent();
                                                 tx.commit(function (err2, _) {
                                                     if (err2) {
                                                         rej(err2);
@@ -195,10 +191,17 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                                     else {
                                                         _this.tx = null;
                                                         _this.isTransactionActive = false;
-                                                        res(r);
+                                                        res(r_1);
                                                     }
                                                 });
-                                                return [2 /*return*/];
+                                                return [3 /*break*/, 4];
+                                            case 3:
+                                                e_1 = _a.sent();
+                                                tx.rollback(function (_) {
+                                                    rej(e_1);
+                                                });
+                                                return [3 /*break*/, 4];
+                                            case 4: return [2 /*return*/];
                                         }
                                     });
                                 }); });
@@ -1337,7 +1340,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.createAndLoadSchemaTable = function (tableName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var e_1, _a, tableExist, rawObjects, schemas, rawObjects_1, rawObjects_1_1, rawObject, table, tableSchemas, column;
+            var e_2, _a, tableExist, rawObjects, schemas, rawObjects_1, rawObjects_1_1, rawObject, table, tableSchemas, column;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.hasTable(tableName)];
@@ -1395,12 +1398,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 Object.assign(tableSchemas[column], this.createExtendSchemaObject(table, rawObject["type"], rawObject["value"]));
                             }
                         }
-                        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
                         finally {
                             try {
                                 if (rawObjects_1_1 && !rawObjects_1_1.done && (_a = rawObjects_1.return)) _a.call(rawObjects_1);
                             }
-                            finally { if (e_1) throw e_1.error; }
+                            finally { if (e_2) throw e_2.error; }
                         }
                         return [2 /*return*/, schemas];
                 }
@@ -1444,7 +1447,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         oldNormalTables = Object.keys(allSchemaObjects);
                         newExtendSchemas = {};
                         return [4 /*yield*/, Promise.all(tableProps.map(function (t) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var e_2, _a, e_3, _b, oldTableIndex, promises, schemaObjectsByTable, oldColumns, _c, _d, c, oldColumnIndex, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
+                                var e_3, _a, e_4, _b, oldTableIndex, promises, schemaObjectsByTable, oldColumns, _c, _d, c, oldColumnIndex, _e, add, remove, addFiltered, removeFiltered, add_1, add_1_1, a;
                                 var _this = this;
                                 return tslib_1.__generator(this, function (_f) {
                                     switch (_f.label) {
@@ -1487,22 +1490,22 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                                                 newExtendSchemas[t.name][c.databaseName] = this.createExtendSchemaObject(a.table, a.type, a.value);
                                                             }
                                                         }
-                                                        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                                                        catch (e_4_1) { e_4 = { error: e_4_1 }; }
                                                         finally {
                                                             try {
                                                                 if (add_1_1 && !add_1_1.done && (_b = add_1.return)) _b.call(add_1);
                                                             }
-                                                            finally { if (e_3) throw e_3.error; }
+                                                            finally { if (e_4) throw e_4.error; }
                                                         }
                                                     }
                                                 }
                                             }
-                                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                                            catch (e_3_1) { e_3 = { error: e_3_1 }; }
                                             finally {
                                                 try {
                                                     if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                                                 }
-                                                finally { if (e_2) throw e_2.error; }
+                                                finally { if (e_3) throw e_3.error; }
                                             }
                                             // if column is no more exists in new entity metadata, remove all extend schema for such columns
                                             if (oldColumns.length > 0) {
@@ -1624,7 +1627,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         return columnSchema;
     };
     SpannerQueryRunner.prototype.verifyAndFillAutoGeneratedValues = function (table, valuesSet) {
-        var e_4, _a, e_5, _b;
+        var e_5, _a, e_6, _b;
         if (!valuesSet) {
             return valuesSet;
         }
@@ -1648,26 +1651,26 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         }
                     }
                 }
-                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
                 finally {
                     try {
                         if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
                     }
-                    finally { if (e_5) throw e_5.error; }
+                    finally { if (e_6) throw e_6.error; }
                 }
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (valuesSet_1_1 && !valuesSet_1_1.done && (_a = valuesSet_1.return)) _a.call(valuesSet_1);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_5) throw e_5.error; }
         }
         return valuesSet;
     };
     SpannerQueryRunner.prototype.verifyValues = function (table, valuesSet) {
-        var e_6, _a, e_7, _b;
+        var e_7, _a, e_8, _b;
         if (!valuesSet) {
             return valuesSet;
         }
@@ -1685,21 +1688,21 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         }
                     }
                 }
-                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                catch (e_8_1) { e_8 = { error: e_8_1 }; }
                 finally {
                     try {
                         if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
                     }
-                    finally { if (e_7) throw e_7.error; }
+                    finally { if (e_8) throw e_8.error; }
                 }
             }
         }
-        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+        catch (e_7_1) { e_7 = { error: e_7_1 }; }
         finally {
             try {
                 if (valuesSet_2_1 && !valuesSet_2_1.done && (_a = valuesSet_2.return)) _a.call(valuesSet_2);
             }
-            finally { if (e_6) throw e_6.error; }
+            finally { if (e_7) throw e_7.error; }
         }
         return valuesSet;
     };
@@ -1727,7 +1730,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.examineKeys = function (table, qb, keysOnly) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var e_8, _a, expressionMap, m, pc_1, keys_1, keys_2, _b, _c, k, idx1, idx2, pc, _d, query, parameters, _e, params, types, pc_2, parsed, keys_3, idx, sql, _f, results, err, keys;
+            var e_9, _a, expressionMap, m, pc_1, keys_1, keys_2, _b, _c, k, idx1, idx2, pc, _d, query, parameters, _e, params, types, pc_2, parsed, keys_3, idx, sql, _f, results, err, keys;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -1768,12 +1771,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                     }
                                 }
                             }
-                            catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                            catch (e_9_1) { e_9 = { error: e_9_1 }; }
                             finally {
                                 try {
                                     if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                                 }
-                                finally { if (e_8) throw e_8.error; }
+                                finally { if (e_9) throw e_9.error; }
                             }
                             if (keys_2.length > 0) {
                                 this.driver.connection.logger.log("info", "multiple primary keys " + JSON.stringify(keys_2));
@@ -1851,7 +1854,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     SpannerQueryRunner.prototype.insert = function (qb) {
         var _this = this;
         return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var table, vss, e_9;
+            var table, vss, e_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1878,8 +1881,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         ok(vss);
                         return [3 /*break*/, 4];
                     case 3:
-                        e_9 = _a.sent();
-                        fail(e_9);
+                        e_10 = _a.sent();
+                        fail(e_10);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -1892,7 +1895,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     SpannerQueryRunner.prototype.update = function (qb) {
         var _this = this;
         return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var e_10, _a, table, vss, value, rows, rows_1, rows_1_1, row, e_11;
+            var e_11, _a, table, vss, value, rows, rows_1, rows_1_1, row, e_12;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -1923,12 +1926,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 Object.assign(row, value);
                             }
                         }
-                        catch (e_10_1) { e_10 = { error: e_10_1 }; }
+                        catch (e_11_1) { e_11 = { error: e_11_1 }; }
                         finally {
                             try {
                                 if (rows_1_1 && !rows_1_1.done && (_a = rows_1.return)) _a.call(rows_1);
                             }
-                            finally { if (e_10) throw e_10.error; }
+                            finally { if (e_11) throw e_11.error; }
                         }
                         // callback not provided see comment of insert
                         return [4 /*yield*/, this.request(table, 'update', rows)];
@@ -1938,8 +1941,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         ok(rows);
                         return [3 /*break*/, 5];
                     case 4:
-                        e_11 = _b.sent();
-                        fail(e_11);
+                        e_12 = _b.sent();
+                        fail(e_12);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
@@ -1952,7 +1955,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     SpannerQueryRunner.prototype.upsert = function (qb) {
         var _this = this;
         return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var table, vss, e_12;
+            var table, vss, e_13;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1973,8 +1976,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         ok(vss);
                         return [3 /*break*/, 4];
                     case 3:
-                        e_12 = _a.sent();
-                        fail(e_12);
+                        e_13 = _a.sent();
+                        fail(e_13);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -1987,7 +1990,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
     SpannerQueryRunner.prototype.delete = function (qb) {
         var _this = this;
         return new Promise(function (ok, fail) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var table, rows, e_13;
+            var table, rows, e_14;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -2014,8 +2017,8 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         ok();
                         return [3 /*break*/, 5];
                     case 4:
-                        e_13 = _a.sent();
-                        fail(e_13);
+                        e_14 = _a.sent();
+                        fail(e_14);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }

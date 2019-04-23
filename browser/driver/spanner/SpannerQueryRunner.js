@@ -647,42 +647,16 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         upQueries = [];
                         downQueries = [];
                         skipColumnLevelPrimary = clonedTable.primaryColumns.length > 0;
-                        upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ADD " + this.buildCreateColumnSql(column, skipColumnLevelPrimary, false));
+                        upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ADD " + this.buildCreateColumnSql(column, { skipPrimary: skipColumnLevelPrimary, skipOptions: true }));
                         downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " DROP COLUMN `" + column.name + "`");
+                        if (SpannerQueryRunner.needColumnOptions(column)) {
+                            upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + column.name + "` " + this.buildSetColumnOptionsSql(column));
+                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + column.name + "` " + this.buildSetColumnOptionsSql(column, true));
+                        }
                         // create or update primary key constraint
                         if (column.isPrimary) {
                             // TODO: re-create table
                             throw new Error("NYI: spanner: addColumn column.isPrimary");
-                            /*
-                            // if we already have generated column, we must temporary drop AUTO_INCREMENT property.
-                            const generatedColumn = clonedTable.columns.find(column => column.isGenerated && column.generationStrategy === "increment");
-                            if (generatedColumn) {
-                                const nonGeneratedColumn = generatedColumn.clone();
-                                nonGeneratedColumn.isGenerated = false;
-                                nonGeneratedColumn.generationStrategy = undefined;
-                                upQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${column.name}\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`);
-                                downQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${nonGeneratedColumn.name}\` ${this.buildCreateColumnSql(column, true)}`);
-                            }
-                
-                            const primaryColumns = clonedTable.primaryColumns;
-                            let columnNames = primaryColumns.map(column => `\`${column.name}\``).join(", ");
-                            upQueries.push(`ALTER TABLE ${this.escapeTableName(table)} DROP PRIMARY KEY`);
-                            downQueries.push(`ALTER TABLE ${this.escapeTableName(table)} ADD PRIMARY KEY (${columnNames})`);
-                
-                            primaryColumns.push(column);
-                            columnNames = primaryColumns.map(column => `\`${column.name}\``).join(", ");
-                            upQueries.push(`ALTER TABLE ${this.escapeTableName(table)} ADD PRIMARY KEY (${columnNames})`);
-                            downQueries.push(`ALTER TABLE ${this.escapeTableName(table)} DROP PRIMARY KEY`);
-                
-                            // if we previously dropped AUTO_INCREMENT property, we must bring it back
-                            if (generatedColumn) {
-                                const nonGeneratedColumn = generatedColumn.clone();
-                                nonGeneratedColumn.isGenerated = false;
-                                nonGeneratedColumn.generationStrategy = undefined;
-                                upQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${nonGeneratedColumn.name}\` ${this.buildCreateColumnSql(column, true)}`);
-                                downQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${column.name}\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`);
-                            }
-                            */
                         }
                         columnIndex = clonedTable.indices.find(function (index) { return index.columnNames.length === 1 && index.columnNames[0] === column.name; });
                         if (columnIndex) {
@@ -797,14 +771,6 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                 throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": change nullable for " + oldColumn.name + ", which is indexed");
                             }
                         }
-                        // - Enable or disable commit timestamps in value and primary key columns.
-                        if (oldColumn.default !== newColumn.default) {
-                            if (newColumn.default !== SpannerColumnUpdateWithCommitTimestamp &&
-                                oldColumn.default !== SpannerColumnUpdateWithCommitTimestamp) {
-                                console.log("oldColumn:" + JSON.stringify(oldColumn));
-                                throw new Error("NYI: spanner: changeColumn " + oldColumn.name + ": set default " + oldColumn.default + " => " + newColumn.default);
-                            }
-                        }
                         // any other invalid changes
                         if (oldColumn.isPrimary !== newColumn.isPrimary ||
                             oldColumn.asExpression !== newColumn.asExpression ||
@@ -822,8 +788,12 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         }
                         // if actually changed, store SQLs
                         if (this.isColumnChanged(oldColumn, newColumn, true)) {
-                            upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + oldColumn.name + "` " + this.buildCreateColumnSql(newColumn, true));
-                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + newColumn.name + "` " + this.buildCreateColumnSql(oldColumn, true));
+                            upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN " + this.buildCreateColumnSql(newColumn, { skipPrimary: true, skipOptions: true }));
+                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN " + this.buildCreateColumnSql(oldColumn, { skipPrimary: true, skipOptions: true }));
+                        }
+                        if (SpannerQueryRunner.isColumnOptionsChanged(oldColumn, newColumn)) {
+                            upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + newColumn.name + "` SET OPTIONS (" + this.buildSetColumnOptionsSql(newColumn) + ")");
+                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + oldColumn.name + "` SET OPTIONS (" + this.buildSetColumnOptionsSql(oldColumn) + ")");
                         }
                         return [4 /*yield*/, this.executeQueries(upQueries, downQueries)];
                     case 4:
@@ -877,44 +847,6 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         // drop primary key constraint
                         if (column.isPrimary) {
                             throw new Error("NYI: spanner: dropColumn column.isPrimary");
-                            /*
-                            // if table have generated column, we must drop AUTO_INCREMENT before changing primary constraints.
-                            const generatedColumn = clonedTable.columns.find(column => column.isGenerated && column.generationStrategy === "increment");
-                            if (generatedColumn) {
-                                const nonGeneratedColumn = generatedColumn.clone();
-                                nonGeneratedColumn.isGenerated = false;
-                                nonGeneratedColumn.generationStrategy = undefined;
-                
-                                upQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${generatedColumn.name}\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`);
-                                downQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${nonGeneratedColumn.name}\` ${this.buildCreateColumnSql(generatedColumn, true)}`);
-                            }
-                
-                            // dropping primary key constraint
-                            const columnNames = clonedTable.primaryColumns.map(primaryColumn => `\`${primaryColumn.name}\``).join(", ");
-                            upQueries.push(`ALTER TABLE ${this.escapeTableName(clonedTable)} DROP PRIMARY KEY`);
-                            downQueries.push(`ALTER TABLE ${this.escapeTableName(clonedTable)} ADD PRIMARY KEY (${columnNames})`);
-                
-                            // update column in table
-                            const tableColumn = clonedTable.findColumnByName(column.name);
-                            tableColumn!.isPrimary = false;
-                
-                            // if primary key have multiple columns, we must recreate it without dropped column
-                            if (clonedTable.primaryColumns.length > 0) {
-                                const columnNames = clonedTable.primaryColumns.map(primaryColumn => `\`${primaryColumn.name}\``).join(", ");
-                                upQueries.push(`ALTER TABLE ${this.escapeTableName(clonedTable)} ADD PRIMARY KEY (${columnNames})`);
-                                downQueries.push(`ALTER TABLE ${this.escapeTableName(clonedTable)} DROP PRIMARY KEY`);
-                            }
-                
-                            // if we have generated column, and we dropped AUTO_INCREMENT property before, and this column is not current dropping column, we must bring it back
-                            if (generatedColumn && generatedColumn.name !== column.name) {
-                                const nonGeneratedColumn = generatedColumn.clone();
-                                nonGeneratedColumn.isGenerated = false;
-                                nonGeneratedColumn.generationStrategy = undefined;
-                
-                                upQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${nonGeneratedColumn.name}\` ${this.buildCreateColumnSql(generatedColumn, true)}`);
-                                downQueries.push(`ALTER TABLE ${this.escapeTableName(table)} CHANGE \`${generatedColumn.name}\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`);
-                            }
-                            */
                         }
                         columnIndex = clonedTable.indices.find(function (index) { return index.columnNames.length === 1 && index.columnNames[0] === column.name; });
                         if (columnIndex) {
@@ -936,7 +868,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             }
                         }
                         upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " DROP COLUMN `" + column.name + "`");
-                        downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ADD " + this.buildCreateColumnSql(column, true));
+                        downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ADD " + this.buildCreateColumnSql(column, { skipPrimary: true }));
                         return [4 /*yield*/, this.executeQueries(upQueries, downQueries)];
                     case 4:
                         _b.sent();
@@ -1509,7 +1441,6 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                                             }
                                             // if column is no more exists in new entity metadata, remove all extend schema for such columns
                                             if (oldColumns.length > 0) {
-                                                console.log('oldColumns', oldColumns);
                                                 promises.push(Promise.all(oldColumns.map(function (c) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                                     return tslib_1.__generator(this, function (_a) {
                                                         switch (_a.label) {
@@ -1626,8 +1557,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         }
         return columnSchema;
     };
-    SpannerQueryRunner.prototype.verifyAndFillAutoGeneratedValues = function (table, valuesSet) {
+    SpannerQueryRunner.prototype.verifyAndFillAutoGeneratedValues = function (table, qem, insert) {
         var e_5, _a, e_6, _b;
+        var valuesSet = qem.valuesSet;
         if (!valuesSet) {
             return valuesSet;
         }
@@ -1669,14 +1601,16 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         }
         return valuesSet;
     };
-    SpannerQueryRunner.prototype.verifyValues = function (table, valuesSet) {
+    SpannerQueryRunner.prototype.verifyValues = function (table, qem) {
         var e_7, _a, e_8, _b;
+        var valuesSet = qem.valuesSet;
         if (!valuesSet) {
             return valuesSet;
         }
         if (!(valuesSet instanceof Array)) {
             valuesSet = [valuesSet];
         }
+        var metadata = qem.mainAlias.hasMetadata ? qem.mainAlias.metadata : undefined;
         try {
             for (var valuesSet_2 = tslib_1.__values(valuesSet), valuesSet_2_1 = valuesSet_2.next(); !valuesSet_2_1.done; valuesSet_2_1 = valuesSet_2.next()) {
                 var values = valuesSet_2_1.value;
@@ -1694,6 +1628,13 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
                     }
                     finally { if (e_8) throw e_8.error; }
+                }
+                if (metadata) {
+                    if (metadata.versionColumn && !values[metadata.versionColumn.databaseName])
+                        values[metadata.versionColumn.databaseName] = metadata.versionColumn.databaseName + " + 1";
+                    if (metadata.updateDateColumn && !values[metadata.updateDateColumn.databaseName])
+                        values[metadata.updateDateColumn.databaseName] =
+                            this.driver.autoGenerateValue(table.name, metadata.updateDateColumn.databaseName);
                 }
             }
         }
@@ -1866,7 +1807,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             fail(new Error("insert: fatal: no such table " + qb.mainTableName));
                             return [2 /*return*/];
                         }
-                        vss = this.verifyAndFillAutoGeneratedValues(table, qb.expressionMap.valuesSet);
+                        vss = this.verifyAndFillAutoGeneratedValues(table, qb.expressionMap, true);
                         // NOTE: when transaction mode, callback (next args of vss) never called.
                         // at transaction mode, this call just change queuedMutations_ property of this.tx,
                         // and callback ignored.
@@ -1907,7 +1848,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             fail(new Error("update: fatal: no such table " + qb.mainTableName));
                             return [2 /*return*/];
                         }
-                        vss = this.verifyValues(table, qb.expressionMap.valuesSet);
+                        vss = this.verifyValues(table, qb.expressionMap);
                         if (!vss || !(vss instanceof Array)) {
                             fail(new Error('only single value set can be used spanner update'));
                             return [2 /*return*/];
@@ -1967,7 +1908,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                             fail(new Error("upsert: fatal: no such table " + qb.mainTableName));
                             return [2 /*return*/];
                         }
-                        vss = this.verifyAndFillAutoGeneratedValues(table, qb.expressionMap.valuesSet);
+                        vss = this.verifyAndFillAutoGeneratedValues(table, qb.expressionMap, false);
                         // callback not provided see comment of insert
                         return [4 /*yield*/, this.request(table, 'upsert', vss)];
                     case 2:
@@ -2144,7 +2085,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      */
     SpannerQueryRunner.prototype.createTableSql = function (table) {
         var _this = this;
-        var columnDefinitions = table.columns.map(function (column) { return _this.buildCreateColumnSql(column, true); }).join(", ");
+        var columnDefinitions = table.columns.map(function (column) { return _this.buildCreateColumnSql(column, { skipPrimary: true }); }).join(", ");
         var sql = "CREATE TABLE " + this.escapeTableName(table) + " (" + columnDefinitions;
         // we create unique indexes instead of unique constraints, because MySql does not have unique constraints.
         // if we mark column as Unique, it means that we create UNIQUE INDEX.
@@ -2298,13 +2239,36 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         }
         return splits.map(function (i) { return disableEscape ? i : "`" + i + "`"; }).join(".");
     };
+    SpannerQueryRunner.needColumnOptions = function (column) {
+        return column.default === SpannerColumnUpdateWithCommitTimestamp;
+    };
+    SpannerQueryRunner.isColumnOptionsChanged = function (oldColumn, newColumn) {
+        return (SpannerQueryRunner.needColumnOptions(oldColumn) !==
+            SpannerQueryRunner.needColumnOptions(newColumn));
+    };
     /**
-     * Builds a part of query to create/change a column.
+     * Builds a part of query to set options to a column.
+     * because spanner ddl does not allow options to set with usual column alternation.
+     * `reverse = true` is used to generate down migration SQL
      */
-    SpannerQueryRunner.prototype.buildCreateColumnSql = function (column, skipPrimary, skipName) {
-        if (skipName === void 0) { skipName = false; }
+    SpannerQueryRunner.prototype.buildSetColumnOptionsSql = function (column, reverse) {
+        var options = [];
+        // spanner ddl does not support any default value except createDate/updateDate related
+        // other default value is supported by extend schema table
+        if (column.default !== undefined && column.default === SpannerColumnUpdateWithCommitTimestamp) {
+            options.push("allow_commit_timestamp=" + (reverse ? "null" : "true"));
+        }
+        else {
+            options.push("allow_commit_timestamp=" + (reverse ? "true" : "null"));
+        }
+        return options.length > 0 ? options.join(',') : "";
+    };
+    /**
+ * Builds a part of query to create/change a column.
+ */
+    SpannerQueryRunner.prototype.buildCreateColumnSql = function (column, skips) {
         var c = "";
-        if (skipName) {
+        if (skips.skipName) {
             c = this.connection.driver.createFullType(column);
         }
         else {
@@ -2343,18 +2307,17 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
             throw new Error("NYI: spanner: column.comment"); //c += ` COMMENT '${column.comment}'`;
         // spanner ddl does not support any default value except SpannerColumnUpdateWithCommitTimestamp
         // other default value is supported by extend schema table
-        if (column.default !== undefined && column.default !== null) {
-            if (column.default === SpannerColumnUpdateWithCommitTimestamp) {
-                c += "OPTIONS (allow_commit_timestamp=true)";
+        if (!skips.skipOptions) {
+            var optionsString = this.buildSetColumnOptionsSql(column);
+            if (optionsString.length > 0) {
+                c += "OPTIONS (" + optionsString + ")";
             }
         }
         // does not support on update
-        if (column.onUpdate)
+        if (column.onUpdate) {
             throw new Error("NYI: spanner: column.onUpdate"); //c += ` ON UPDATE ${column.onUpdate}`;
+        }
         return c;
-    };
-    SpannerQueryRunner.prototype.buildCreateColumnOptionsSql = function (column) {
-        return "";
     };
     SpannerQueryRunner.prototype.replaceCachedTable = function (table, changedTable) {
         if (changedTable) {

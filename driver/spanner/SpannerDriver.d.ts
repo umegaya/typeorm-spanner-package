@@ -13,7 +13,8 @@ import { SpannerDatabase, SpannerExtendSchemas } from "./SpannerRawTypes";
 import { Table } from "../../schema-builder/table/Table";
 import { ObjectLiteral } from "../../common/ObjectLiteral";
 import { ValueTransformer } from "../../decorator/options/ValueTransformer";
-export declare const SpannerColumnUpdateWithCommitTimestamp = "commit_timestamp";
+export declare const SpannerColumnUpdateWithCurrentTimestamp = "CURRENT_TIMESTAMP(6)";
+export declare const SpannerColumnUpdateWithCommitTimestamp = "spanner.commit_timestamp()";
 /**
  * Organizes communication with MySQL DBMS.
  */
@@ -101,6 +102,7 @@ export declare class SpannerDriver implements Driver {
     constructor(connection: Connection);
     static updateTableWithExtendSchema(db: SpannerDatabase, extendSchemas: SpannerExtendSchemas, ignoreColumnNotFound: boolean): void;
     static randomInt64(): string;
+    static needToChangeByNormalSchema(from: any, to: any): boolean;
     /**
      * returns spanner database object. used as databaseConnection of query runner.
      */
@@ -250,7 +252,7 @@ export declare class SpannerDriver implements Driver {
     /**
      * Checks if "DEFAULT" values in the column metadata and in the database are equal.
      */
-    protected compareDefaultValues(columnMetadataValue: string, databaseValue: string): boolean;
+    protected compareDefaultValues(columnMetadata: ColumnMetadata, columnMetadataValue?: string, databaseValue?: string): boolean;
     /**
      * parse typename and return additional information required by TableColumn object.
      */

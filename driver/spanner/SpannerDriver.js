@@ -14,7 +14,8 @@ if (process.env.PRELOAD_SPANNER_DEPENDENCY) {
     require('sql-ddl-to-json-schema');
 }
 //import { filter } from "minimatch";
-exports.SpannerColumnUpdateWithCommitTimestamp = "commit_timestamp";
+exports.SpannerColumnUpdateWithCurrentTimestamp = "CURRENT_TIMESTAMP(6)";
+exports.SpannerColumnUpdateWithCommitTimestamp = "spanner.commit_timestamp()";
 /**
  * Organizes communication with MySQL DBMS.
  */
@@ -87,10 +88,10 @@ var SpannerDriver = /** @class */ (function () {
         this.mappedDataTypes = {
             createDate: "timestamp",
             createDatePrecision: 20,
-            createDateDefault: "CURRENT_TIMESTAMP(6)",
+            createDateDefault: exports.SpannerColumnUpdateWithCurrentTimestamp,
             updateDate: "timestamp",
             updateDatePrecision: 20,
-            updateDateDefault: "CURRENT_TIMESTAMP(6)",
+            updateDateDefault: exports.SpannerColumnUpdateWithCurrentTimestamp,
             version: "int64",
             treeLevel: "int64",
             migrationId: "string",
@@ -131,7 +132,9 @@ var SpannerDriver = /** @class */ (function () {
                     var column = table.findColumnByName(columnName);
                     if (column) {
                         column.isGenerated = !!columnSchema.generator;
-                        column.default = columnSchema.default;
+                        if (!SpannerDriver.needToChangeByNormalSchema(columnSchema.default, column.default)) {
+                            column.default = columnSchema.default;
+                        }
                         column.generationStrategy = columnSchema.generatorStorategy;
                     }
                     else if (!ignoreColumnNotFound) {
@@ -164,6 +167,12 @@ var SpannerDriver = /** @class */ (function () {
             finally { if (e_1) throw e_1.error; }
         }
         return Long.fromBytes(as_numbers, true).toString();
+    };
+    SpannerDriver.needToChangeByNormalSchema = function (from, to) {
+        //if change to SpannerColumnUpdateWithCommitTimestamp or from SpannerColumnUpdateWithCommitTimestamp,
+        //need schema change
+        return (from !== to) &&
+            (from === exports.SpannerColumnUpdateWithCommitTimestamp || to === exports.SpannerColumnUpdateWithCommitTimestamp);
     };
     // -------------------------------------------------------------------------
     // Public Methods (SpannerDriver specific)
@@ -400,7 +409,8 @@ var SpannerDriver = /** @class */ (function () {
     };
     SpannerDriver.prototype.encodeDefaultValueGenerator = function (value) {
         var defaultValue = typeof (value) === 'function' ? value() : value;
-        if (defaultValue === this.mappedDataTypes.createDateDefault) {
+        if (defaultValue === exports.SpannerColumnUpdateWithCommitTimestamp ||
+            defaultValue === exports.SpannerColumnUpdateWithCurrentTimestamp) {
             return defaultValue;
         }
         else {
@@ -408,7 +418,10 @@ var SpannerDriver = /** @class */ (function () {
         }
     };
     SpannerDriver.prototype.decodeDefaultValueGenerator = function (value) {
-        if (value === this.mappedDataTypes.createDateDefault) {
+        if (value === exports.SpannerColumnUpdateWithCommitTimestamp) {
+            return function () { return exports.SpannerColumnUpdateWithCommitTimestamp; };
+        }
+        else if (value === exports.SpannerColumnUpdateWithCurrentTimestamp) {
             return function () { return new Date(); };
         }
         else {
@@ -683,8 +696,8 @@ var SpannerDriver = /** @class */ (function () {
      */
     SpannerDriver.prototype.normalizeDefault = function (columnMetadata) {
         var defaultValue = columnMetadata.default;
-        if (columnMetadata.isUpdateDate) {
-            return exports.SpannerColumnUpdateWithCommitTimestamp;
+        if (columnMetadata.isUpdateDate || columnMetadata.isCreateDate) {
+            return typeof defaultValue === "function" ? defaultValue() : defaultValue;
         }
         else if (typeof defaultValue === "number") {
             return "" + defaultValue;
@@ -811,10 +824,10 @@ var SpannerDriver = /** @class */ (function () {
                // console.log("comment:", tableColumn.comment, columnMetadata.comment);
             // if (tableColumn.default !== columnMetadata.default)
                // console.log("default:", tableColumn.default, columnMetadata.default);
-            // if (!this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default))
-               // console.log("default changed:", !this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default));
-            if (tableColumn.onUpdate !== columnMetadata.onUpdate)
-               console.log("onUpdate:", tableColumn.onUpdate, columnMetadata.onUpdate);
+            // if (!this.compareDefaultValues(columnMetadata, this.normalizeDefault(columnMetadata), tableColumn.default))
+               // console.log("default changed:", !this.compareDefaultValues(columnMetadata, this.normalizeDefault(columnMetadata), tableColumn.default));
+            if (tableColumn.onUpdate !== columnMetadata.onUpdate
+               console.log("onUpdate:", tableColumn.onUpdate, columnMetadata.onUpdate, columnMetadata.isUpdateDate);
             if (tableColumn.isPrimary !== columnMetadata.isPrimary)
                console.log("isPrimary:", tableColumn.isPrimary, columnMetadata.isPrimary);
             if (tableColumn.isNullable !== columnMetadata.isNullable)
@@ -835,8 +848,7 @@ var SpannerDriver = /** @class */ (function () {
                 || tableColumn.asExpression !== columnMetadata.asExpression
                 || tableColumn.generatedType !== columnMetadata.generatedType
                 // || tableColumn.comment !== columnMetadata.comment // todo
-                // default value is alway sync'ed to latest definition, via extendSchema repository
-                // || !this.compareDefaultValues(this.normalizeDefault(columnMetadata), tableColumn.default)
+                || !_this.compareDefaultValues(columnMetadata, _this.normalizeDefault(columnMetadata), tableColumn.default)
                 || tableColumn.onUpdate !== columnMetadata.onUpdate
                 || tableColumn.isPrimary !== columnMetadata.isPrimary
                 || tableColumn.isNullable !== columnMetadata.isNullable
@@ -904,12 +916,13 @@ var SpannerDriver = /** @class */ (function () {
     /**
      * Checks if "DEFAULT" values in the column metadata and in the database are equal.
      */
-    SpannerDriver.prototype.compareDefaultValues = function (columnMetadataValue, databaseValue) {
-        if (typeof columnMetadataValue === "string" && typeof databaseValue === "string") {
-            // we need to cut out "'" because in mysql we can understand returned value is a string or a function
-            // as result compare cannot understand if default is really changed or not
-            columnMetadataValue = columnMetadataValue.replace(/^'+|'+$/g, "");
-            databaseValue = databaseValue.replace(/^'+|'+$/g, "");
+    SpannerDriver.prototype.compareDefaultValues = function (columnMetadata, columnMetadataValue, databaseValue) {
+        // console.log('compareDefaultValues', columnMetadata.databaseName, columnMetadataValue, databaseValue)
+        if (!columnMetadata.isUpdateDate && !columnMetadata.isCreateDate) {
+            // basically, default value is alway sync'ed to latest definition, via extendSchema repository
+            // so do not change database schema by any default value change,
+            // except for createDate/updateDate related dafault value, which is set at ColumnMetadata.ts 387-402
+            return true;
         }
         return columnMetadataValue === databaseValue;
     };
@@ -945,13 +958,13 @@ var SpannerDriver = /** @class */ (function () {
     */
     SpannerDriver.prototype.parseSchema = function (schemas) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var e_2, _a, e_3, _b, e_4, _c, e_5, _d, e_6, _e, tableOptionsMap, _f, _g, stmt, indices, foreignKeys, uniques, columns, m, im, tableIndexOptions, tableOptions, _loop_1, _h, _j, uniqueColumnName, tableName, columnStmts, indexStmts, _k, _l, columnStmt, cm, type, _m, _o, idxStmt, im, pm, _loop_2, _p, _q, primaryColumnName, result, tableName;
-            return tslib_1.__generator(this, function (_r) {
+            var e_2, _a, e_3, _b, e_4, _c, e_5, _d, e_6, _e, e_7, _f, e_8, _g, tableOptionsMap, _h, _j, stmt, indices, foreignKeys, uniques, columns, m, im, tableIndexOptions, tableOptions, _loop_1, _k, _l, uniqueColumnName, tableName, columnStmts, indexStmts, _m, _o, columnStmt, cm, type, columnOptions, osm, options, options_1, options_1_1, option, _p, _q, regex, om, _r, _s, idxStmt, im, pm, _loop_2, _t, _u, primaryColumnName, result, tableName;
+            return tslib_1.__generator(this, function (_v) {
                 this.connection.logger.log("info", schemas);
                 tableOptionsMap = {};
                 try {
-                    for (_f = tslib_1.__values(schemas[0]), _g = _f.next(); !_g.done; _g = _f.next()) {
-                        stmt = _g.value;
+                    for (_h = tslib_1.__values(schemas[0]), _j = _h.next(); !_j.done; _j = _h.next()) {
+                        stmt = _j.value;
                         indices = [];
                         foreignKeys = [];
                         uniques = [];
@@ -997,15 +1010,15 @@ var SpannerDriver = /** @class */ (function () {
                                                 }
                                             };
                                             try {
-                                                for (_h = tslib_1.__values(tableIndexOptions.columnNames), _j = _h.next(); !_j.done; _j = _h.next()) {
-                                                    uniqueColumnName = _j.value;
+                                                for (_k = tslib_1.__values(tableIndexOptions.columnNames), _l = _k.next(); !_l.done; _l = _k.next()) {
+                                                    uniqueColumnName = _l.value;
                                                     _loop_1(uniqueColumnName);
                                                 }
                                             }
                                             catch (e_3_1) { e_3 = { error: e_3_1 }; }
                                             finally {
                                                 try {
-                                                    if (_j && !_j.done && (_b = _h.return)) _b.call(_h);
+                                                    if (_l && !_l.done && (_b = _k.return)) _b.call(_k);
                                                 }
                                                 finally { if (e_3) throw e_3.error; }
                                             }
@@ -1026,15 +1039,14 @@ var SpannerDriver = /** @class */ (function () {
                         indexStmts = m[3];
                         try {
                             // parse columns
-                            for (_k = tslib_1.__values(columnStmts.split(',')), _l = _k.next(); !_l.done; _l = _k.next()) {
-                                columnStmt = _l.value;
-                                cm = columnStmt.match(/(\w+)\s+([\w\(\)]+)\s*([^\n]*)/);
+                            for (_m = tslib_1.__values(columnStmts.split(',')), _o = _m.next(); !_o.done; _o = _m.next()) {
+                                columnStmt = _o.value;
+                                cm = columnStmt.match(/(\w+)\s+([\w\(\)]+)\s*((.|[\r\n])*)/);
                                 if (!cm) {
                                     throw new Error("invalid ddl column format:" + columnStmt);
                                 }
                                 type = this.parseTypeName(cm[2]);
-                                // check and store constraint with m[3]
-                                columns.push({
+                                columnOptions = {
                                     name: cm[1],
                                     type: type.typeName,
                                     isNullable: cm[3].indexOf("NOT NULL") < 0,
@@ -1045,13 +1057,51 @@ var SpannerDriver = /** @class */ (function () {
                                     length: type.length ? type.length : undefined,
                                     default: undefined,
                                     generationStrategy: undefined,
-                                });
+                                };
+                                osm = cm[3].match(/OPTIONS\s*\(((.|[\r\n])*)\)/);
+                                if (osm) {
+                                    options = osm[1].split(',').map(function (t) { return t.trim(); });
+                                    try {
+                                        for (options_1 = tslib_1.__values(options), options_1_1 = options_1.next(); !options_1_1.done; options_1_1 = options_1.next()) {
+                                            option = options_1_1.value;
+                                            try {
+                                                for (_p = tslib_1.__values([/^(allow_commit_timestamp)\s*=\s*(\w+)/]), _q = _p.next(); !_q.done; _q = _p.next()) {
+                                                    regex = _q.value;
+                                                    om = option.match(regex);
+                                                    if (om) {
+                                                        if (om[1] === "allow_commit_timestamp") {
+                                                            columnOptions.default = Boolean(om[2]) ? exports.SpannerColumnUpdateWithCommitTimestamp : undefined;
+                                                        }
+                                                        else {
+                                                            throw new Error("unsupported spanner column options: " + osm[0]);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                                            finally {
+                                                try {
+                                                    if (_q && !_q.done && (_e = _p.return)) _e.call(_p);
+                                                }
+                                                finally { if (e_6) throw e_6.error; }
+                                            }
+                                        }
+                                    }
+                                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                                    finally {
+                                        try {
+                                            if (options_1_1 && !options_1_1.done && (_d = options_1.return)) _d.call(options_1);
+                                        }
+                                        finally { if (e_5) throw e_5.error; }
+                                    }
+                                }
+                                columns.push(columnOptions);
                             }
                         }
                         catch (e_4_1) { e_4 = { error: e_4_1 }; }
                         finally {
                             try {
-                                if (_l && !_l.done && (_c = _k.return)) _c.call(_k);
+                                if (_o && !_o.done && (_c = _m.return)) _c.call(_m);
                             }
                             finally { if (e_4) throw e_4.error; }
                         }
@@ -1061,8 +1111,8 @@ var SpannerDriver = /** @class */ (function () {
                             continue;
                         }
                         try {
-                            for (_m = tslib_1.__values((indexStmts.match(/(\w+[\w\s]+\([^)]+\)[^,]*)/g) || [])), _o = _m.next(); !_o.done; _o = _m.next()) {
-                                idxStmt = _o.value;
+                            for (_r = tslib_1.__values((indexStmts.match(/(\w+[\w\s]+\([^)]+\)[^,]*)/g) || [])), _s = _r.next(); !_s.done; _s = _r.next()) {
+                                idxStmt = _s.value;
                                 // console.log('idxStmt', idxStmt);
                                 // distinguish index and foreignKey. fk should contains INTERLEAVE
                                 if (idxStmt.indexOf("INTERLEAVE") == 0) {
@@ -1089,17 +1139,17 @@ var SpannerDriver = /** @class */ (function () {
                                             }
                                         };
                                         try {
-                                            for (_p = tslib_1.__values(pm[1].split(',').map(function (e) { return e.trim(); })), _q = _p.next(); !_q.done; _q = _p.next()) {
-                                                primaryColumnName = _q.value;
+                                            for (_t = tslib_1.__values(pm[1].split(',').map(function (e) { return e.trim(); })), _u = _t.next(); !_u.done; _u = _t.next()) {
+                                                primaryColumnName = _u.value;
                                                 _loop_2(primaryColumnName);
                                             }
                                         }
-                                        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                                        catch (e_8_1) { e_8 = { error: e_8_1 }; }
                                         finally {
                                             try {
-                                                if (_q && !_q.done && (_e = _p.return)) _e.call(_p);
+                                                if (_u && !_u.done && (_g = _t.return)) _g.call(_t);
                                             }
-                                            finally { if (e_6) throw e_6.error; }
+                                            finally { if (e_8) throw e_8.error; }
                                         }
                                     }
                                     else {
@@ -1108,12 +1158,12 @@ var SpannerDriver = /** @class */ (function () {
                                 }
                             }
                         }
-                        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                        catch (e_7_1) { e_7 = { error: e_7_1 }; }
                         finally {
                             try {
-                                if (_o && !_o.done && (_d = _m.return)) _d.call(_m);
+                                if (_s && !_s.done && (_f = _r.return)) _f.call(_r);
                             }
-                            finally { if (e_5) throw e_5.error; }
+                            finally { if (e_7) throw e_7.error; }
                         }
                         tableOptionsMap[tableName] = {
                             name: tableName,
@@ -1127,14 +1177,14 @@ var SpannerDriver = /** @class */ (function () {
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
+                        if (_j && !_j.done && (_a = _h.return)) _a.call(_h);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
                 result = {};
                 for (tableName in tableOptionsMap) {
-                    // console.log('tableOptions', tableName, tableOptionsMap[tableName]);
                     result[tableName] = new Table_1.Table(tableOptionsMap[tableName]);
+                    // console.log('tableOptions', tableName, tableOptionsMap[tableName], result[tableName]);
                 }
                 return [2 /*return*/, result];
             });

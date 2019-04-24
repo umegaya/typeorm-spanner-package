@@ -124,7 +124,10 @@ var SpannerDDLTransformer = /** @class */ (function () {
         return "ALTER TABLE " + this.scopedTable + " DROP COLUMN " + ast.column;
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_changeColumn = function (ast, extendSchemas) {
-        return "ALTER TABLE " + this.scopedTable + " ALTER COLUMN " + [ast.column, ast.newName].filter(function (e) { return !!e; }).join(' ') + " " +
+        if (ast.newName && ast.column !== ast.newName) {
+            throw new Error("changing column name " + ast.column + " => " + ast.newName + " is not supported ");
+        }
+        return "ALTER TABLE " + this.scopedTable + " ALTER COLUMN " + ast.column + " " +
             this.alterColumnDefinitionHelper(ast, extendSchemas);
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_addIndex = function (ast, extendSchemas) {

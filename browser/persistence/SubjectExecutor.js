@@ -533,7 +533,7 @@ var SubjectExecutor = /** @class */ (function () {
                 if (column.isVirtual)
                     return;
                 // update nullable columns
-                if (column.isNullable) {
+                if (column.isNullable && (!_this.options || !_this.options.skip_set_null_for_undefined_nullable_column)) {
                     var columnValue = column.getEntityValue(subject.entity);
                     if (columnValue === undefined)
                         column.setEntityValue(subject.entity, null);

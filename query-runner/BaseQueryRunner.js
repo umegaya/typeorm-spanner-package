@@ -346,10 +346,11 @@ var BaseQueryRunner = /** @class */ (function () {
                     case 3:
                         _a.sent();
                         _a.label = 4;
-                    case 4:
-                        ret = runInTransaction(queryRunner.manager);
-                        return [4 /*yield*/, queryRunner.commitTransaction()];
+                    case 4: return [4 /*yield*/, runInTransaction(queryRunner.manager)];
                     case 5:
+                        ret = _a.sent();
+                        return [4 /*yield*/, queryRunner.commitTransaction()];
+                    case 6:
                         _a.sent();
                         return [2 /*return*/, ret];
                 }

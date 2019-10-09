@@ -50,11 +50,10 @@ var SpannerDDLTransformer = /** @class */ (function () {
         return "" + ast.map(function (d) { return _this.P_CREATE_TABLE_CREATE_DEFINITION(d.def, extendSchemas); }).filter(function (e) { return !!e; }).join(',');
     };
     SpannerDDLTransformer.prototype.P_CREATE_TABLE_CREATE_DEFINITION = function (ast, extendSchemas) {
-        var _this = this;
         if (ast.column) {
             this.setScopedColumn(ast.column.name);
             return ast.column.name + " " + this.O_DATATYPE(ast.column.def.datatype, extendSchemas) + " " +
-                ("" + ast.column.def.columnDefinition.map(function (cd) { return _this.O_COLUMN_DEFINITION(cd.def, extendSchemas); }).join(' '));
+                ("" + this.O_COLUMN_DEFINITION(ast.column.def.columnDefinition, extendSchemas));
         }
         else if (ast.primaryKey) {
             this.primaryKeyColumns = this.primaryKeyColumns
@@ -190,24 +189,31 @@ var SpannerDDLTransformer = /** @class */ (function () {
         return this.scopedColumnType;
     };
     // O_XXXXX_DATATYPE: default (ignored)
-    SpannerDDLTransformer.prototype.O_COLUMN_DEFINITION = function (ast, extendSchemas) {
-        if (ast.nullable === true) {
-            return ""; //spanner does not allow `NULL` to express nullable column. all column nullable by default.
+    SpannerDDLTransformer.prototype.O_COLUMN_DEFINITION = function (asts, extendSchemas) {
+        var _this = this;
+        if (!Array.isArray(asts)) {
+            asts = [asts];
         }
-        else if (ast.nullable === false) {
-            return "NOT NULL";
-        }
-        else if (ast.autoincrement) {
-            this.addExtendSchema(extendSchemas, "generator", "increment");
-        }
-        else if (ast.default !== undefined) {
-            this.addExtendSchema(extendSchemas, "default", this.defaultValueEncoder(ast.default));
-        }
-        return "";
+        return asts.map(function (ast) {
+            var a = ast.def;
+            if (a.nullable === true) {
+                return ""; //spanner does not allow `NULL` to express nullable column. all column nullable by default.
+            }
+            else if (a.nullable === false) {
+                return "NOT NULL";
+            }
+            else if (a.autoincrement) {
+                _this.addExtendSchema(extendSchemas, "generator", "increment");
+            }
+            else if (a.default !== undefined) {
+                _this.addExtendSchema(extendSchemas, "default", _this.defaultValueEncoder(a.default));
+            }
+            return "";
+        }).join(' ');
     };
     // helpers
     SpannerDDLTransformer.prototype.alterColumnDefinitionHelper = function (ast, extendSchemas) {
-        this.setScopedColumn(ast.name);
+        this.setScopedColumn(ast.column);
         return this.O_DATATYPE(ast.datatype, extendSchemas) + " " +
             ("" + this.O_COLUMN_DEFINITION(ast.columnDefinition, extendSchemas)) +
             (ast.position ? (ast.position.after ? "AFTER " + ast.position.after : "FIRST") : "");

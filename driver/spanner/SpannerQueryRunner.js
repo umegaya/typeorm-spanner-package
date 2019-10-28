@@ -653,7 +653,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " DROP COLUMN `" + column.name + "`");
                         if (SpannerQueryRunner.needColumnOptions(column)) {
                             upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + column.name + "` " + this.buildSetColumnOptionsSql(column));
-                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + column.name + "` " + this.buildSetColumnOptionsSql(column, true));
+                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + column.name + "` " + this.buildSetColumnOptionsSql(column, { reverse: true }));
                         }
                         // create or update primary key constraint
                         if (column.isPrimary) {
@@ -795,7 +795,7 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
                         }
                         if (SpannerQueryRunner.isColumnOptionsChanged(oldColumn, newColumn)) {
                             upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + newColumn.name + "` SET OPTIONS (" + this.buildSetColumnOptionsSql(newColumn) + ")");
-                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + oldColumn.name + "` SET OPTIONS (" + this.buildSetColumnOptionsSql(oldColumn) + ")");
+                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN `" + oldColumn.name + "` SET OPTIONS (" + this.buildSetColumnOptionsSql(oldColumn, { reverse: true }) + ")");
                         }
                         return [4 /*yield*/, this.executeQueries(upQueries, downQueries)];
                     case 4:
@@ -2253,15 +2253,20 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
      * because spanner ddl does not allow options to set with usual column alternation.
      * `reverse = true` is used to generate down migration SQL
      */
-    SpannerQueryRunner.prototype.buildSetColumnOptionsSql = function (column, reverse) {
+    SpannerQueryRunner.prototype.buildSetColumnOptionsSql = function (column, settings) {
         var options = [];
+        settings = settings || {};
         // spanner ddl does not support any default value except createDate/updateDate related
         // other default value is supported by extend schema table
         if (column.default !== undefined && column.default === SpannerDriver_1.SpannerColumnUpdateWithCommitTimestamp) {
-            options.push("allow_commit_timestamp=" + (reverse ? "null" : "true"));
+            if (!settings.reverse || !settings.from_create_table) {
+                options.push("allow_commit_timestamp=" + (settings.reverse ? "null" : "true"));
+            }
         }
         else {
-            options.push("allow_commit_timestamp=" + (reverse ? "true" : "null"));
+            if (settings.reverse || !settings.from_create_table) {
+                options.push("allow_commit_timestamp=" + (settings.reverse ? "true" : "null"));
+            }
         }
         return options.length > 0 ? options.join(',') : "";
     };
@@ -2310,9 +2315,9 @@ var SpannerQueryRunner = /** @class */ (function (_super) {
         // spanner ddl does not support any default value except SpannerColumnUpdateWithCommitTimestamp
         // other default value is supported by extend schema table
         if (!skips.skipOptions) {
-            var optionsString = this.buildSetColumnOptionsSql(column);
+            var optionsString = this.buildSetColumnOptionsSql(column, { from_create_table: true });
             if (optionsString.length > 0) {
-                c += "OPTIONS (" + optionsString + ")";
+                c += " OPTIONS (" + optionsString + ")";
             }
         }
         // does not support on update

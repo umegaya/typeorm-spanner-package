@@ -397,7 +397,10 @@ export declare class SpannerQueryRunner extends BaseQueryRunner implements Query
      * because spanner ddl does not allow options to set with usual column alternation.
      * `reverse = true` is used to generate down migration SQL
      */
-    protected buildSetColumnOptionsSql(column: TableColumn, reverse?: boolean): string;
+    protected buildSetColumnOptionsSql(column: TableColumn, settings?: {
+        from_create_table?: boolean;
+        reverse?: boolean;
+    }): string;
     /**
  * Builds a part of query to create/change a column.
  */

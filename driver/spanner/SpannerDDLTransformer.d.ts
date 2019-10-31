@@ -47,7 +47,7 @@ export declare class SpannerDDLTransformer {
     protected O_ALTER_TABLE_SPEC_dropIndex(ast: any, extendSchemas: SpannerExtendSchemaSources): string;
     protected O_DATATYPE(ast: any, extendSchemas: SpannerExtendSchemaSources): string;
     protected O_COLUMN_DEFINITION(asts: any, extendSchemas: SpannerExtendSchemaSources): string;
-    protected alterColumnDefinitionHelper(ast: any, extendSchemas: SpannerExtendSchemaSources): string;
+    protected alterColumnDefinitionHelper(ast: any, columnName: string, extendSchemas: SpannerExtendSchemaSources): string;
     protected primaryKeyDefinitionHelper(): string;
     protected indexDefinitionsHelper(): string;
     protected indexDefinitionHelper(idx: Index): string;

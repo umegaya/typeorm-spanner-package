@@ -27,10 +27,16 @@ var SpannerDDLTransformer = /** @class */ (function () {
         };
     };
     SpannerDDLTransformer.prototype.setScopedColumn = function (column) {
+        if (!column) {
+            throw new Error("setScopedColumn: column should not be empty " + column);
+        }
         this.scopedIndex = undefined;
         this.scopedColumn = column;
     };
     SpannerDDLTransformer.prototype.setScopedIndex = function (index) {
+        if (!index) {
+            throw new Error("setScopedIndex: index should not be empty " + index);
+        }
         this.scopedIndex = "idx@" + index;
         this.scopedColumn = undefined;
     };
@@ -118,7 +124,7 @@ var SpannerDDLTransformer = /** @class */ (function () {
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_addColumn = function (ast, extendSchemas) {
         return "ALTER TABLE " + this.scopedTable + " ADD COLUMN " + ast.name + " " +
-            this.alterColumnDefinitionHelper(ast, extendSchemas);
+            this.alterColumnDefinitionHelper(ast, ast.name, extendSchemas);
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_dropColumn = function (ast, extendSchemas) {
         this.setScopedColumn(ast.column);
@@ -129,7 +135,7 @@ var SpannerDDLTransformer = /** @class */ (function () {
             throw new Error("changing column name " + ast.column + " => " + ast.newName + " is not supported ");
         }
         return "ALTER TABLE " + this.scopedTable + " ALTER COLUMN " + ast.column + " " +
-            this.alterColumnDefinitionHelper(ast, extendSchemas);
+            this.alterColumnDefinitionHelper(ast, ast.column, extendSchemas);
     };
     SpannerDDLTransformer.prototype.O_ALTER_TABLE_SPEC_addIndex = function (ast, extendSchemas) {
         return this.indexDefinitionHelper(this.indexHelper(ast, { unique: false, sparse: false }));
@@ -212,8 +218,8 @@ var SpannerDDLTransformer = /** @class */ (function () {
         }).join(' ');
     };
     // helpers
-    SpannerDDLTransformer.prototype.alterColumnDefinitionHelper = function (ast, extendSchemas) {
-        this.setScopedColumn(ast.column);
+    SpannerDDLTransformer.prototype.alterColumnDefinitionHelper = function (ast, columnName, extendSchemas) {
+        this.setScopedColumn(columnName);
         return this.O_DATATYPE(ast.datatype, extendSchemas) + " " +
             ("" + this.O_COLUMN_DEFINITION(ast.columnDefinition, extendSchemas)) +
             (ast.position ? (ast.position.after ? "AFTER " + ast.position.after : "FIRST") : "");
